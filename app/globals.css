@@ -11,11 +11,11 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
-  --color-brand: #e8572a;
-  --color-pos: #a3c4b1;
-  --color-neg: #d7a8a3;
-  --color-panel: #111113;
-  --color-dim: #71717a;
+  --color-brand: var(--brand);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-panel: var(--panel);
+  --color-dim: var(--dim);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -108,6 +108,26 @@
   --border: rgba(255, 255, 255, 0.08);
   --input: rgba(255, 255, 255, 0.14);
   --ring: #e8572a;
+  --brand: #e8572a;
+  --brand-ink: #1c0c06;
+  --pos: #a3c4b1;
+  --neg: #d7a8a3;
+  --panel: #111113;
+  --dim: #71717a;
+  --highlight: rgb(232 87 42 / 0.15);
+  --header-bg: rgb(9 9 11 / 0.9);
+  --header-fg: #f4f4f5;
+  --header-muted: #a1a1aa;
+  --header-mark: #e8572a;
+  --header-border: rgba(255, 255, 255, 0.08);
+  --footer-bg: transparent;
+  --footer-fg: #71717a;
+  --tab-bg: #0c0c0e;
+  --tab-fg: #71717a;
+  --tab-active: #f4f4f5;
+  --tab-icon: #e8572a;
+  --chip: #141416;
+  --team-ring: rgba(255, 255, 255, 0.15);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -121,6 +141,46 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+.light {
+  --background: #dce1e6;
+  --foreground: #0c3969;
+  --card: #ffffff;
+  --card-foreground: #0c3969;
+  --popover: #ffffff;
+  --popover-foreground: #0c3969;
+  --primary: #025299;
+  --primary-foreground: #ffffff;
+  --secondary: #7fa4c5;
+  --secondary-foreground: #0c3969;
+  --muted: #ffffff;
+  --muted-foreground: #025299;
+  --accent: #7fa4c5;
+  --accent-foreground: #0c3969;
+  --border: rgba(12, 57, 105, 0.16);
+  --input: rgba(12, 57, 105, 0.22);
+  --ring: #025299;
+  --brand: #025299;
+  --brand-ink: #ffffff;
+  --pos: #025299;
+  --neg: #0c3969;
+  --panel: #ffffff;
+  --dim: #025299;
+  --highlight: rgb(2 82 153 / 0.12);
+  --header-bg: #0c3969;
+  --header-fg: #ffffff;
+  --header-muted: #dce1e6;
+  --header-mark: #7fa4c5;
+  --header-border: rgba(255, 255, 255, 0.1);
+  --footer-bg: #0c3969;
+  --footer-fg: #dce1e6;
+  --tab-bg: #0c3969;
+  --tab-fg: #7fa4c5;
+  --tab-active: #ffffff;
+  --tab-icon: #7fa4c5;
+  --chip: #ffffff;
+  --team-ring: rgba(255, 255, 255, 0.3);
 }
 
 @layer base {

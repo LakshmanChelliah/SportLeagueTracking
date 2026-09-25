@@ -22,7 +22,7 @@ export function ScoreLine({
   ]
 
   return (
-    <article className={cn("border-t border-border py-3 first:border-t-0", yours && "bg-[#e8572a]/15 shadow-[inset_3px_0_0_#e8572a] max-md:bg-transparent max-md:shadow-none")}>
+    <article className={cn("border-t border-border py-3 first:border-t-0", yours && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)] max-md:bg-transparent max-md:shadow-none")}>
       {meta ? (
         <div className="flex items-center gap-2.5 px-4 pb-1.5 text-[11px] tracking-[0.1em] text-dim uppercase">
           <span>{meta}{yours ? " · You" : ""}{result.forfeit ? " · Forfeit" : ""}</span>

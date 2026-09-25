@@ -27,7 +27,7 @@ export function CalendarButton({
     <button
       type="button"
       onClick={download}
-      className="rounded-lg bg-brand px-3.5 py-2.5 text-[13px] font-semibold text-[#1c0c06] transition-transform active:scale-95 max-md:border max-md:border-white/15 max-md:bg-transparent max-md:text-foreground"
+      className="rounded-lg bg-brand px-3.5 py-2.5 text-[13px] font-semibold text-[var(--brand-ink)] transition-transform active:scale-95 max-md:border max-md:border-border max-md:bg-transparent max-md:text-foreground"
     >
       {label}
     </button>
