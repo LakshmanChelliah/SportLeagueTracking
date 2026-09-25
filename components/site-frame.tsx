@@ -1,0 +1,43 @@
+"use client"
+
+import { SiteFooter } from "@/components/site-footer"
+import { SiteHeader } from "@/components/site-header"
+import { TabBar } from "@/components/tab-bar"
+import { TeamChoices } from "@/components/team-picker"
+import { useTeam } from "@/components/team-provider"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+export function SiteFrame({ children }: { children: React.ReactNode }) {
+  const { team, ready, setTeam } = useTeam()
+
+  if (!ready || team == null) {
+    if (!ready) return null
+    return (
+      <Dialog open>
+        <DialogContent
+          showCloseButton={false}
+          className="gap-5 p-6 sm:max-w-md"
+          onEscapeKeyDown={(event) => event.preventDefault()}
+          onPointerDownOutside={(event) => event.preventDefault()}
+          onInteractOutside={(event) => event.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="font-display text-3xl tracking-wide uppercase">Which team are you on?</DialogTitle>
+            <DialogDescription>Your phone shows only your matches. Standings still list every team.</DialogDescription>
+          </DialogHeader>
+          <TeamChoices onPick={setTeam} />
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <>
+      <div className="h-[3px] bg-brand" />
+      <SiteHeader />
+      <div className="flex-1 pb-[72px] md:pb-0">{children}</div>
+      <SiteFooter />
+      <TabBar />
+    </>
+  )
+}

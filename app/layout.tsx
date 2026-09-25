@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 import { Barlow_Condensed, Inter } from "next/font/google"
-import { SiteFooter } from "@/components/site-footer"
-import { SiteHeader } from "@/components/site-header"
-import { TabBar } from "@/components/tab-bar"
+import { SiteFrame } from "@/components/site-frame"
 import { TeamProvider } from "@/components/team-provider"
 import { readTeamCookie } from "@/lib/read-team"
 import "./globals.css"
@@ -30,13 +28,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const team = process.env.STATIC_EXPORT === "1" ? null : await readTeamCookie()
   return (
     <html lang="en" className={`dark ${inter.variable} ${barlow.variable} h-full overflow-x-hidden antialiased`}>
-      <body className="flex min-h-full flex-col overflow-x-hidden bg-background pb-[72px] text-foreground md:overflow-x-visible md:pb-0">
-        <div className="h-[3px] bg-brand" />
+      <body className="flex min-h-full flex-col overflow-x-hidden bg-background text-foreground md:overflow-x-visible">
         <TeamProvider initialTeam={team}>
-          <SiteHeader />
-          <div className="flex-1">{children}</div>
-          <SiteFooter />
-          <TabBar />
+          <SiteFrame>{children}</SiteFrame>
         </TeamProvider>
       </body>
     </html>
