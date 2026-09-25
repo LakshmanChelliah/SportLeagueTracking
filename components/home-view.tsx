@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { CalendarButton } from "@/components/calendar-button"
 import { Countdown } from "@/components/countdown"
 import { MatchCard } from "@/components/match-card"
@@ -33,8 +34,12 @@ function recordLine(row: Standing | undefined) {
   )
 }
 
-export function HomeView({ league, nowIso }: { league: LeagueData; nowIso: string }) {
+export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team, setTeam } = useTeam()
+  const [nowIso, setNowIso] = useState(serverNowIso)
+  useEffect(() => {
+    setNowIso(new Date().toISOString())
+  }, [])
   const now = new Date(nowIso)
   const matches = league.schedule.matches
   const table = standings(matches, league.results)

@@ -1,7 +1,16 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
+
+const pages = process.env.STATIC_EXPORT === "1"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  ...(pages
+    ? {
+        output: "export" as const,
+        basePath: "/SportLeagueTracking",
+        trailingSlash: true,
+        images: { unoptimized: true },
+      }
+    : {}),
+}
 
-export default nextConfig;
+export default nextConfig

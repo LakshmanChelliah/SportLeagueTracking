@@ -12,6 +12,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Pick your team in the header. That choice is remembered in a cookie and, on a phone, limits Home, Schedule, and Team to your matches. Standings always lists every team.
 
+The public board is [https://lakshmanchelliah.github.io/SportLeagueTracking/](https://lakshmanchelliah.github.io/SportLeagueTracking/). Publish an update with `npm run build:pages`, then commit the `out/` files to the branch GitHub Pages serves. That host is static, so score entry stays on the coordinator server described below.
+
 ## Scores
 
 `/admin` is the coordinator page. Set a PIN before using it:

@@ -2,9 +2,13 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { TeamView } from "@/components/team-view"
 import { getLeague } from "@/lib/league"
-import { parseTeam, teamName } from "@/lib/teams"
+import { parseTeam, TEAMS, teamName } from "@/lib/teams"
 
-export const dynamic = "force-dynamic"
+export function generateStaticParams() {
+  return TEAMS.map((team) => ({ n: String(team) }))
+}
+
+export const dynamicParams = false
 
 export async function generateMetadata({ params }: { params: Promise<{ n: string }> }): Promise<Metadata> {
   const { n } = await params

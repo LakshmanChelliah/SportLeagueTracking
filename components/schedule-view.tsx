@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { MatchCard } from "@/components/match-card"
 import { ScoreLine } from "@/components/score-line"
 import { TeamChoices } from "@/components/team-picker"
@@ -8,16 +10,13 @@ import { WeekStrip } from "@/components/week-strip"
 import { defaultNight, formatNight, formatTime, involves, nightsOf, torontoDate, warmupLabel } from "@/lib/schedule"
 import type { LeagueData } from "@/lib/types"
 
-export function ScheduleView({
-  league,
-  nowIso,
-  requested,
-}: {
-  league: LeagueData
-  nowIso: string
-  requested?: string
-}) {
+export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team, setTeam } = useTeam()
+  const requested = useSearchParams().get("night") ?? undefined
+  const [nowIso, setNowIso] = useState(serverNowIso)
+  useEffect(() => {
+    setNowIso(new Date().toISOString())
+  }, [])
   const now = new Date(nowIso)
   const matches = league.schedule.matches
   const nights = nightsOf(matches)

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const team = await readTeamCookie()
+  const team = process.env.STATIC_EXPORT === "1" ? null : await readTeamCookie()
   return (
     <html lang="en" className={`dark ${inter.variable} ${barlow.variable} h-full overflow-x-hidden antialiased`}>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-background pb-[72px] text-foreground md:overflow-x-visible md:pb-0">

@@ -3,7 +3,6 @@ import { StandingsHighlight } from "@/components/standings-highlight"
 import { getLeague } from "@/lib/league"
 import { standings } from "@/lib/standings"
 
-export const dynamic = "force-dynamic"
 export const metadata: Metadata = { title: "Standings" }
 
 export default function StandingsPage() {

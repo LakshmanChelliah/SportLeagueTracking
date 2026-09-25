@@ -1,13 +1,18 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
 import type { TeamId } from "@/lib/teams"
 
 export function TeamGate() {
-  const { setTeam } = useTeam()
+  const { team, setTeam } = useTeam()
   const router = useRouter()
+
+  useEffect(() => {
+    if (team) router.replace(`/team/${team}`)
+  }, [team, router])
 
   function pick(team: TeamId) {
     setTeam(team)

@@ -1,7 +1,7 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
-import { TEAM_COOKIE, type TeamId } from "@/lib/teams"
+import { createContext, useContext, useEffect, useState } from "react"
+import { parseTeam, TEAM_COOKIE, type TeamId } from "@/lib/teams"
 
 type TeamContextValue = {
   team: TeamId | null
@@ -18,6 +18,13 @@ export function TeamProvider({
   children: React.ReactNode
 }) {
   const [team, setTeamState] = useState<TeamId | null>(initialTeam)
+
+  useEffect(() => {
+    if (initialTeam != null) return
+    const raw = document.cookie.split("; ").find((part) => part.startsWith(`${TEAM_COOKIE}=`))
+    const saved = parseTeam(raw?.split("=")[1])
+    if (saved) setTeamState(saved)
+  }, [initialTeam])
 
   function setTeam(next: TeamId | null) {
     setTeamState(next)
