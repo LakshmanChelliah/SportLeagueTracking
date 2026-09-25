@@ -1,6 +1,6 @@
-:HL["/SportLeagueTracking/_next/static/chunks/0jj7ti94i6iav.css","style"]
+:HL["/SportLeagueTracking/_next/static/chunks/2gwykvsz6ct58.css","style"]
 :HL["/SportLeagueTracking/_next/static/media/303804218d80822e-s.p.3lj349bs9hfu1.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/SportLeagueTracking/_next/static/media/612838607db3d51d-s.p.2-6hkzwn24m5-.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/SportLeagueTracking/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/SportLeagueTracking/_next/static/media/d9b5d46d9a89ffe6-s.p.0xxdg0o7uh536.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"team","param":null,"prefetchHints":4192,"slots":{"children":{"name":"n","param":{"type":"d","key":"4","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"XOFjuf1mhXS1OZDHTxRs7"}
+0:{"tree":{"name":"","param":null,"prefetchHints":4176,"slots":{"children":{"name":"team","param":null,"prefetchHints":4192,"slots":{"children":{"name":"n","param":{"type":"d","key":"4","siblings":[]},"prefetchHints":4192,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"-_Uoe_F2DI4sHR1kPRyQT"}
