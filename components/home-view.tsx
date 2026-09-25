@@ -6,7 +6,6 @@ import { Countdown } from "@/components/countdown"
 import { MatchCard } from "@/components/match-card"
 import { ScoreLine } from "@/components/score-line"
 import { StandingsList } from "@/components/standings-table"
-import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
 import {
   defaultNight,
@@ -35,7 +34,7 @@ function recordLine(row: Standing | undefined) {
 }
 
 export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
-  const { team, setTeam } = useTeam()
+  const { team } = useTeam()
   const [nowIso, setNowIso] = useState(serverNowIso)
   useEffect(() => {
     setNowIso(new Date().toISOString())
@@ -57,15 +56,6 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-48px)] max-md:pt-7 max-md:pb-8">
-      {!team ? (
-        <section className="max-w-md">
-          <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your team</p>
-          <h1 className="mt-3 font-display text-4xl tracking-wide uppercase">Which team are you on?</h1>
-          <p className="mt-2 mb-5 text-sm text-muted-foreground">Your phone shows only your matches. Standings still list every team.</p>
-          <TeamChoices onPick={setTeam} />
-        </section>
-      ) : null}
-
       {team && focus ? (
         <section className="flex flex-col">
           <div className="mb-[18px] flex items-baseline justify-between gap-3 max-md:mb-5">
