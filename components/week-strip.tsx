@@ -18,7 +18,7 @@ export function WeekStrip({
     <div className="relative mb-[18px] flex min-w-0 gap-1.5 overflow-x-auto overscroll-x-contain md:grid md:grid-cols-9 md:gap-0 md:overflow-hidden md:rounded-xl md:border md:border-border">
       {dates.map((date) => {
         const played = Object.keys(results).some((id) => id.startsWith(date))
-        const state = date === nextDate ? "Next" : played ? "Final" : "—"
+        const state = date === nextDate ? "Next" : played ? "Final" : "-"
         const active = date === selected
         return (
           <Link
@@ -33,7 +33,7 @@ export function WeekStrip({
             <span className={cn("block font-display text-lg tracking-wide uppercase md:text-xl", !played && date !== nextDate && date !== selected && "text-muted-foreground")}>
               {formatChip(date)}
             </span>
-            <span className={cn("mt-0.5 block text-[10px] tracking-[0.12em] uppercase", date === nextDate ? "text-brand" : "text-dim", state === "—" && "max-md:hidden")}>
+            <span className={cn("mt-0.5 block text-[10px] tracking-[0.12em] uppercase", date === nextDate ? "text-brand" : "text-dim", state === "-" && "max-md:hidden")}>
               {state}
             </span>
           </Link>

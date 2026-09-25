@@ -28,7 +28,7 @@ export default function StandingsPage() {
             A game stopped at 10 minutes to the hour still counts. The team ahead at the whistle gets the point. Tied games award nothing.
           </p>
           <p className="mt-3.5 text-[13px] leading-normal text-dim">
-            Forfeit — no women on the court, or 4 players or fewer — is entered as 21–0, 21–0, 21–0.
+            A forfeit for 4 players or fewer is entered as 21–0, 21–0, 21–0.
           </p>
         </aside>
       </div>

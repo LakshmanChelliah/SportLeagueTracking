@@ -36,4 +36,4 @@ Without `GITHUB_TOKEN`, saving writes `data/results.json` on this machine. On Ve
 - One point per game won.
 - Rank is wins, then point differential, then points scored.
 - A game can end at 10 minutes to the hour. Tied games award no point.
-- A forfeit (no woman on the court, or four players or fewer) is stored as 21–0, 21–0, 21–0.
+- A forfeit (four players or fewer) is stored as 21–0, 21–0, 21–0.
