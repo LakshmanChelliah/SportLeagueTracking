@@ -215,7 +215,7 @@ export function AdminView({ league }: { league: LeagueData }) {
             </div>
             <div className="mt-4 flex items-start gap-3 text-[13px] text-muted-foreground">
               <Switch checked={forfeit} onCheckedChange={setForfeit} aria-label="Forfeit" />
-              <span>Forfeit. Records the match as 21–0, 21–0, 21–0. Use this when a team has no women on the court, or four players or fewer.</span>
+              <span>Forfeit. Records the match as 21–0, 21–0, 21–0 when a team has four players or fewer.</span>
             </div>
             {forfeit ? (
               <div className="mt-3 flex gap-2">

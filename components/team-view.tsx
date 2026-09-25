@@ -25,7 +25,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <h1 className="font-display text-[72px] leading-[0.85] tracking-wide uppercase max-md:text-4xl">{teamName(team)}</h1>
           <div className="mt-3 flex gap-7 max-md:mt-3.5 max-md:gap-5">
-            <Stat value={row && row.wins + row.losses > 0 ? ordinal(row.rank) : "—"} label="Rank" />
+            <Stat value={row && row.wins + row.losses > 0 ? ordinal(row.rank) : "-"} label="Rank" />
             <Stat value={row ? `${row.wins}–${row.losses}` : "0–0"} label="Games" />
             <Stat value={row ? diffLabel(row.diff) : "0"} label="Point diff" positive={!!row && row.diff > 0} negative={!!row && row.diff < 0} />
           </div>
@@ -64,7 +64,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 return `${mineScore}–${oppScore}`
               }).join(", ")
             : null
-          const outcome = sets ? seriesLabel(sets.setsFor, sets.setsAgainst) : next?.id === match.id ? "Next" : "—"
+          const outcome = sets ? seriesLabel(sets.setsFor, sets.setsAgainst) : next?.id === match.id ? "Next" : "-"
           const upcoming = !result
           return (
             <div key={match.id}>
