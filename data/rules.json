@@ -1,0 +1,50 @@
+{
+  "intro": "GD RA Volleyball League · 2026–27. From Benny Fong, coordinator.",
+  "rules": [
+    {
+      "n": "01",
+      "title": "Three games, one hour",
+      "body": "Play 3 games in the hour. At 10 minutes to the hour the game stops and the team ahead wins. Each game won is 1 point."
+    },
+    {
+      "n": "02",
+      "title": "Rally to 21",
+      "body": "Rally scoring to 21. If tied, play until a team leads by 2, or until a team reaches 25 first."
+    },
+    {
+      "n": "03",
+      "title": "Co-ed roster",
+      "body": "Register at least 8 players, including at least 2 women. One woman must always be on the court. No women means a default loss, 21–0 in all 3 games."
+    },
+    {
+      "n": "04",
+      "title": "Minimum on court",
+      "body": "Four players or fewer is an automatic loss of the whole match."
+    },
+    {
+      "n": "05",
+      "title": "Serve limit",
+      "body": "A player serves at most 5 in a row, then the team rotates and a new server starts."
+    },
+    {
+      "n": "06",
+      "title": "Clear the gym",
+      "body": "Games end at 10 to the hour so the next teams can warm up and nets can come down. Out by the end of the slot, or the league can lose the gym."
+    },
+    {
+      "n": "07",
+      "title": "Equipment room",
+      "body": "Leave it clean. The last game puts nets and poles away. If the room is a mess when you arrive, tell Benny so he can report it."
+    },
+    {
+      "n": "08",
+      "title": "Season",
+      "body": "Wednesday, October 7, 2026 through Wednesday, May 5, 2027. 28 nights. This board lists play through December 2."
+    }
+  ],
+  "playoffs": [
+    { "week": "Week 1", "name": "Quarterfinals", "series": "Best of three" },
+    { "week": "Week 2", "name": "Semifinals", "series": "Best of three" },
+    { "week": "Week 3", "name": "Final", "series": "Best of five" }
+  ]
+}
