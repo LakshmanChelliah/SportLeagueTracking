@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { PageTransition } from "@/components/page-transition"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
@@ -10,7 +11,10 @@ import { useTeam } from "@/components/team-provider"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export function SiteFrame({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
   const { team, ready, setTeam } = useTeam()
+
+  if (pathname.startsWith("/prototype")) return children
 
   if (!ready || team == null) {
     if (!ready) return null
