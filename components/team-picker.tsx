@@ -22,7 +22,7 @@ export function TeamChoices({
           type="button"
           onClick={() => onPick(team)}
           className={cn(
-            "rounded-lg border border-border px-2 py-3 font-display text-xl tracking-wide uppercase",
+            "rounded-lg border border-border px-2 py-3 font-display text-xl tracking-wide uppercase transition-transform active:scale-95",
             selected === team ? "border-brand bg-brand/15 text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >

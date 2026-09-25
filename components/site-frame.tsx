@@ -1,5 +1,6 @@
 "use client"
 
+import { PageTransition } from "@/components/page-transition"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { TabBar } from "@/components/tab-bar"
@@ -35,7 +36,9 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
     <>
       <div className="h-[3px] bg-brand" />
       <SiteHeader />
-      <div className="flex-1 pb-[72px] md:pb-0">{children}</div>
+      <div className="flex-1 overflow-x-hidden pb-[72px] md:pb-0">
+        <PageTransition>{children}</PageTransition>
+      </div>
       <SiteFooter />
       <TabBar />
     </>
