@@ -39,12 +39,12 @@ export function TeamButton() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-transparent py-1.5 pr-2.5 pl-2 text-[13px] font-medium">
-        <span className="grid size-[22px] place-items-center rounded-full bg-brand font-display text-[15px] font-bold text-[#1a0c06]">
+      <DialogTrigger className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-transparent py-1.5 pr-2.5 pl-2 text-[13px] font-medium text-white">
+        <span className="grid size-[22px] place-items-center rounded-full bg-[#025299] font-display text-[15px] font-bold text-white">
           {team ?? "?"}
         </span>
         {team ? teamName(team) : "My team"}
-        <ChevronDown className="size-3.5 text-dim" />
+        <ChevronDown className="size-3.5 text-[#DCE1E6]" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>

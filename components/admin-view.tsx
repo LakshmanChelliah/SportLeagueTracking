@@ -161,7 +161,7 @@ export function AdminView({ league }: { league: LeagueData }) {
                 key={item.id}
                 type="button"
                 onClick={() => loadMatch(item)}
-                className={`flex w-full items-center justify-between gap-2 border-t border-border px-4 py-3 text-left ${item.id === match?.id ? "bg-[#e8572a]/15 shadow-[inset_3px_0_0_#e8572a]" : ""}`}
+                className={`flex w-full items-center justify-between gap-2 border-t border-border px-4 py-3 text-left ${item.id === match?.id ? "bg-[#025299]/15 shadow-[inset_3px_0_0_#025299]" : ""}`}
               >
                 <span>
                   <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{formatTime(item.time)} · Court {item.court}</span>
