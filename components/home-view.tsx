@@ -1,9 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
 import { Countdown } from "@/components/countdown"
 import { MatchCard } from "@/components/match-card"
+import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
 import { StandingsList } from "@/components/standings-table"
 import { useTeam } from "@/components/team-provider"
@@ -54,43 +56,42 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
   const lastNight = lastNightDate ? matches.filter((match) => match.date === lastNightDate) : []
   const last = team ? lastPlayed(matches, team, league.results) : null
 
+  const others = focus ? night.slots.flatMap((slot) => slot.matches).filter((match) => match.id !== focus.id) : []
+
   return (
-    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-48px)] max-md:pt-7 max-md:pb-8">
+    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5 max-md:pb-6">
       {team && focus ? (
-        <section className="flex flex-col">
-          <div className="mb-[18px] flex items-baseline justify-between gap-3 max-md:mb-5">
+        <section className="hidden flex-col md:flex">
+          <div className="mb-[18px] flex items-baseline justify-between gap-3">
             <span className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</span>
             <span className="text-[13px] text-muted-foreground">{recordLine(mine)}</span>
           </div>
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-7 max-md:order-3 max-md:flex max-md:flex-col max-md:items-start max-md:gap-0">
-            <div className="max-md:order-3 max-md:mt-4">
-              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase max-md:hidden">You</div>
-              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase max-md:hidden">{teamName(team)}</div>
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-7">
+            <div>
+              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">You</div>
+              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase">{teamName(team)}</div>
             </div>
-            <div className="min-w-28 text-center max-md:order-2 max-md:mt-3.5 max-md:flex max-md:min-w-0 max-md:items-baseline max-md:gap-3 max-md:text-left">
-              <div className="font-display text-5xl leading-none tracking-wide max-md:text-[22px]">
+            <div className="min-w-28 text-center">
+              <div className="font-display text-5xl leading-none tracking-wide">
                 {formatTime(focus.time).replace(" PM", "")}
-                <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground max-md:text-sm">PM</span>
+                <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground">PM</span>
               </div>
-              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase max-md:mt-0">Court {focus.court}</div>
+              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">Court {focus.court}</div>
             </div>
-            <div className="text-right max-md:order-3 max-md:mt-[18px] max-md:text-left">
-              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase max-md:hidden">Opponent</div>
-              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase max-md:font-sans max-md:text-xl max-md:font-medium max-md:tracking-normal max-md:normal-case">
-                <span className="hidden max-md:inline text-muted-foreground">vs </span>
-                {teamName(opponent(focus, team))}
-              </div>
+            <div className="text-right">
+              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
             </div>
           </div>
-          <div className="mt-[22px] flex items-end justify-between border-t border-border pt-4 max-md:contents">
-            <div className="max-md:order-1">
-              <div className="font-display text-[28px] leading-none tracking-wide uppercase max-md:text-4xl">{formatNight(focus.date)}</div>
-              <div className="mt-1.5 text-[13px] text-muted-foreground max-md:mt-2 max-md:text-dim">
+          <div className="mt-[22px] flex items-end justify-between border-t border-border pt-4">
+            <div>
+              <div className="font-display text-[28px] leading-none tracking-wide uppercase">{formatNight(focus.date)}</div>
+              <div className="mt-1.5 text-[13px] text-muted-foreground">
                 {league.schedule.gym} · be there for warm-up at {warmupLabel(focus.time)}
               </div>
             </div>
-            <div className="flex items-center gap-3.5 max-md:order-4 max-md:mt-7 max-md:w-full max-md:justify-between">
-              <span className="font-display text-[22px] tracking-[0.06em] uppercase max-md:font-sans max-md:text-sm max-md:font-medium max-md:tracking-normal max-md:text-muted-foreground max-md:normal-case">
+            <div className="flex items-center gap-3.5">
+              <span className="font-display text-[22px] tracking-[0.06em] uppercase">
                 <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
               </span>
               <CalendarButton matches={[focus]} team={team} label="Add to calendar" />
@@ -99,24 +100,88 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         </section>
       ) : null}
 
+      {team && focus ? (
+        <div className="md:hidden">
+          <section className="overflow-hidden rounded-xl border border-border bg-panel">
+            <div className="px-4 pt-4">
+              <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</div>
+              <div className="mt-1 text-[13px] text-muted-foreground">{recordLine(mine)}</div>
+              <div className="mt-4 font-display text-[34px] leading-none tracking-wide uppercase">{formatNight(focus.date)}</div>
+              <div className="mt-1.5 text-[13px] text-dim">
+                {league.schedule.gym} · warm-up {warmupLabel(focus.time)}
+              </div>
+            </div>
+            <div className="mx-4 mt-4 overflow-hidden rounded-lg bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]">
+              <div className="grid grid-cols-2 gap-3 px-3.5 pt-3.5">
+                <div>
+                  <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
+                </div>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">
+                <span className="font-display text-[28px] leading-none tracking-wide">{formatTime(focus.time)}</span>
+                <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {focus.court}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between gap-3 px-4 py-4">
+              <span className="font-display text-lg tracking-[0.06em] uppercase">
+                <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
+              </span>
+              <CalendarButton matches={[focus]} team={team} label="Add to calendar" />
+            </div>
+          </section>
+
+          {others.length ? (
+            <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
+              <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+                <h2 className="text-sm font-semibold">Rest of the night</h2>
+                <span className="text-xs text-dim">{formatNight(night.date).replace(/^[^,]+, /, "")}</span>
+              </div>
+              {others.map((match) => (
+                <NightLine key={match.id} match={match} />
+              ))}
+            </section>
+          ) : null}
+
+          {last ? (
+            <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel px-4 py-3.5">
+              <div className="text-xs font-semibold tracking-[0.14em] text-dim uppercase">Last match</div>
+              <div className="mt-2 font-display text-[32px] leading-none tracking-wide uppercase">
+                {seriesLabel(teamSets(last.match, last.result, team).setsFor, teamSets(last.match, last.result, team).setsAgainst)}{" "}
+                <span className="text-muted-foreground">vs {teamName(opponent(last.match, team))}</span>
+              </div>
+              <div className="mt-2 text-[13px] text-dim">
+                {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)} · Court {last.match.court}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
+            <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+              <h2 className="text-sm font-semibold">Standings</h2>
+              <Link href="/standings" className="text-xs font-medium text-brand">Full table</Link>
+            </div>
+            <StandingsList rows={table} you={team} />
+          </section>
+        </div>
+      ) : null}
+
       {team && !focus ? (
         <section>
           <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Season on this board</p>
           <h1 className="mt-2 font-display text-5xl uppercase">All caught up</h1>
           <p className="mt-2 text-sm text-muted-foreground">Every listed night for {teamName(team)} has a score.</p>
-        </section>
-      ) : null}
-
-      {last && team ? (
-        <section className="mt-10 hidden border-t border-border pt-[22px] max-md:block">
-          <div className="text-xs font-semibold tracking-[0.14em] text-dim uppercase">Last match</div>
-          <div className="mt-2 font-display text-[32px] leading-none tracking-wide uppercase">
-            {seriesLabel(teamSets(last.match, last.result, team).setsFor, teamSets(last.match, last.result, team).setsAgainst)}{" "}
-            <span className="text-muted-foreground">vs {teamName(opponent(last.match, team))}</span>
-          </div>
-          <div className="mt-2 text-[13px] text-dim">
-            {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)} · Court {last.match.court}
-          </div>
+          <section className="mt-4 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
+            <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+              <h2 className="text-sm font-semibold">Standings</h2>
+              <Link href="/standings" className="text-xs font-medium text-brand">Full table</Link>
+            </div>
+            <StandingsList rows={table} you={team} />
+          </section>
         </section>
       ) : null}
 

@@ -10,7 +10,7 @@ export default function StandingsPage() {
   const rows = standings(league.schedule.matches, league.results)
   const played = Object.keys(league.results).length
   return (
-    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-48px)]">
+    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
       <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Standings</h1>
       <p className="mb-[18px] text-sm text-muted-foreground">
         One point per game won.{played ? " Updated from entered scores." : " No games played yet."}
@@ -32,7 +32,20 @@ export default function StandingsPage() {
           </p>
         </aside>
       </div>
-      <p className="mt-4 text-[13px] text-dim md:hidden">Ranked by wins, then point differential, then points scored.</p>
+      <aside className="mt-3 rounded-xl border border-border bg-panel px-4 py-3.5 md:hidden">
+        <h2 className="font-display text-base tracking-[0.08em] uppercase">If two teams tie</h2>
+        <ol className="mt-2 list-decimal pl-[18px] text-sm text-muted-foreground">
+          <li className="my-1.5">Games won</li>
+          <li className="my-1.5">Point differential</li>
+          <li className="my-1.5">Points scored</li>
+        </ol>
+        <p className="mt-3 text-[13px] leading-normal text-dim">
+          A game stopped at 10 minutes to the hour still counts. The team ahead at the whistle gets the point. Tied games award nothing.
+        </p>
+        <p className="mt-3 text-[13px] leading-normal text-dim">
+          A forfeit for 4 players or fewer is entered as 21–0, 21–0, 21–0.
+        </p>
+      </aside>
     </div>
   )
 }

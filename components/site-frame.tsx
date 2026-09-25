@@ -26,7 +26,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           <div className="flex items-start justify-between gap-3">
             <DialogHeader>
               <DialogTitle className="font-display text-3xl tracking-wide uppercase">Which team are you on?</DialogTitle>
-              <DialogDescription>Your phone shows only your matches. Standings still list every team.</DialogDescription>
+              <DialogDescription>Your next match leads the page. The rest of the night and the standings stay with it.</DialogDescription>
             </DialogHeader>
             <ThemeToggle tone="surface" />
           </div>

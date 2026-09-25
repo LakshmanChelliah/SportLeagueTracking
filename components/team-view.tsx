@@ -17,7 +17,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
   const next = matches.find((match) => !league.results[match.id])
 
   return (
-    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-48px)]">
+    <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
       <div className="mb-[18px] flex items-end justify-between gap-6 max-md:mb-2 max-md:flex-col max-md:items-start max-md:gap-4">
         <div>
           <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase max-md:hidden">
@@ -32,6 +32,25 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
         </div>
         <CalendarButton matches={matches} team={team} label="Add all nights to calendar" />
       </div>
+
+      {next ? (
+        <section className="mb-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
+          <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+            <h2 className="text-sm font-semibold">Next match</h2>
+            <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Court {next.court}</span>
+          </div>
+          <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)]">
+            <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+            <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+            <div className="mt-3 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+            <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(next, team))}</div>
+          </div>
+          <div className="flex items-baseline justify-between px-4 py-3.5">
+            <span className="text-sm text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)}</span>
+            <span className="text-xs text-dim">Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
+          </div>
+        </section>
+      ) : null}
 
       {next ? (
         <section className="mb-[18px] overflow-hidden rounded-xl border border-border bg-panel max-md:hidden">
@@ -52,7 +71,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
         </section>
       ) : null}
 
-      <h2 className="mb-2 font-display text-sm tracking-[0.08em] text-muted-foreground uppercase max-md:hidden">Season</h2>
+      <h2 className="mb-2 font-display text-sm tracking-[0.08em] text-muted-foreground uppercase max-md:mt-4">Season</h2>
       <div>
         {matches.map((match) => {
           const result = league.results[match.id]
@@ -84,18 +103,24 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                   {scoreText ? <small className="mt-0.5 block font-sans text-xs font-normal tracking-normal text-dim">{scoreText}</small> : null}
                 </span>
               </div>
-              <div className={cn("border-t border-border py-3.5 md:hidden", upcoming && next?.id !== match.id && "text-muted-foreground")}>
+              <div
+                className={cn(
+                  "mt-2 rounded-xl border border-border bg-panel px-4 py-3.5 md:hidden",
+                  upcoming && next?.id === match.id && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
+                  upcoming && next?.id !== match.id && "text-muted-foreground",
+                )}
+              >
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-display text-lg tracking-wide uppercase">{formatShort(match.date)}</span>
+                  <span className="font-display text-xl tracking-wide uppercase">{formatShort(match.date)}</span>
                   {outcome === "Next" ? (
                     <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Next</span>
                   ) : (
                     <span className="font-display text-base">{outcome}</span>
                   )}
                 </div>
-                <div className="text-sm text-dim">{formatTime(match.time)} · Court {match.court}</div>
-                <div className="font-medium">vs {teamName(opponent(match, team))}</div>
-                {scoreText ? <div className="text-xs text-dim">{scoreText}</div> : null}
+                <div className="mt-1 font-display text-[26px] leading-none tracking-wide uppercase">vs {teamName(opponent(match, team))}</div>
+                <div className="mt-1.5 text-sm text-dim">{formatTime(match.time)} · Court {match.court}</div>
+                {scoreText ? <div className="mt-1 text-xs text-dim">{scoreText}</div> : null}
               </div>
             </div>
           )
