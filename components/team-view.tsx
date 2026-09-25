@@ -39,7 +39,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
             <h2 className="text-sm font-semibold">Next match</h2>
             <span className="text-xs text-dim">Court {next.court}</span>
           </div>
-          <div className="grid grid-cols-[118px_1fr_auto_1fr] items-center gap-2 bg-[#025299]/15 px-4 py-3 shadow-[inset_3px_0_0_#025299]">
+          <div className="grid grid-cols-[118px_1fr_auto_1fr] items-center gap-2 bg-[var(--highlight)] px-4 py-3 shadow-[inset_3px_0_0_var(--brand)]">
             <span className="text-xs tracking-wider text-brand uppercase">Court {next.court}</span>
             <span className="font-display text-[26px] uppercase">{teamName(team)}</span>
             <span className="text-[11px] tracking-[0.14em] text-dim uppercase">vs</span>
@@ -71,7 +71,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               <div
                 className={cn(
                   "hidden grid-cols-[92px_88px_80px_1fr_auto] items-center gap-3 border-t border-border py-3 md:grid",
-                  upcoming && next?.id === match.id && "bg-[#025299]/15 px-3 shadow-[inset_3px_0_0_#025299]",
+                  upcoming && next?.id === match.id && "bg-[var(--highlight)] px-3 shadow-[inset_3px_0_0_var(--brand)]",
                   upcoming && next?.id !== match.id && "text-muted-foreground",
                 )}
               >

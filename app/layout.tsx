@@ -28,6 +28,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const team = process.env.STATIC_EXPORT === "1" ? null : await readTeamCookie()
   return (
     <html lang="en" className={`dark ${inter.variable} ${barlow.variable} h-full overflow-x-hidden antialiased`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(document.cookie.split("; ").indexOf("gdra-theme=light")!==-1)document.documentElement.classList.add("light")}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-background text-foreground md:overflow-x-visible">
         <TeamProvider initialTeam={team}>
           <SiteFrame>{children}</SiteFrame>

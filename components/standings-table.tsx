@@ -24,8 +24,8 @@ export function StandingsTable({ rows, you }: { rows: Standing[]; you?: number |
           {rows.map((row) => {
             const mine = you === row.team
             return (
-              <tr key={row.team} className={mine ? "bg-[#025299]/15" : undefined}>
-                <td className={cn("border-b border-border px-2.5 py-2.5 text-left font-display text-[22px] text-dim max-md:py-3.5 max-md:text-lg", mine && "shadow-[inset_3px_0_0_#025299]")}>
+              <tr key={row.team} className={mine ? "bg-[var(--highlight)]" : undefined}>
+                <td className={cn("border-b border-border px-2.5 py-2.5 text-left font-display text-[22px] text-dim max-md:py-3.5 max-md:text-lg", mine && "shadow-[inset_3px_0_0_var(--brand)]")}>
                   {row.rank}
                 </td>
                 <td className="border-b border-border px-2.5 py-2.5 text-left text-[15px] font-medium">{teamName(row.team)}</td>
@@ -61,7 +61,7 @@ export function StandingsList({ rows, you }: { rows: Standing[]; you?: number | 
           key={row.team}
           className={cn(
             "grid grid-cols-[28px_1fr_auto_auto] items-center gap-2 border-t border-border px-4 py-1.5 first:border-t-0",
-            you === row.team && "bg-[#025299]/15 shadow-[inset_3px_0_0_#025299]",
+            you === row.team && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
           )}
         >
           <span className="font-display text-lg text-dim">{row.rank}</span>

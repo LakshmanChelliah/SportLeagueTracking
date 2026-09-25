@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { TabBar } from "@/components/tab-bar"
 import { TeamChoices } from "@/components/team-picker"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { useTeam } from "@/components/team-provider"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
@@ -22,10 +23,13 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
           onPointerDownOutside={(event) => event.preventDefault()}
           onInteractOutside={(event) => event.preventDefault()}
         >
-          <DialogHeader>
-            <DialogTitle className="font-display text-3xl tracking-wide uppercase">Which team are you on?</DialogTitle>
-            <DialogDescription>Your phone shows only your matches. Standings still list every team.</DialogDescription>
-          </DialogHeader>
+          <div className="flex items-start justify-between gap-3">
+            <DialogHeader>
+              <DialogTitle className="font-display text-3xl tracking-wide uppercase">Which team are you on?</DialogTitle>
+              <DialogDescription>Your phone shows only your matches. Standings still list every team.</DialogDescription>
+            </DialogHeader>
+            <ThemeToggle tone="surface" />
+          </div>
           <TeamChoices onPick={setTeam} />
         </DialogContent>
       </Dialog>

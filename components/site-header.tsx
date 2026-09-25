@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLayoutEffect, useRef, useState } from "react"
 import { TeamButton } from "@/components/team-picker"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "cn"
 
 const links = [
@@ -34,11 +35,11 @@ export function SiteHeader() {
   }, [pathname])
 
   return (
-    <header className="border-b border-white/10 bg-[#0C3969] text-white">
+    <header className="border-b border-[var(--header-border)] bg-[var(--header-bg)] text-[var(--header-fg)]">
       <div className="mx-auto flex h-16 w-[min(1120px,calc(100%-48px))] items-center gap-7 max-md:h-14 max-md:w-[calc(100%-40px)]">
         <Link href="/" className="flex items-baseline gap-2.5 transition-opacity active:opacity-70">
           <span className="font-display text-[26px] leading-none tracking-[0.06em]">GD RA</span>
-          <span className="text-xs font-medium tracking-[0.16em] text-[#DCE1E6] uppercase max-md:hidden">Volleyball</span>
+          <span className="text-xs font-medium tracking-[0.16em] text-[var(--header-muted)] uppercase max-md:hidden">Volleyball</span>
         </Link>
         <nav ref={navRef} className="relative flex h-full items-stretch max-md:hidden">
           {links.map((link) => {
@@ -49,8 +50,8 @@ export function SiteHeader() {
                 href={link.href}
                 data-active={active ? "true" : undefined}
                 className={cn(
-                  "flex items-center px-3 text-sm font-medium text-[#7FA4C5] transition-all duration-200 active:scale-95",
-                  active && "text-white",
+                  "flex items-center px-3 text-sm font-medium transition-all duration-200 active:scale-95",
+                  active ? "text-[var(--header-fg)]" : "text-[var(--header-muted)]",
                 )}
               >
                 {link.label}
@@ -58,12 +59,13 @@ export function SiteHeader() {
             )
           })}
           <span
-            className="pointer-events-none absolute bottom-0 h-0.5 bg-[#7FA4C5] transition-[left,width] duration-300 ease-out"
+            className="pointer-events-none absolute bottom-0 h-0.5 bg-[var(--header-mark)] transition-[left,width] duration-300 ease-out"
             style={{ left: bar?.left ?? 0, width: bar?.width ?? 0 }}
           />
         </nav>
         <div className="ml-auto flex items-center gap-4">
-          <span className="text-xs tracking-[0.12em] text-[#DCE1E6] uppercase max-md:hidden">2026–27</span>
+          <span className="text-xs tracking-[0.12em] text-[var(--header-muted)] uppercase max-md:hidden">2026–27</span>
+          <ThemeToggle />
           <TeamButton />
         </div>
       </div>
