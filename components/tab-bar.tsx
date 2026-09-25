@@ -16,14 +16,27 @@ export function TabBar() {
     { href: "/standings", label: "Standings", icon: ListOrdered, match: (path: string) => path.startsWith("/standings") },
     { href: teamHref, label: "Team", icon: UserRound, match: (path: string) => path.startsWith("/team") },
   ]
+  const activeIndex = Math.max(items.findIndex((item) => item.match(pathname)), 0)
+
   return (
     <nav className="fixed inset-x-0 bottom-0 z-20 grid h-[60px] grid-cols-4 border-t border-border bg-[#0c0c0e] md:hidden">
+      <span
+        className="pointer-events-none absolute top-0 h-0.5 bg-brand transition-[left] duration-300 ease-out"
+        style={{ width: "25%", left: `${activeIndex * 25}%` }}
+      />
       {items.map((item) => {
         const active = item.match(pathname)
         const Icon = item.icon
         return (
-          <Link key={item.label} href={item.href} className={cn("flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold tracking-wider text-dim uppercase", active && "text-foreground")}>
-            <Icon className={cn("size-[18px]", active && "text-brand")} strokeWidth={1.6} />
+          <Link
+            key={item.label}
+            href={item.href}
+            className={cn(
+              "flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold tracking-wider text-dim uppercase transition-all active:scale-90",
+              active && "text-foreground",
+            )}
+          >
+            <Icon className={cn("size-[18px] transition-transform duration-200", active && "scale-110 text-brand")} strokeWidth={1.6} />
             {item.label}
           </Link>
         )
