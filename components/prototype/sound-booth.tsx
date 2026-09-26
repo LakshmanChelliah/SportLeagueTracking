@@ -16,15 +16,64 @@ export function SoundBooth() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const currentRef = useRef<string | null>(null)
   const setMode = useRef(false)
+  const holdTimer = useRef<number | null>(null)
+  const startRef = useRef<(id: string) => void>(() => {})
   const [current, setCurrent] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const [playingSet, setPlayingSet] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  function clearHold() {
+    if (holdTimer.current != null) {
+      window.clearTimeout(holdTimer.current)
+      holdTimer.current = null
+    }
+  }
+
+  function stopRow() {
+    audioRef.current?.pause()
+    clearHold()
+    currentRef.current = null
+    setCurrent(null)
+    setProgress(0)
+  }
+
   useEffect(() => {
     const audio = new Audio()
     audio.preload = "auto"
     audioRef.current = audio
+
+    function clearHoldInside() {
+      if (holdTimer.current != null) {
+        window.clearTimeout(holdTimer.current)
+        holdTimer.current = null
+      }
+    }
+
+    function hold(id: string) {
+      clearHoldInside()
+      setProgress(1)
+      holdTimer.current = window.setTimeout(() => {
+        if (currentRef.current === id && !setMode.current) {
+          currentRef.current = null
+          setCurrent(null)
+          setProgress(0)
+        }
+      }, 700)
+    }
+
+    function start(id: string) {
+      const item = catalog.find((sound) => sound.id === id)
+      if (!item) return
+      clearHoldInside()
+      setError(null)
+      currentRef.current = id
+      setCurrent(id)
+      setProgress(0)
+      audio.src = src(item.file)
+      audio.currentTime = 0
+      void audio.play().catch(() => setError("The browser blocked playback. Tap the sound again."))
+    }
 
     function stopIfIdle() {
       if (setMode.current) {
@@ -36,67 +85,55 @@ export function SoundBooth() {
         }
       }
       setMode.current = false
-      currentRef.current = null
       setPlayingSet(false)
-      setCurrent(null)
-      setProgress(0)
+      if (currentRef.current) hold(currentRef.current)
     }
 
     function onTime() {
-      if (!audio.duration) return
+      if (!audio.duration || audio.ended) return
       setProgress(audio.currentTime / audio.duration)
     }
 
+    function onError() {
+      setError("This sound didn't load. Try it again.")
+    }
+
+    startRef.current = start
     audio.addEventListener("timeupdate", onTime)
     audio.addEventListener("ended", stopIfIdle)
-    audio.addEventListener("error", () => setError("This sound didn't load. Try it again."))
+    audio.addEventListener("error", onError)
 
     return () => {
       audio.pause()
+      clearHoldInside()
+      startRef.current = () => {}
       audio.removeEventListener("timeupdate", onTime)
       audio.removeEventListener("ended", stopIfIdle)
+      audio.removeEventListener("error", onError)
     }
   }, [])
-
-  function start(id: string) {
-    const item = catalog.find((sound) => sound.id === id)
-    const audio = audioRef.current
-    if (!item || !audio) return
-    setError(null)
-    currentRef.current = id
-    setCurrent(id)
-    setProgress(0)
-    audio.src = src(item.file)
-    audio.currentTime = 0
-    void audio.play().catch(() => setError("The browser blocked playback. Tap the sound again."))
-  }
 
   function playOne(id: string) {
     setMode.current = false
     setPlayingSet(false)
-    if (currentRef.current === id) {
-      audioRef.current?.pause()
-      currentRef.current = null
-      setCurrent(null)
-      setProgress(0)
+    const audio = audioRef.current
+    if (currentRef.current === id && audio && !audio.paused) {
+      stopRow()
       return
     }
-    start(id)
+    startRef.current(id)
   }
 
   function playSet() {
     if (playingSet) {
       setMode.current = false
       setPlayingSet(false)
-      audioRef.current?.pause()
-      currentRef.current = null
-      setCurrent(null)
-      setProgress(0)
+      stopRow()
       return
     }
     setMode.current = true
     setPlayingSet(true)
-    start(catalog[0].id)
+    startRef.current(catalog[0].id)
   }
 
   return (
@@ -171,7 +208,7 @@ function SoundRow({
   onPlay: () => void
 }) {
   return (
-    <button type="button" onClick={onPlay} className="border-t border-white/10 py-5 text-left" aria-pressed={active}>
+    <button type="button" onClick={onPlay} className="sound-hit border-t border-white/10 py-5 text-left" aria-pressed={active}>
       <span className="flex items-start gap-4">
         <span
           className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${active ? "bg-[#e8572a] text-[#1c0c06]" : "border border-white/15 text-[#f4f4f5]"}`}
