@@ -206,6 +206,10 @@
     scale: 0.96;
   }
 
+  button.sound-hit:active {
+    scale: 1;
+  }
+
   .page-forward,
   .page-back {
     animation-duration: 320ms;
