@@ -22,6 +22,12 @@ const items = [
     title: "Season odds",
     body: "Watch ten seasons, then see how often you finish first.",
   },
+  {
+    href: "/prototype/sounds",
+    n: "04",
+    title: "Sound examples",
+    body: "Clash, wall, special move, spin, spin-out, and bounce. Listen.",
+  },
 ]
 
 export default function PrototypePage() {
@@ -30,7 +36,7 @@ export default function PrototypePage() {
       <p className="text-[11px] font-semibold tracking-[0.22em] text-[#e8572a] uppercase">GD RA Volleyball</p>
       <h1 className="mt-3 font-display text-[68px] leading-[0.84] tracking-wide uppercase">Prototypes</h1>
       <p className="mt-4 max-w-sm text-sm text-[#a1a1aa]">
-        Three samples. Scores in here are made up. The league board is unchanged.
+        Four samples. Scores in the first three are made up. The fourth is a set of sounds. The league board is unchanged.
       </p>
       <div className="mt-10 flex flex-col">
         {items.map((item) => (
