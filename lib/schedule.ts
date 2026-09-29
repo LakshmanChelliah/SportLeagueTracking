@@ -11,6 +11,12 @@ export function torontoDate(now: Date) {
   }).format(now)
 }
 
+export function latestPlayedNight(dates: string[], now: Date) {
+  const today = torontoDate(now)
+  const played = dates.filter((date) => date <= today)
+  return played[played.length - 1] ?? dates[0] ?? ""
+}
+
 function zoneOffset(date: string) {
   return date < "2026-11-01" ? "-04:00" : "-05:00"
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import schedule from "../data/schedule.json"
 import { buildCalendar } from "./ics"
 import { forfeitGames, parseResult } from "./results"
-import { nextUnplayed, setCounts } from "./schedule"
+import { latestPlayedNight, nextUnplayed, setCounts } from "./schedule"
 import { standings } from "./standings"
 import type { Match, ResultsFile } from "./types"
 
@@ -78,6 +78,13 @@ describe("standings", () => {
 })
 
 describe("schedule", () => {
+  it("opens score entry on the latest night already played", () => {
+    const dates = ["2026-10-07", "2026-10-14", "2026-10-21"]
+    expect(latestPlayedNight(dates, new Date("2026-10-15T03:30:00Z"))).toBe("2026-10-14")
+    expect(latestPlayedNight(dates, new Date("2026-10-07T16:00:00Z"))).toBe("2026-10-07")
+    expect(latestPlayedNight(dates, new Date("2026-10-01T16:00:00Z"))).toBe("2026-10-07")
+  })
+
   it("picks the earliest unplayed match for a team", () => {
     const next = nextUnplayed(matches, 3, {
       "2026-10-07-1900-c1": result([[21, 19], [21, 16], [15, 21]]),

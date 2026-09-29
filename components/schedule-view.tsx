@@ -7,6 +7,7 @@ import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
 import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
+import { useLiveResults } from "@/components/use-live-results"
 import { WeekStrip } from "@/components/week-strip"
 import { defaultNight, formatNight, formatTime, involves, nightsOf, opponent, torontoDate, warmupLabel } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
@@ -14,6 +15,7 @@ import type { LeagueData } from "@/lib/types"
 
 export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team, setTeam } = useTeam()
+  const { results } = useLiveResults(league.results)
   const requested = useSearchParams().get("night") ?? undefined
   const [nowIso, setNowIso] = useState(serverNowIso)
   useEffect(() => {
@@ -27,7 +29,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
   const night = nights.find((item) => item.date === selected) ?? nights[0]
   const today = torontoDate(now)
   const nextDate = dates.find((date) => date >= today) ?? null
-  const playedCount = night.slots.flatMap((slot) => slot.matches).filter((match) => league.results[match.id]).length
+  const playedCount = night.slots.flatMap((slot) => slot.matches).filter((match) => results[match.id]).length
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
@@ -43,7 +45,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         </div>
       ) : null}
       <div className={!team ? "max-md:hidden" : undefined}>
-        <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={league.results} />
+        <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={results} />
         <div className="mb-3.5 flex items-baseline justify-between">
           <h2 className="font-display text-[28px] tracking-wide uppercase max-md:text-2xl">{formatNight(night.date)}</h2>
           <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : "4 matches"}</span>
@@ -58,7 +60,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                   <span className="text-xs text-dim">Warm-up {warmupLabel(slot.time)}</span>
                 </div>
                 {slot.matches.map((match) => {
-                  const result = league.results[match.id]
+                  const result = results[match.id]
                   const yours = team != null && involves(match, team)
                   const hide = team != null && !yours
                   return (
