@@ -9,6 +9,7 @@ import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
 import { StandingsList } from "@/components/standings-table"
 import { useTeam } from "@/components/team-provider"
+import { useLiveResults } from "@/components/use-live-results"
 import {
   defaultNight,
   diffLabel,
@@ -37,24 +38,25 @@ function recordLine(row: Standing | undefined) {
 
 export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team } = useTeam()
+  const { results } = useLiveResults(league.results)
   const [nowIso, setNowIso] = useState(serverNowIso)
   useEffect(() => {
     setNowIso(new Date().toISOString())
   }, [])
   const now = new Date(nowIso)
   const matches = league.schedule.matches
-  const table = standings(matches, league.results)
+  const table = standings(matches, results)
   const nights = nightsOf(matches)
-  const focus = team ? nextUnplayed(matches, team, league.results) : null
+  const focus = team ? nextUnplayed(matches, team, results) : null
   const nightDate = focus?.date ?? defaultNight(matches, undefined, now)
   const night = nights.find((item) => item.date === nightDate) ?? nights[0]
   const mine = team ? table.find((row) => row.team === team) : undefined
   const previousDates = nights.filter((item) => item.date < night.date).map((item) => item.date)
   const lastNightDate = [...previousDates].reverse().find((date) =>
-    matches.some((match) => match.date === date && league.results[match.id]),
+    matches.some((match) => match.date === date && results[match.id]),
   )
   const lastNight = lastNightDate ? matches.filter((match) => match.date === lastNightDate) : []
-  const last = team ? lastPlayed(matches, team, league.results) : null
+  const last = team ? lastPlayed(matches, team, results) : null
 
   const others = focus ? night.slots.flatMap((slot) => slot.matches).filter((match) => match.id !== focus.id) : []
 
@@ -213,7 +215,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <span className="text-xs text-dim">{formatNight(lastNightDate!)} · Final</span>
             </div>
             {lastNight.map((match) => {
-              const result = league.results[match.id]
+              const result = results[match.id]
               return result ? (
                 <ScoreLine key={match.id} match={match} result={result} you={team} meta={`${formatTime(match.time)} · Court ${match.court}`} />
               ) : (
@@ -225,7 +227,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         <section className="overflow-hidden rounded-xl border border-border bg-panel">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
             <h2 className="text-sm font-semibold">Standings</h2>
-            <span className="text-xs text-dim">{Object.keys(league.results).length ? "Live" : "No games yet"}</span>
+            <span className="text-xs text-dim">{Object.keys(results).length ? "Live" : "No games yet"}</span>
           </div>
           <StandingsList rows={table} you={team} />
         </section>

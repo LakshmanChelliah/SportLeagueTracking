@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
 import { useTeam } from "@/components/team-provider"
+import { useLiveResults } from "@/components/use-live-results"
 import { diffLabel, formatTime, involves, opponent, seriesLabel } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName, type TeamId } from "@/lib/teams"
@@ -11,10 +12,11 @@ import { cn } from "cn"
 
 export function TeamView({ league, team }: { league: LeagueData; team: TeamId }) {
   const { team: mine } = useTeam()
+  const { results } = useLiveResults(league.results)
   const matches = league.schedule.matches.filter((match) => involves(match, team))
-  const table = standings(league.schedule.matches, league.results)
+  const table = standings(league.schedule.matches, results)
   const row = table.find((item) => item.team === team)
-  const next = matches.find((match) => !league.results[match.id])
+  const next = matches.find((match) => !results[match.id])
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
@@ -74,7 +76,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
       <h2 className="mb-2 font-display text-sm tracking-[0.08em] text-muted-foreground uppercase max-md:mt-4">Season</h2>
       <div>
         {matches.map((match) => {
-          const result = league.results[match.id]
+          const result = results[match.id]
           const sets = result ? teamSets(match, result, team) : null
           const scoreText = result
             ? result.games.map((game) => {

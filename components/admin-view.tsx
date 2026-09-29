@@ -1,59 +1,93 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { formatNight, formatTime, nightsOf } from "@/lib/schedule"
+import { useLiveResults } from "@/components/use-live-results"
+import { coordinatorApiUrl } from "@/lib/endpoints"
+import { formatNight, formatTime, latestPlayedNight, nightsOf } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
-import type { LeagueData, Match } from "@/lib/types"
+import type { LeagueData, Match, Result } from "@/lib/types"
 
 const PIN_KEY = "gdra-pin"
 
-export function AdminView({ league }: { league: LeagueData }) {
+let clientNow: string | undefined
+
+function subscribeNow() {
+  return () => {}
+}
+
+function readClientNow() {
+  clientNow ??= new Date().toISOString()
+  return clientNow
+}
+
+function useNow(serverNowIso: string) {
+  return useSyncExternalStore(subscribeNow, readClientNow, () => serverNowIso)
+}
+
+type Draft = {
+  matchId: string
+  games: [string, string][]
+  forfeit: boolean
+  forfeitSide: "home" | "away"
+}
+
+function blankGames(): [string, string][] {
+  return [
+    ["", ""],
+    ["", ""],
+    ["", ""],
+  ]
+}
+
+function savedGames(saved: Result): [string, string][] {
+  return saved.games.map((game) => [String(game[0]), String(game[1])])
+}
+
+export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: string }) {
   const router = useRouter()
+  const { results, reload } = useLiveResults(league.results)
   const nights = useMemo(() => nightsOf(league.schedule.matches), [league.schedule.matches])
+  const dates = nights.map((item) => item.date)
   const [pin, setPin] = useState("")
   const [authed, setAuthed] = useState(false)
   const [error, setError] = useState("")
   const [notice, setNotice] = useState("")
   const [busy, setBusy] = useState(false)
-  const [date, setDate] = useState(nights[0]?.date ?? "")
+  const clock = useNow(nowIso)
+  const [dateOverride, setDateOverride] = useState<string | null>(null)
+  const date = dateOverride ?? latestPlayedNight(dates, new Date(clock))
   const night = nights.find((item) => item.date === date) ?? nights[0]
-  const flat = night.slots.flatMap((slot) => slot.matches)
-  const [matchId, setMatchId] = useState(flat[0]?.id ?? "")
-  const match = league.schedule.matches.find((item) => item.id === matchId) ?? flat[0]
-  const existing = match ? league.results[match.id] : undefined
-  const [games, setGames] = useState<[string, string][]>([
-    ["", ""],
-    ["", ""],
-    ["", ""],
-  ])
-  const [forfeit, setForfeit] = useState(false)
-  const [forfeitSide, setForfeitSide] = useState<"home" | "away">("away")
+  const flat = night?.slots.flatMap((slot) => slot.matches) ?? []
+  const [matchId, setMatchId] = useState("")
+  const activeId = flat.some((item) => item.id === matchId) ? matchId : (flat[0]?.id ?? "")
+  const match = flat.find((item) => item.id === activeId)
+  const [draft, setDraft] = useState<Draft | null>(null)
+  const saved = match ? results[match.id] : undefined
+  const activeDraft = draft?.matchId === match?.id ? draft : null
+  const games = activeDraft?.games ?? (saved ? savedGames(saved) : blankGames())
+  const forfeit = activeDraft ? activeDraft.forfeit : Boolean(saved?.forfeit)
+  const forfeitSide = activeDraft?.forfeitSide ?? saved?.forfeit ?? "away"
+
+  function writeDraft(next: Omit<Draft, "matchId">) {
+    if (!match) return
+    setDraft({ matchId: match.id, ...next })
+  }
 
   function loadMatch(next: Match) {
     setMatchId(next.id)
-    const saved = league.results[next.id]
-    if (saved?.forfeit) {
-      setForfeit(true)
-      setForfeitSide(saved.forfeit)
-      setGames(saved.games.map((game) => [String(game[0]), String(game[1])] as [string, string]))
-      return
-    }
-    setForfeit(false)
-    setForfeitSide("away")
-    setGames(saved ? saved.games.map((game) => [String(game[0]), String(game[1])] as [string, string]) : [["", ""], ["", ""], ["", ""]])
   }
 
-  async function call(body: unknown, savedPin = pin) {
+  async function call(body: unknown, savedPin = pin): Promise<false | "github" | "local" | "ok"> {
     setBusy(true)
     setError("")
     setNotice("")
     try {
-      const response = await fetch("/api/results", {
+      const response = await fetch(coordinatorApiUrl(), {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-pin": savedPin },
         body: JSON.stringify(body),
@@ -63,13 +97,7 @@ export function AdminView({ league }: { league: LeagueData }) {
         setError(payload.error ?? "Could not save.")
         return false
       }
-      if (payload.mode === "github") {
-        setNotice("Saved. The public scoreboard updates after the site redeploys.")
-      } else if (payload.mode === "local") {
-        setNotice("Saved.")
-        router.refresh()
-      }
-      return true
+      return payload.mode === "github" ? "github" : payload.mode === "local" ? "local" : "ok"
     } catch {
       setError("Could not reach the server.")
       return false
@@ -91,24 +119,30 @@ export function AdminView({ league }: { league: LeagueData }) {
   async function save(event: React.FormEvent) {
     event.preventDefault()
     if (!match) return
-    const ok = await call({
+    const mode = await call({
       action: "save",
       matchId: match.id,
       result: forfeit
         ? { forfeit: forfeitSide }
         : { games: games.map(([home, away]) => [Number(home), Number(away)]) },
     })
-    if (ok) router.refresh()
+    if (!mode) return
+    if (mode === "github") setNotice("Saved. The board reads this from the results file.")
+    else setNotice("Saved.")
+    await reload()
+    setDraft(null)
+    if (mode === "local") router.refresh()
   }
 
   async function clear() {
     if (!match) return
-    const ok = await call({ action: "clear", matchId: match.id })
-    if (ok) {
-      setGames([["", ""], ["", ""], ["", ""]])
-      setForfeit(false)
-      router.refresh()
-    }
+    const mode = await call({ action: "clear", matchId: match.id })
+    if (!mode) return
+    setDraft({ matchId: match.id, games: blankGames(), forfeit: false, forfeitSide: "away" })
+    setNotice("Cleared.")
+    await reload()
+    setDraft(null)
+    if (mode === "local") router.refresh()
   }
 
   if (!authed) {
@@ -145,7 +179,7 @@ export function AdminView({ league }: { league: LeagueData }) {
               value={date}
               onChange={(event) => {
                 const nextDate = event.target.value
-                setDate(nextDate)
+                setDateOverride(nextDate)
                 const first = nights.find((item) => item.date === nextDate)?.slots[0]?.matches[0]
                 if (first) loadMatch(first)
               }}
@@ -167,7 +201,7 @@ export function AdminView({ league }: { league: LeagueData }) {
                   <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{formatTime(item.time)} · Court {item.court}</span>
                   <span className="font-display text-xl tracking-wide uppercase">{teamName(item.home)} vs {teamName(item.away)}</span>
                 </span>
-                <span className="text-[11px] tracking-[0.1em] text-dim uppercase">{league.results[item.id] ? "Saved" : "Open"}</span>
+                <span className="text-[11px] tracking-[0.1em] text-dim uppercase">{results[item.id] ? "Saved" : "Open"}</span>
               </button>
             ))}
           </div>
@@ -193,7 +227,7 @@ export function AdminView({ league }: { league: LeagueData }) {
                     onChange={(event) => {
                       const next = games.map((row) => [...row] as [string, string])
                       next[index][0] = event.target.value
-                      setGames(next)
+                      writeDraft({ games: next, forfeit, forfeitSide })
                     }}
                     className="h-14 text-center font-display text-3xl"
                   />
@@ -206,7 +240,7 @@ export function AdminView({ league }: { league: LeagueData }) {
                     onChange={(event) => {
                       const next = games.map((row) => [...row] as [string, string])
                       next[index][1] = event.target.value
-                      setGames(next)
+                      writeDraft({ games: next, forfeit, forfeitSide })
                     }}
                     className="h-14 text-center font-display text-3xl"
                   />
@@ -214,17 +248,21 @@ export function AdminView({ league }: { league: LeagueData }) {
               ))}
             </div>
             <div className="mt-4 flex items-start gap-3 text-[13px] text-muted-foreground">
-              <Switch checked={forfeit} onCheckedChange={setForfeit} aria-label="Forfeit" />
+              <Switch
+                checked={forfeit}
+                onCheckedChange={(checked) => writeDraft({ games, forfeit: checked, forfeitSide })}
+                aria-label="Forfeit"
+              />
               <span>Forfeit. Records the match as 21–0, 21–0, 21–0 when a team has four players or fewer.</span>
             </div>
             {forfeit ? (
               <div className="mt-3 flex gap-2">
-                <Button type="button" variant={forfeitSide === "home" ? "default" : "outline"} onClick={() => setForfeitSide("home")}>{teamName(match.home)} forfeits</Button>
-                <Button type="button" variant={forfeitSide === "away" ? "default" : "outline"} onClick={() => setForfeitSide("away")}>{teamName(match.away)} forfeits</Button>
+                <Button type="button" variant={forfeitSide === "home" ? "default" : "outline"} onClick={() => writeDraft({ games, forfeit, forfeitSide: "home" })}>{teamName(match.home)} forfeits</Button>
+                <Button type="button" variant={forfeitSide === "away" ? "default" : "outline"} onClick={() => writeDraft({ games, forfeit, forfeitSide: "away" })}>{teamName(match.away)} forfeits</Button>
               </div>
             ) : null}
             <div className="mt-5 flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={clear} disabled={busy || !existing}>Clear</Button>
+              <Button type="button" variant="outline" onClick={clear} disabled={busy || !saved}>Clear</Button>
               <Button type="submit" disabled={busy}>Save result</Button>
             </div>
           </form>
