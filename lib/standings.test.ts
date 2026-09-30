@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 import schedule from "../data/schedule.json"
-import { buildCalendar } from "./ics"
+import { readFileSync } from "node:fs"
+import { buildCalendar, outlookSubscribeUrl } from "./ics"
+import { TEAMS } from "./teams"
 import { forfeitGames, parseResult } from "./results"
 import { latestPlayedNight, nextUnplayed, setCounts } from "./schedule"
 import { standings } from "./standings"
@@ -101,5 +103,28 @@ describe("calendar", () => {
     expect(ics).toContain("20261007T190000")
     expect(ics).toContain("20261202T180000")
     expect(ics).toContain("Court 2")
+    expect(ics).toContain("METHOD:PUBLISH")
+  })
+
+  it("publishes a feed Outlook can subscribe to for every team", () => {
+    const team1 = matches.filter((match) => match.home === 1 || match.away === 1)
+    const feed = buildCalendar(matches, 1)
+    expect(feed.match(/BEGIN:VEVENT/g)).toHaveLength(team1.length)
+    expect(feed).toContain("X-WR-CALNAME:GD RA Volleyball · Team 1")
+    expect(feed).toContain("20261007T180000")
+
+    for (const team of TEAMS) {
+      const file = readFileSync(`public/calendars/team-${team}.ics`, "utf8")
+      expect(file).toBe(buildCalendar(matches, team))
+    }
+
+    const work = new URL(outlookSubscribeUrl("work", 1))
+    expect(`${work.origin}${work.pathname}`).toBe("https://outlook.office.com/calendar/0/addfromweb")
+    expect(work.searchParams.get("url")).toBe("https://lakshmanchelliah.github.io/SportLeagueTracking/calendars/team-1.ics")
+    expect(work.searchParams.get("name")).toBe("GD RA Volleyball · Team 1")
+
+    const personal = new URL(outlookSubscribeUrl("personal", 1))
+    expect(personal.origin).toBe("https://outlook.live.com")
+    expect(personal.searchParams.get("url")).toBe("https://lakshmanchelliah.github.io/SportLeagueTracking/calendars/team-1.ics")
   })
 })

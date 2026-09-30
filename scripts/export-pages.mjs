@@ -6,6 +6,15 @@ const root = process.cwd()
 const api = path.join(root, "app", "api")
 const stash = path.join("/tmp", "gdra-api-stash")
 
+const calendars = spawn(process.execPath, ["--experimental-strip-types", "--import", "./scripts/register-calendars.mjs", "scripts/write-calendars.mjs"], {
+  cwd: root,
+  stdio: "inherit",
+})
+const calendarCode = await new Promise((resolve) => {
+  calendars.on("exit", (status) => resolve(status ?? 1))
+})
+if (calendarCode !== 0) process.exit(calendarCode)
+
 await rm(stash, { recursive: true, force: true })
 await rename(api, stash)
 
