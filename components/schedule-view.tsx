@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { CalendarButton } from "@/components/calendar-button"
 import { MatchCard } from "@/components/match-card"
 import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
@@ -33,11 +34,16 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
-      <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
-      <p className="mb-[18px] text-sm text-muted-foreground max-md:hidden">
-        Double Gym · two courts · through December 2. Your matches are marked.
-      </p>
-      <p className="mb-4 text-sm text-dim md:hidden">Double Gym · two courts · your match is marked.</p>
+      <div className="mb-[18px] flex items-end justify-between gap-4 max-md:mb-4 max-md:flex-col max-md:items-start">
+        <div>
+          <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
+          <p className="text-sm text-muted-foreground max-md:hidden">
+            Double Gym · two courts · through December 2. Your matches are marked.
+          </p>
+          <p className="text-sm text-dim md:hidden">Double Gym · two courts · your match is marked.</p>
+        </div>
+        {team ? <CalendarButton matches={matches} team={team} outlook label="Add to Outlook" /> : null}
+      </div>
       {!team ? (
         <div className="mb-6 max-w-md md:hidden">
           <p className="mb-3 text-sm text-muted-foreground">Pick your team to see when you play.</p>

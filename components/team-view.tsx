@@ -32,7 +32,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
             <Stat value={row ? diffLabel(row.diff) : "0"} label="Point diff" positive={!!row && row.diff > 0} negative={!!row && row.diff < 0} />
           </div>
         </div>
-        <CalendarButton matches={matches} team={team} label="Add all nights to calendar" />
+        <CalendarButton matches={league.schedule.matches} team={team} outlook label="Add to Outlook" />
       </div>
 
       {next ? (

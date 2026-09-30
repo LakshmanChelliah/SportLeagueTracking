@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:pages": "node scripts/export-pages.mjs",
+    "calendars": "node --experimental-strip-types --import ./scripts/register-calendars.mjs scripts/write-calendars.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run"
