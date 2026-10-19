@@ -6,5 +6,5 @@ export const metadata: Metadata = { title: "Night playback" }
 
 export default function PlaybackPage() {
   const { schedule } = getLeague()
-  return <NightPlayback matches={schedule.matches} />
+  return <NightPlayback matches={schedule.matches} venues={schedule.venues} />
 }

@@ -1,10 +1,17 @@
 export type TeamId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 
+export type Venue = {
+  id: string
+  name: string
+  address?: string
+}
+
 export type Match = {
   id: string
   date: string
   time: "18:00" | "19:00"
   court: 1 | 2
+  venue?: string
   home: TeamId
   away: TeamId
 }
@@ -16,6 +23,7 @@ export type ScheduleFile = {
   timezone: string
   through: string
   teams: TeamId[]
+  venues: Venue[]
   matches: Match[]
 }
 

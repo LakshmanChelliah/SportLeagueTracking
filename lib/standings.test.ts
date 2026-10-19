@@ -15,14 +15,14 @@ function result(games: [number, number][]) {
 describe("standings", () => {
   it("ranks by wins, then point differential, then points scored", () => {
     const results: ResultsFile = {
-      "2026-10-07-1800-c1": result([[21, 15], [19, 21], [21, 18]]),
-      "2026-10-07-1800-c2": result([[21, 10], [21, 17], [21, 12]]),
-      "2026-10-07-1900-c1": result([[21, 19], [21, 16], [15, 21]]),
-      "2026-10-07-1900-c2": result([[18, 21], [21, 19], [16, 21]]),
-      "2026-10-14-1800-c1": result([[21, 18], [21, 14], [21, 19]]),
-      "2026-10-14-1800-c2": result([[21, 12], [21, 15], [21, 11]]),
-      "2026-10-14-1900-c1": result([[21, 19], [15, 21], [21, 17]]),
-      "2026-10-14-1900-c2": result([[21, 18], [14, 21], [21, 16]]),
+      "2026-10-21-1800-c1": result([[21, 15], [19, 21], [21, 18]]),
+      "2026-10-21-1900-c1": result([[21, 10], [21, 17], [21, 12]]),
+      "2026-10-21-1800-c2": result([[21, 19], [21, 16], [15, 21]]),
+      "2026-10-21-1900-c2": result([[18, 21], [21, 19], [16, 21]]),
+      "2026-10-28-1800-c1": result([[21, 18], [21, 14], [21, 19]]),
+      "2026-10-28-1900-c1": result([[21, 12], [21, 15], [21, 11]]),
+      "2026-10-28-1800-c2": result([[21, 19], [15, 21], [21, 17]]),
+      "2026-10-28-1900-c2": result([[21, 18], [14, 21], [21, 16]]),
     }
     const table = standings(matches, results)
     expect(table.map((row) => [row.team, row.wins, row.losses, row.diff])).toEqual([
@@ -41,7 +41,7 @@ describe("standings", () => {
 
   it("does not award a point for a tied game", () => {
     const results: ResultsFile = {
-      "2026-10-07-1800-c1": result([[21, 21], [17, 14], [10, 12]]),
+      "2026-10-21-1800-c1": result([[21, 21], [17, 14], [10, 12]]),
     }
     const table = standings(matches, results)
     const team1 = table.find((row) => row.team === 1)!
@@ -52,7 +52,7 @@ describe("standings", () => {
     expect(team8.losses).toBe(1)
     expect(team1.pointsFor).toBe(48)
     expect(team1.diff).toBe(1)
-    expect(setCounts(results["2026-10-07-1800-c1"])).toEqual([1, 1])
+    expect(setCounts(results["2026-10-21-1800-c1"])).toEqual([1, 1])
   })
 
   it("records a forfeit as three 21–0 games", () => {
@@ -61,7 +61,7 @@ describe("standings", () => {
     const parsed = parseResult({ forfeit: "home" })
     expect("result" in parsed && parsed.result.games).toEqual([[0, 21], [0, 21], [0, 21]])
     const results: ResultsFile = {
-      "2026-10-07-1900-c1": { games: forfeitGames("away"), forfeit: "away" },
+      "2026-10-21-1800-c2": { games: forfeitGames("away"), forfeit: "away" },
     }
     const team3 = standings(matches, results).find((row) => row.team === 3)!
     const team6 = standings(matches, results).find((row) => row.team === 6)!
@@ -87,19 +87,19 @@ describe("schedule", () => {
 
   it("picks the earliest unplayed match for a team", () => {
     const next = nextUnplayed(matches, 3, {
-      "2026-10-07-1900-c1": result([[21, 19], [21, 16], [15, 21]]),
+      "2026-10-21-1800-c2": result([[21, 19], [21, 16], [15, 21]]),
     })
-    expect(next?.id).toBe("2026-10-14-1800-c2")
+    expect(next?.id).toBe("2026-10-28-1900-c1")
   })
 })
 
 describe("calendar", () => {
   it("includes each of team 3's nights through December 2", () => {
-    const ics = buildCalendar(matches, 3)
+    const ics = buildCalendar(matches, 3, schedule.venues)
     const starts = ics.match(/DTSTART;TZID/g) ?? []
-    expect(starts).toHaveLength(9)
-    expect(ics).toContain("20261007T190000")
+    expect(starts).toHaveLength(7)
+    expect(ics).toContain("20261021T180000")
     expect(ics).toContain("20261202T180000")
-    expect(ics).toContain("Court 2")
+    expect(ics).toContain("2599 Regina St\\, Ottawa\\, ON K2B 8A5")
   })
 })

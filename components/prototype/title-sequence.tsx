@@ -2,11 +2,13 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { LocationLabel } from "@/components/location-label"
 import { formatNight, formatTime, nextUnplayed, opponent } from "@/lib/schedule"
 import { TEAMS, teamName, type TeamId } from "@/lib/teams"
-import type { Match } from "@/lib/types"
+import type { Match, Venue } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 
-export function TitleSequence({ matches }: { matches: Match[] }) {
+export function TitleSequence({ matches, venues }: { matches: Match[]; venues: Venue[] }) {
   const [team, setTeam] = useState<TeamId | null>(null)
   const [run, setRun] = useState(0)
 
@@ -45,7 +47,8 @@ export function TitleSequence({ matches }: { matches: Match[] }) {
             {teamName(foe)}
           </div>
           <p className="proto-rise proto-d7 mt-10 text-sm tracking-[0.12em] text-[#a1a1aa] uppercase">
-            {formatNight(focus.date)} · {formatTime(focus.time)} · Court {focus.court}
+            {formatNight(focus.date)} · {formatTime(focus.time)} ·{" "}
+            <LocationLabel venue={findVenue(venues, focus)} fallback={`Court ${focus.court}`} />
           </p>
         </div>
       ) : (
