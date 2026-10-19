@@ -1,19 +1,21 @@
 "use client"
 
 import { buildCalendar } from "@/lib/ics"
-import type { Match } from "@/lib/types"
+import type { Match, Venue } from "@/lib/types"
 
 export function CalendarButton({
   matches,
   team,
+  venues,
   label,
 }: {
   matches: Match[]
   team: number
+  venues: Venue[]
   label: string
 }) {
   function download() {
-    const ics = buildCalendar(matches, team)
+    const ics = buildCalendar(matches, team, venues)
     const blob = new Blob([ics], { type: "text/calendar" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")

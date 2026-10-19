@@ -1,6 +1,7 @@
 import { formatTime, involves, setCounts } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Result } from "@/lib/types"
+import type { ReactNode } from "react"
 import { cn } from "cn"
 
 export function ScoreLine({
@@ -12,7 +13,7 @@ export function ScoreLine({
   match: Match
   result: Result
   you?: number | null
-  meta?: string
+  meta?: ReactNode
 }) {
   const yours = you != null && involves(match, you)
   const [homeSets, awaySets] = setCounts(result)

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
 import { Countdown } from "@/components/countdown"
+import { LocationLabel, NightPlaces } from "@/components/location-label"
 import { MatchCard } from "@/components/match-card"
 import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
@@ -26,6 +27,7 @@ import {
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName } from "@/lib/teams"
 import type { LeagueData, Standing } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 
 function recordLine(row: Standing | undefined) {
   if (!row || row.wins + row.losses === 0) return "No games yet"
@@ -78,7 +80,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 {formatTime(focus.time).replace(" PM", "")}
                 <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground">PM</span>
               </div>
-              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">Court {focus.court}</div>
+              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">
+                <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={`Court ${focus.court}`} />
+              </div>
             </div>
             <div className="text-right">
               <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
@@ -89,14 +93,16 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
             <div>
               <div className="font-display text-[28px] leading-none tracking-wide uppercase">{formatNight(focus.date)}</div>
               <div className="mt-1.5 text-[13px] text-muted-foreground">
-                {league.schedule.gym} · be there for warm-up at {warmupLabel(focus.time)}
+                <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={league.schedule.gym} />
+                {" · be there for warm-up at "}
+                {warmupLabel(focus.time)}
               </div>
             </div>
             <div className="flex items-center gap-3.5">
               <span className="font-display text-[22px] tracking-[0.06em] uppercase">
                 <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
               </span>
-              <CalendarButton matches={[focus]} team={team} label="Add to calendar" />
+              <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
             </div>
           </div>
         </section>
@@ -110,7 +116,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <div className="mt-1 text-[13px] text-muted-foreground">{recordLine(mine)}</div>
               <div className="mt-4 font-display text-[34px] leading-none tracking-wide uppercase">{formatNight(focus.date)}</div>
               <div className="mt-1.5 text-[13px] text-dim">
-                {league.schedule.gym} · warm-up {warmupLabel(focus.time)}
+                <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={league.schedule.gym} />
+                {" · warm-up "}
+                {warmupLabel(focus.time)}
               </div>
             </div>
             <div className="mx-4 mt-4 overflow-hidden rounded-lg bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]">
@@ -126,14 +134,16 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               </div>
               <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">
                 <span className="font-display text-[28px] leading-none tracking-wide">{formatTime(focus.time)}</span>
-                <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {focus.court}</span>
+                <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+                  <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={`Court ${focus.court}`} />
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-between gap-3 px-4 py-4">
               <span className="font-display text-lg tracking-[0.06em] uppercase">
                 <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
               </span>
-              <CalendarButton matches={[focus]} team={team} label="Add to calendar" />
+              <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
             </div>
           </section>
 
@@ -144,7 +154,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span className="text-xs text-dim">{formatNight(night.date).replace(/^[^,]+, /, "")}</span>
               </div>
               {others.map((match) => (
-                <NightLine key={match.id} match={match} />
+                <NightLine key={match.id} match={match} venues={league.schedule.venues} />
               ))}
             </section>
           ) : null}
@@ -157,7 +167,8 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span className="text-muted-foreground">vs {teamName(opponent(last.match, team))}</span>
               </div>
               <div className="mt-2 text-[13px] text-dim">
-                {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)} · Court {last.match.court}
+                {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)} ·{" "}
+                <LocationLabel venue={findVenue(league.schedule.venues, last.match)} fallback={`Court ${last.match.court}`} />
               </div>
             </section>
           ) : null}
@@ -190,7 +201,14 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
       <section className="mt-[22px] hidden overflow-hidden rounded-xl border border-border bg-panel md:block">
         <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
           <h2 className="text-sm font-semibold">The full night</h2>
-          <span className="text-xs text-dim">{formatNight(night.date)} · {league.schedule.gym}</span>
+          <span className="text-xs text-dim">
+            {formatNight(night.date)} ·{" "}
+            <NightPlaces
+              matches={night.slots.flatMap((slot) => slot.matches)}
+              venues={league.schedule.venues}
+              gym={league.schedule.gym}
+            />
+          </span>
         </div>
         <div className="grid grid-cols-2">
           {night.slots.map((slot, index) => (
@@ -200,7 +218,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span>Warm-up {warmupLabel(slot.time)}</span>
               </div>
               {slot.matches.map((match) => (
-                <MatchCard key={match.id} match={match} you={team} />
+                <MatchCard key={match.id} match={match} you={team} venues={league.schedule.venues} />
               ))}
             </div>
           ))}
@@ -217,9 +235,20 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
             {lastNight.map((match) => {
               const result = results[match.id]
               return result ? (
-                <ScoreLine key={match.id} match={match} result={result} you={team} meta={`${formatTime(match.time)} · Court ${match.court}`} />
+                <ScoreLine
+                  key={match.id}
+                  match={match}
+                  result={result}
+                  you={team}
+                  meta={
+                    <>
+                      {formatTime(match.time)} ·{" "}
+                      <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                    </>
+                  }
+                />
               ) : (
-                <MatchCard key={match.id} match={match} you={team} />
+                <MatchCard key={match.id} match={match} you={team} venues={league.schedule.venues} />
               )
             })}
           </section>

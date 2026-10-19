@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { LocationLabel, NightPlaces } from "@/components/location-label"
 import { MatchCard } from "@/components/match-card"
 import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
@@ -12,6 +13,7 @@ import { WeekStrip } from "@/components/week-strip"
 import { defaultNight, formatNight, formatTime, involves, nightsOf, opponent, torontoDate, warmupLabel } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 
 export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team, setTeam } = useTeam()
@@ -35,9 +37,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
       <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
       <p className="mb-[18px] text-sm text-muted-foreground max-md:hidden">
-        Double Gym · two courts · through December 2. Your matches are marked.
+        Regina Street PS and School 2 · through December 2. Your matches are marked.
       </p>
-      <p className="mb-4 text-sm text-dim md:hidden">Double Gym · two courts · your match is marked.</p>
+      <p className="mb-4 text-sm text-dim md:hidden">Regina Street PS and School 2 · your match is marked.</p>
       {!team ? (
         <div className="mb-6 max-w-md md:hidden">
           <p className="mb-3 text-sm text-muted-foreground">Pick your team to see when you play.</p>
@@ -66,11 +68,16 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                   return (
                     <div key={match.id} className={hide ? "hidden md:block" : undefined}>
                       {result ? (
-                        <ScoreLine match={match} result={result} you={team} meta={`Court ${match.court}`} />
+                        <ScoreLine
+                          match={match}
+                          result={result}
+                          you={team}
+                          meta={<LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />}
+                        />
                       ) : (
                         <>
                           <div className="max-md:hidden">
-                            <MatchCard match={match} you={team} />
+                            <MatchCard match={match} you={team} venues={league.schedule.venues} />
                           </div>
                           {yours && team ? (
                             <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)] md:hidden">
@@ -84,7 +91,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                                   <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
                                 </div>
                               </div>
-                              <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {match.court}</div>
+                              <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+                                <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                              </div>
                             </div>
                           ) : null}
                         </>
@@ -100,10 +109,16 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
             <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
               <h3 className="text-sm font-semibold">Rest of the night</h3>
-              <span className="text-xs text-dim">{league.schedule.gym}</span>
+              <span className="text-xs text-dim">
+                <NightPlaces
+                  matches={night.slots.flatMap((slot) => slot.matches)}
+                  venues={league.schedule.venues}
+                  gym={league.schedule.gym}
+                />
+              </span>
             </div>
             {night.slots.flatMap((slot) => slot.matches).filter((match) => !involves(match, team)).map((match) => (
-              <NightLine key={match.id} match={match} />
+              <NightLine key={match.id} match={match} venues={league.schedule.venues} />
             ))}
           </section>
         ) : null}

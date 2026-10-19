@@ -1,5 +1,6 @@
 import { formatTime, opponent } from "@/lib/schedule"
-import type { Match } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
+import type { Match, Venue } from "@/lib/types"
 
 function stamp(date: string, time: string) {
   return `${date.replaceAll("-", "")}T${time.replace(":", "")}00`
@@ -13,19 +14,23 @@ function escapeText(value: string) {
   return value.replaceAll("\\", "\\\\").replaceAll("\n", "\\n").replaceAll(",", "\\,").replaceAll(";", "\\;")
 }
 
-export function buildCalendar(matches: Match[], team: number) {
+export function buildCalendar(matches: Match[], team: number, venues: Venue[] = []) {
   const events = matches
     .filter((match) => match.home === team || match.away === team)
     .map((match) => {
+      const venue = findVenue(venues, match)
       const summary = `GD RA Volleyball · vs Team ${opponent(match, team)}`
-      const description = `${formatTime(match.time)} · Court ${match.court} · Double Gym. Warm up 10 minutes before.`
+      const description = venue
+        ? `${formatTime(match.time)} · ${venue.name}. Warm up 10 minutes before.`
+        : `${formatTime(match.time)} · Court ${match.court} · Double Gym. Warm up 10 minutes before.`
+      const location = venue?.address ?? venue?.name ?? "Double Gym"
       return [
         "BEGIN:VEVENT",
         `UID:${match.id}-team${team}@gd-ra-volleyball`,
         `DTSTART;TZID=America/Toronto:${stamp(match.date, match.time)}`,
         `DTEND;TZID=America/Toronto:${stamp(match.date, endTime(match.time))}`,
         `SUMMARY:${escapeText(summary)}`,
-        `LOCATION:Double Gym`,
+        `LOCATION:${escapeText(location)}`,
         `DESCRIPTION:${escapeText(description)}`,
         "END:VEVENT",
       ].join("\r\n")
