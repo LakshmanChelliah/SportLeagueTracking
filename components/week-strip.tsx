@@ -15,7 +15,7 @@ export function WeekStrip({
   results: ResultsFile
 }) {
   return (
-    <div className="relative mb-[18px] flex min-w-0 gap-1.5 overflow-x-auto overscroll-x-contain md:grid md:grid-cols-9 md:gap-0 md:overflow-hidden md:rounded-xl md:border md:border-border">
+    <div className="relative mb-[18px] flex min-w-0 gap-1.5 overflow-x-auto overscroll-x-contain md:grid md:grid-cols-7 md:gap-0 md:overflow-hidden md:rounded-xl md:border md:border-border">
       {dates.map((date) => {
         const played = Object.keys(results).some((id) => id.startsWith(date))
         const state = date === nextDate ? "Next" : played ? "Final" : "-"
