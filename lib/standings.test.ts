@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import schedule from "../data/schedule.json"
 import { buildCalendar } from "./ics"
 import { forfeitGames, parseResult } from "./results"
-import { latestPlayedNight, nextUnplayed, setCounts } from "./schedule"
+import { gymsOf, latestPlayedNight, nextUnplayed, setCounts } from "./schedule"
 import { standings } from "./standings"
 import type { Match, ResultsFile } from "./types"
 
@@ -90,6 +90,19 @@ describe("schedule", () => {
       "2026-10-21-1800-c2": result([[21, 19], [21, 16], [15, 21]]),
     })
     expect(next?.id).toBe("2026-10-28-1900-c1")
+  })
+
+  it("splits October 21 across two gyms with one court of games each", () => {
+    const gyms = gymsOf(matches.filter((match) => match.date === "2026-10-21"))
+    expect(gyms.map((gym) => gym.key)).toEqual(["regina", "school-2"])
+    expect(gyms[0].matches.map((match) => [match.time, match.home, match.away])).toEqual([
+      ["18:00", 1, 8],
+      ["19:00", 2, 7],
+    ])
+    expect(gyms[1].matches.map((match) => [match.time, match.home, match.away])).toEqual([
+      ["18:00", 3, 6],
+      ["19:00", 4, 5],
+    ])
   })
 })
 

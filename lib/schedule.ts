@@ -84,6 +84,22 @@ export function nightsOf(matches: Match[]) {
   })
 }
 
+/** Two gyms at two locations. Each gym has one court, so its games run one after another. */
+export function gymsOf(matches: Match[]) {
+  const groups = new Map<string, Match[]>()
+  for (const match of [...matches].sort(byStart)) {
+    const key = match.venue ?? `court-${match.court}`
+    const group = groups.get(key)
+    if (group) group.push(match)
+    else groups.set(key, [match])
+  }
+  return [...groups.entries()].map(([key, day]) => ({ key, matches: day }))
+}
+
+export function nightHasGyms(matches: Match[]) {
+  return matches.some((match) => match.venue)
+}
+
 export function defaultNight(matches: Match[], requested: string | undefined, now: Date) {
   const dates = [...new Set(matches.map((match) => match.date))]
   if (requested && dates.includes(requested)) return requested

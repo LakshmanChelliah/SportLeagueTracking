@@ -16,9 +16,11 @@ import {
   diffLabel,
   formatNight,
   formatTime,
+  gymsOf,
   lastPlayed,
   matchStart,
   nextUnplayed,
+  nightHasGyms,
   nightsOf,
   opponent,
   seriesLabel,
@@ -81,7 +83,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground">PM</span>
               </div>
               <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">
-                <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={`Court ${focus.court}`} />
+                {findVenue(league.schedule.venues, focus) ? "One court" : `Court ${focus.court}`}
               </div>
             </div>
             <div className="text-right">
@@ -135,7 +137,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">
                 <span className="font-display text-[28px] leading-none tracking-wide">{formatTime(focus.time)}</span>
                 <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-                  <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={`Court ${focus.court}`} />
+                  {findVenue(league.schedule.venues, focus) ? "One court" : `Court ${focus.court}`}
                 </span>
               </div>
             </div>
@@ -202,26 +204,51 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
           <h2 className="text-sm font-semibold">The full night</h2>
           <span className="text-xs text-dim">
-            {formatNight(night.date)} ·{" "}
-            <NightPlaces
-              matches={night.slots.flatMap((slot) => slot.matches)}
-              venues={league.schedule.venues}
-              gym={league.schedule.gym}
-            />
+            {formatNight(night.date)}
+            {nightHasGyms(night.slots.flatMap((slot) => slot.matches)) ? (
+              " · two gyms, one court each"
+            ) : (
+              <>
+                {" · "}
+                <NightPlaces
+                  matches={night.slots.flatMap((slot) => slot.matches)}
+                  venues={league.schedule.venues}
+                  gym={league.schedule.gym}
+                />
+              </>
+            )}
           </span>
         </div>
         <div className="grid grid-cols-2">
-          {night.slots.map((slot, index) => (
-            <div key={slot.time} className={index === 1 ? "border-l border-border" : undefined}>
-              <div className="flex justify-between px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
-                <b className="font-display text-xl font-semibold tracking-wide text-foreground">{formatTime(slot.time)}</b>
-                <span>Warm-up {warmupLabel(slot.time)}</span>
-              </div>
-              {slot.matches.map((match) => (
-                <MatchCard key={match.id} match={match} you={team} venues={league.schedule.venues} />
+          {nightHasGyms(night.slots.flatMap((slot) => slot.matches))
+            ? gymsOf(night.slots.flatMap((slot) => slot.matches)).map((gym, index) => {
+                const sample = gym.matches[0]
+                const venue = findVenue(league.schedule.venues, sample)
+                return (
+                  <div key={gym.key} className={index === 1 ? "border-l border-border" : undefined}>
+                    <div className="flex items-baseline justify-between gap-3 px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                      <b className="font-display text-xl font-semibold tracking-wide text-foreground normal-case">
+                        <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
+                      </b>
+                      <span className="shrink-0">One court</span>
+                    </div>
+                    {gym.matches.map((match) => (
+                      <MatchCard key={match.id} match={match} you={team} venues={league.schedule.venues} lead="time" />
+                    ))}
+                  </div>
+                )
+              })
+            : night.slots.map((slot, index) => (
+                <div key={slot.time} className={index === 1 ? "border-l border-border" : undefined}>
+                  <div className="flex justify-between px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                    <b className="font-display text-xl font-semibold tracking-wide text-foreground">{formatTime(slot.time)}</b>
+                    <span>Warm-up {warmupLabel(slot.time)}</span>
+                  </div>
+                  {slot.matches.map((match) => (
+                    <MatchCard key={match.id} match={match} you={team} venues={league.schedule.venues} />
+                  ))}
+                </div>
               ))}
-            </div>
-          ))}
         </div>
       </section>
 

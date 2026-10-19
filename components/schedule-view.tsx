@@ -10,7 +10,7 @@ import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
 import { WeekStrip } from "@/components/week-strip"
-import { defaultNight, formatNight, formatTime, involves, nightsOf, opponent, torontoDate, warmupLabel } from "@/lib/schedule"
+import { defaultNight, formatNight, formatTime, gymsOf, involves, nightHasGyms, nightsOf, opponent, torontoDate, warmupLabel } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -31,15 +31,23 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
   const night = nights.find((item) => item.date === selected) ?? nights[0]
   const today = torontoDate(now)
   const nextDate = dates.find((date) => date >= today) ?? null
-  const playedCount = night.slots.flatMap((slot) => slot.matches).filter((match) => results[match.id]).length
+  const nightMatches = night.slots.flatMap((slot) => slot.matches)
+  const playedCount = nightMatches.filter((match) => results[match.id]).length
+  const groupedByGym = nightHasGyms(nightMatches)
+  const yourGym = team == null ? undefined : nightMatches.find((match) => involves(match, team))?.venue
+  const restMatches = nightMatches.filter((match) => {
+    if (team == null || involves(match, team)) return false
+    if (groupedByGym && yourGym && match.venue === yourGym) return false
+    return true
+  })
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
       <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
       <p className="mb-[18px] text-sm text-muted-foreground max-md:hidden">
-        Regina Street PS and School 2 · through December 2. Your matches are marked.
+        Two gyms, one court each, at Regina Street PS and School 2. Through December 2. Your matches are marked.
       </p>
-      <p className="mb-4 text-sm text-dim md:hidden">Regina Street PS and School 2 · your match is marked.</p>
+      <p className="mb-4 text-sm text-dim md:hidden">Two gyms, one court each. Your match is marked.</p>
       {!team ? (
         <div className="mb-6 max-w-md md:hidden">
           <p className="mb-3 text-sm text-muted-foreground">Pick your team to see when you play.</p>
@@ -53,57 +61,107 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
           <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : "4 matches"}</span>
         </div>
         <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
-          {night.slots.map((slot) => {
-            const hideSlotOnMobile = team != null && !slot.matches.some((match) => involves(match, team))
-            return (
-              <section key={slot.time} className={hideSlotOnMobile ? "hidden overflow-hidden rounded-xl border border-border bg-panel md:block" : "overflow-hidden rounded-xl border border-border bg-panel"}>
-                <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-                  <h3 className="text-sm font-semibold">{formatTime(slot.time)}</h3>
-                  <span className="text-xs text-dim">Warm-up {warmupLabel(slot.time)}</span>
-                </div>
-                {slot.matches.map((match) => {
-                  const result = results[match.id]
-                  const yours = team != null && involves(match, team)
-                  const hide = team != null && !yours
-                  return (
-                    <div key={match.id} className={hide ? "hidden md:block" : undefined}>
-                      {result ? (
-                        <ScoreLine
-                          match={match}
-                          result={result}
-                          you={team}
-                          meta={<LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />}
-                        />
-                      ) : (
-                        <>
-                          <div className="max-md:hidden">
-                            <MatchCard match={match} you={team} venues={league.schedule.venues} />
-                          </div>
-                          {yours && team ? (
-                            <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)] md:hidden">
-                              <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                  <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-                                  <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
-                                </div>
-                                <div className="text-right">
-                                  <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-                                  <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
-                                </div>
-                              </div>
-                              <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-                                <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
-                              </div>
-                            </div>
-                          ) : null}
-                        </>
-                      )}
+          {groupedByGym
+            ? gymsOf(nightMatches).map((gym) => {
+                const sample = gym.matches[0]
+                const venue = findVenue(league.schedule.venues, sample)
+                const hideGymOnMobile = team != null && !gym.matches.some((match) => involves(match, team))
+                return (
+                  <section key={gym.key} className={hideGymOnMobile ? "hidden overflow-hidden rounded-xl border border-border bg-panel md:block" : "overflow-hidden rounded-xl border border-border bg-panel"}>
+                    <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3.5">
+                      <h3 className="text-sm font-semibold">
+                        <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
+                      </h3>
+                      <span className="shrink-0 text-xs text-dim">One court</span>
                     </div>
-                  )
-                })}
-              </section>
-            )
-          })}
+                    {gym.matches.map((match) => {
+                      const result = results[match.id]
+                      const yours = team != null && involves(match, team)
+                      return (
+                        <div key={match.id}>
+                          {result ? (
+                            <ScoreLine match={match} result={result} you={team} meta={formatTime(match.time)} />
+                          ) : (
+                            <>
+                              <div className={yours ? "max-md:hidden" : undefined}>
+                                <MatchCard match={match} you={team} venues={league.schedule.venues} lead="time" />
+                              </div>
+                              {yours && team ? (
+                                <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)] md:hidden">
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+                                    {formatTime(match.time)} · warm-up {warmupLabel(match.time)}
+                                  </div>
+                                </div>
+                              ) : null}
+                            </>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </section>
+                )
+              })
+            : night.slots.map((slot) => {
+                const hideSlotOnMobile = team != null && !slot.matches.some((match) => involves(match, team))
+                return (
+                  <section key={slot.time} className={hideSlotOnMobile ? "hidden overflow-hidden rounded-xl border border-border bg-panel md:block" : "overflow-hidden rounded-xl border border-border bg-panel"}>
+                    <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
+                      <h3 className="text-sm font-semibold">{formatTime(slot.time)}</h3>
+                      <span className="text-xs text-dim">Warm-up {warmupLabel(slot.time)}</span>
+                    </div>
+                    {slot.matches.map((match) => {
+                      const result = results[match.id]
+                      const yours = team != null && involves(match, team)
+                      const hide = team != null && !yours
+                      return (
+                        <div key={match.id} className={hide ? "hidden md:block" : undefined}>
+                          {result ? (
+                            <ScoreLine
+                              match={match}
+                              result={result}
+                              you={team}
+                              meta={<LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />}
+                            />
+                          ) : (
+                            <>
+                              <div className="max-md:hidden">
+                                <MatchCard match={match} you={team} venues={league.schedule.venues} />
+                              </div>
+                              {yours && team ? (
+                                <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)] md:hidden">
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                      <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+                                    <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                                  </div>
+                                </div>
+                              ) : null}
+                            </>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </section>
+                )
+              })}
         </div>
         {team ? (
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
@@ -111,13 +169,13 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
               <h3 className="text-sm font-semibold">Rest of the night</h3>
               <span className="text-xs text-dim">
                 <NightPlaces
-                  matches={night.slots.flatMap((slot) => slot.matches)}
+                  matches={restMatches}
                   venues={league.schedule.venues}
                   gym={league.schedule.gym}
                 />
               </span>
             </div>
-            {night.slots.flatMap((slot) => slot.matches).filter((match) => !involves(match, team)).map((match) => (
+            {restMatches.map((match) => (
               <NightLine key={match.id} match={match} venues={league.schedule.venues} />
             ))}
           </section>
