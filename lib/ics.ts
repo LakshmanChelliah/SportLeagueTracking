@@ -21,7 +21,7 @@ export function buildCalendar(matches: Match[], team: number, venues: Venue[] = 
       const venue = findVenue(venues, match)
       const summary = `GD RA Volleyball · vs Team ${opponent(match, team)}`
       const description = venue
-        ? `${formatTime(match.time)} · ${venue.name}. Warm up 10 minutes before.`
+        ? `${formatTime(match.time)} · ${venue.name}. One court. Warm up 10 minutes before.`
         : `${formatTime(match.time)} · Court ${match.court} · Double Gym. Warm up 10 minutes before.`
       const location = venue?.address ?? venue?.name ?? "Double Gym"
       return [

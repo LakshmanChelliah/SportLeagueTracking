@@ -1,11 +1,21 @@
 import { LocationLabel } from "@/components/location-label"
-import { involves } from "@/lib/schedule"
+import { formatTime, involves } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Venue } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
 import { cn } from "cn"
 
-export function MatchCard({ match, you, venues }: { match: Match; you?: number | null; venues?: Venue[] }) {
+export function MatchCard({
+  match,
+  you,
+  venues,
+  lead = "place",
+}: {
+  match: Match
+  you?: number | null
+  venues?: Venue[]
+  lead?: "place" | "time"
+}) {
   const yours = you != null && involves(match, you)
   return (
     <div
@@ -16,7 +26,7 @@ export function MatchCard({ match, you, venues }: { match: Match; you?: number |
       )}
     >
       <span className={cn("text-xs tracking-wider text-dim uppercase", yours && "text-brand")}>
-        <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />
+        {lead === "time" ? formatTime(match.time) : <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />}
         {yours ? " · You" : ""}
       </span>
       <span className="font-display text-[26px] leading-none tracking-wide uppercase max-md:text-[32px]">{teamName(match.home)}</span>

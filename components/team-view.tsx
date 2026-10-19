@@ -53,7 +53,10 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <div className="flex items-baseline justify-between px-4 py-3.5">
             <span className="text-sm text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)}</span>
-            <span className="text-xs text-dim">Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
+            <span className="text-xs text-dim">
+              {findVenue(league.schedule.venues, next) ? "One court · " : ""}
+              Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}
+            </span>
           </div>
         </section>
       ) : null}
@@ -68,7 +71,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <div className="grid grid-cols-[118px_1fr_auto_1fr] items-center gap-2 bg-[var(--highlight)] px-4 py-3 shadow-[inset_3px_0_0_var(--brand)]">
             <span className="text-xs tracking-wider text-brand uppercase">
-              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
+              {findVenue(league.schedule.venues, next) ? "One court" : `Court ${next.court}`}
             </span>
             <span className="font-display text-[26px] uppercase">{teamName(team)}</span>
             <span className="text-[11px] tracking-[0.14em] text-dim uppercase">vs</span>
