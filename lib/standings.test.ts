@@ -19,26 +19,22 @@ describe("standings", () => {
     const results: ResultsFile = {
       "2026-10-21-1800-c1": result([[21, 15], [19, 21], [21, 18]]),
       "2026-10-21-1900-c1": result([[21, 10], [21, 17], [21, 12]]),
-      "2026-10-21-1800-c2": result([[21, 19], [21, 16], [15, 21]]),
-      "2026-10-21-1900-c2": result([[18, 21], [21, 19], [16, 21]]),
-      "2026-10-28-1800-c1": result([[21, 18], [21, 14], [21, 19]]),
-      "2026-10-28-1900-c1": result([[21, 12], [21, 15], [21, 11]]),
-      "2026-10-28-1800-c2": result([[21, 19], [15, 21], [21, 17]]),
-      "2026-10-28-1900-c2": result([[21, 18], [14, 21], [21, 16]]),
+      "2026-10-21-2000-c1": result([[21, 19], [21, 16], [15, 21]]),
+      "2026-10-21-2100-c1": result([[18, 21], [21, 19], [16, 21]]),
     }
     const table = standings(matches, results)
     expect(table.map((row) => [row.team, row.wins, row.losses, row.diff])).toEqual([
-      [2, 6, 0, 36],
-      [3, 5, 1, 26],
-      [1, 3, 3, 7],
-      [8, 3, 3, -6],
-      [6, 2, 4, -2],
-      [5, 2, 4, -6],
-      [7, 2, 4, -24],
-      [4, 1, 5, -31],
+      [2, 3, 0, 24],
+      [1, 2, 1, 7],
+      [5, 2, 1, 6],
+      [3, 2, 1, 1],
+      [6, 1, 2, -1],
+      [4, 1, 2, -6],
+      [8, 1, 2, -7],
+      [7, 0, 3, -24],
     ])
     expect(table[0].rank).toBe(1)
-    expect(table[1].form).toEqual(["W", "W", "L", "W", "W", "W"].slice(-3))
+    expect(table[0].form).toEqual(["W", "W", "W"])
   })
 
   it("does not award a point for a tied game", () => {
@@ -63,7 +59,7 @@ describe("standings", () => {
     const parsed = parseResult({ forfeit: "home" })
     expect("result" in parsed && parsed.result.games).toEqual([[0, 21], [0, 21], [0, 21]])
     const results: ResultsFile = {
-      "2026-10-21-1800-c2": { games: forfeitGames("away"), forfeit: "away" },
+      "2026-10-21-2000-c1": { games: forfeitGames("away"), forfeit: "away" },
     }
     const team3 = standings(matches, results).find((row) => row.team === 3)!
     const team6 = standings(matches, results).find((row) => row.team === 6)!
@@ -88,33 +84,32 @@ describe("schedule", () => {
   })
 
   it("picks the earliest unplayed match for a team", () => {
-    const next = nextUnplayed(matches, 3, {
-      "2026-10-21-1800-c2": result([[21, 19], [21, 16], [15, 21]]),
-    })
-    expect(next?.id).toBe("2026-10-28-1900-c1")
+    expect(nextUnplayed(matches, 3, {})?.id).toBe("2026-10-21-2000-c1")
+    expect(nextUnplayed(matches, 3, {
+      "2026-10-21-2000-c1": result([[21, 19], [21, 16], [15, 21]]),
+    })).toBeNull()
   })
 
-  it("splits October 21 across two gyms with one court of games each", () => {
+  it("plays October 21 at one gym, one game after another", () => {
     const gyms = gymsOf(matches.filter((match) => match.date === "2026-10-21"))
-    expect(gyms.map((gym) => gym.key)).toEqual(["regina", "school-2"])
+    expect(gyms.map((gym) => gym.key)).toEqual(["regina"])
     expect(gyms[0].matches.map((match) => [match.time, match.home, match.away])).toEqual([
       ["18:00", 1, 8],
       ["19:00", 2, 7],
+      ["20:00", 3, 6],
+      ["21:00", 4, 5],
     ])
-    expect(gyms[1].matches.map((match) => [match.time, match.home, match.away])).toEqual([
-      ["18:00", 3, 6],
-      ["19:00", 4, 5],
-    ])
+    expect(matches.every((match) => match.venue === "regina")).toBe(true)
   })
 })
 
 describe("calendar", () => {
-  it("includes each of team 3's nights through December 2", () => {
+  it("includes team 3's October 21 game at Regina Street", () => {
     const ics = buildCalendar(matches, 3, schedule.venues)
     const starts = ics.match(/DTSTART;TZID/g) ?? []
-    expect(starts).toHaveLength(7)
-    expect(ics).toContain("20261021T180000")
-    expect(ics).toContain("20261202T180000")
+    expect(starts).toHaveLength(1)
+    expect(ics).toContain("20261021T200000")
+    expect(ics).toContain("DTEND;TZID=America/Toronto:20261021T210000")
     expect(ics).toContain("2599 Regina St\\, Ottawa\\, ON K2B 8A5")
     expect(ics).toContain("METHOD:PUBLISH")
   })

@@ -1,6 +1,6 @@
 # GD RA Volleyball
 
-Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, Wednesday nights from October 21 through December 2, 2026. The first two nights use two gyms at different locations, one court in each: Regina Street PS and School 2.
+Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, one gym at Regina Street PS. The board currently lists Wednesday, October 21, 2026: four games, one after another, from 6:00 PM to 9:00 PM.
 
 ## Run locally
 
