@@ -54,6 +54,8 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
   const focus = team ? nextUnplayed(matches, team, results) : null
   const nightDate = focus?.date ?? defaultNight(matches, undefined, now)
   const night = nights.find((item) => item.date === nightDate) ?? nights[0]
+  const nightMatches = night.slots.flatMap((slot) => slot.matches)
+  const multiGym = nightHasGyms(nightMatches) && gymsOf(nightMatches).length > 1
   const mine = team ? table.find((row) => row.team === team) : undefined
   const previousDates = nights.filter((item) => item.date < night.date).map((item) => item.date)
   const lastNightDate = [...previousDates].reverse().find((date) =>
@@ -205,23 +207,24 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           <h2 className="text-sm font-semibold">The full night</h2>
           <span className="text-xs text-dim">
             {formatNight(night.date)}
-            {nightHasGyms(night.slots.flatMap((slot) => slot.matches)) ? (
+            {multiGym ? (
               " · two gyms, one court each"
             ) : (
               <>
                 {" · "}
                 <NightPlaces
-                  matches={night.slots.flatMap((slot) => slot.matches)}
+                  matches={nightMatches}
                   venues={league.schedule.venues}
                   gym={league.schedule.gym}
                 />
+                {" · one gym"}
               </>
             )}
           </span>
         </div>
-        <div className="grid grid-cols-2">
-          {nightHasGyms(night.slots.flatMap((slot) => slot.matches))
-            ? gymsOf(night.slots.flatMap((slot) => slot.matches)).map((gym, index) => {
+        <div className={multiGym ? "grid grid-cols-2" : "grid grid-cols-1"}>
+          {nightHasGyms(nightMatches)
+            ? gymsOf(nightMatches).map((gym, index) => {
                 const sample = gym.matches[0]
                 const venue = findVenue(league.schedule.venues, sample)
                 return (

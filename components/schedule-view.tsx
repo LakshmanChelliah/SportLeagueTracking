@@ -34,7 +34,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
   const nextDate = dates.find((date) => date >= today) ?? null
   const nightMatches = night.slots.flatMap((slot) => slot.matches)
   const playedCount = nightMatches.filter((match) => results[match.id]).length
+  const gyms = gymsOf(nightMatches)
   const groupedByGym = nightHasGyms(nightMatches)
+  const multiGym = groupedByGym && gyms.length > 1
   const yourGym = team == null ? undefined : nightMatches.find((match) => involves(match, team))?.venue
   const restMatches = nightMatches.filter((match) => {
     if (team == null || involves(match, team)) return false
@@ -48,9 +50,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         <div>
           <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
           <p className="text-sm text-muted-foreground max-md:hidden">
-            Two gyms, one court each, at Regina Street PS and School 2. Through December 2. Your matches are marked.
+            Regina Street PS · one gym · games one after another. Your match is marked.
           </p>
-          <p className="text-sm text-dim md:hidden">Two gyms, one court each. Your match is marked.</p>
+          <p className="text-sm text-dim md:hidden">Regina Street PS · one gym. Your match is marked.</p>
         </div>
         {team ? <CalendarButton matches={matches} team={team} venues={league.schedule.venues} outlook label="Add to Outlook" /> : null}
       </div>
@@ -66,9 +68,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
           <h2 className="font-display text-[28px] tracking-wide uppercase max-md:text-2xl">{formatNight(night.date)}</h2>
           <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : "4 matches"}</span>
         </div>
-        <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
+        <div className={multiGym ? "grid grid-cols-2 gap-4 max-md:grid-cols-1" : "grid grid-cols-1 gap-4"}>
           {groupedByGym
-            ? gymsOf(nightMatches).map((gym) => {
+            ? gyms.map((gym) => {
                 const sample = gym.matches[0]
                 const venue = findVenue(league.schedule.venues, sample)
                 const hideGymOnMobile = team != null && !gym.matches.some((match) => involves(match, team))
@@ -169,7 +171,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                 )
               })}
         </div>
-        {team ? (
+        {team && restMatches.length ? (
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
             <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
               <h3 className="text-sm font-semibold">Rest of the night</h3>
