@@ -9,7 +9,7 @@ export type Venue = {
 export type Match = {
   id: string
   date: string
-  time: "18:00" | "19:00"
+  time: "18:00" | "19:00" | "20:00" | "21:00"
   court: 1 | 2
   venue?: string
   home: TeamId

@@ -1,13 +1,36 @@
-import { formatTime, opponent } from "@/lib/schedule"
+import { formatTime, matchStart, opponent } from "@/lib/schedule"
 import { findVenue } from "@/lib/venues"
 import type { Match, Venue } from "@/lib/types"
+
+export const CALENDAR_FEED_ORIGIN = "https://lakshmanchelliah.github.io/SportLeagueTracking"
+
+export function calendarTitle(team: number) {
+  return `GD RA Volleyball · Team ${team}`
+}
+
+export function calendarFeedUrl(team: number) {
+  return `${CALENDAR_FEED_ORIGIN}/calendars/team-${team}.ics`
+}
+
+export function outlookSubscribeUrl(account: "work" | "personal", team: number) {
+  const origin = account === "work" ? "https://outlook.office.com" : "https://outlook.live.com"
+  const url = new URL("/calendar/0/addfromweb", origin)
+  url.searchParams.set("url", calendarFeedUrl(team))
+  url.searchParams.set("name", calendarTitle(team))
+  return url.toString()
+}
 
 function stamp(date: string, time: string) {
   return `${date.replaceAll("-", "")}T${time.replace(":", "")}00`
 }
 
 function endTime(time: string) {
-  return time === "18:00" ? "19:00" : "20:00"
+  const [hour, minute] = time.split(":")
+  return `${String(Number(hour) + 1).padStart(2, "0")}:${minute}`
+}
+
+function utcStamp(date: Date) {
+  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")
 }
 
 function escapeText(value: string) {
@@ -15,6 +38,7 @@ function escapeText(value: string) {
 }
 
 export function buildCalendar(matches: Match[], team: number, venues: Venue[] = []) {
+  const title = calendarTitle(team)
   const events = matches
     .filter((match) => match.home === team || match.away === team)
     .map((match) => {
@@ -27,6 +51,7 @@ export function buildCalendar(matches: Match[], team: number, venues: Venue[] = 
       return [
         "BEGIN:VEVENT",
         `UID:${match.id}-team${team}@gd-ra-volleyball`,
+        `DTSTAMP:${utcStamp(matchStart(match))}`,
         `DTSTART;TZID=America/Toronto:${stamp(match.date, match.time)}`,
         `DTEND;TZID=America/Toronto:${stamp(match.date, endTime(match.time))}`,
         `SUMMARY:${escapeText(summary)}`,
@@ -41,6 +66,10 @@ export function buildCalendar(matches: Match[], team: number, venues: Venue[] = 
     "VERSION:2.0",
     "PRODID:-//GD RA Volleyball//Schedule//EN",
     "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `NAME:${escapeText(title)}`,
+    `X-WR-CALNAME:${escapeText(title)}`,
+    "X-WR-TIMEZONE:America/Toronto",
     "BEGIN:VTIMEZONE",
     "TZID:America/Toronto",
     "BEGIN:DAYLIGHT",

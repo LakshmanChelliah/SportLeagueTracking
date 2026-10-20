@@ -12,6 +12,12 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Pick your team in the header. That choice is remembered in a cookie and, on a phone, limits Home, Schedule, and Team to your matches. Standings always lists every team.
 
+## Calendar
+
+On Schedule or a team page, **Add to Outlook** subscribes that team’s games. Team 1, for example, gets every Team 1 night. Work and school accounts open Outlook on the web. Outlook.com is the personal account. The same dialog can download an `.ics` file for Outlook desktop, Apple Calendar, or Google Calendar.
+
+Those links read `https://lakshmanchelliah.github.io/SportLeagueTracking/calendars/team-1.ics` (and teams 2–8). `npm run calendars` writes the files, and `npm run build:pages` copies them onto the public board. Publish that board once so Outlook can fetch them.
+
 The public board is [https://lakshmanchelliah.github.io/SportLeagueTracking/](https://lakshmanchelliah.github.io/SportLeagueTracking/). Publish an update with `npm run build:pages`, then commit the `out/` files to the branch GitHub Pages serves. That host is static, so score entry stays on the coordinator server described below.
 
 ## Scores
