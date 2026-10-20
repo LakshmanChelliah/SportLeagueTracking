@@ -21,6 +21,7 @@ import {
   nightsOf,
   opponent,
   seriesLabel,
+  sharesSlot,
   warmupLabel,
 } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
@@ -78,7 +79,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 {formatTime(focus.time).replace(" PM", "")}
                 <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground">PM</span>
               </div>
-              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">Court {focus.court}</div>
+              {sharesSlot(matches, focus) ? (
+                <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">Court {focus.court}</div>
+              ) : null}
             </div>
             <div className="text-right">
               <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
@@ -126,7 +129,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               </div>
               <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">
                 <span className="font-display text-[28px] leading-none tracking-wide">{formatTime(focus.time)}</span>
-                <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {focus.court}</span>
+                {sharesSlot(matches, focus) ? (
+                  <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {focus.court}</span>
+                ) : null}
               </div>
             </div>
             <div className="flex items-center justify-between gap-3 px-4 py-4">
@@ -144,7 +149,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span className="text-xs text-dim">{formatNight(night.date).replace(/^[^,]+, /, "")}</span>
               </div>
               {others.map((match) => (
-                <NightLine key={match.id} match={match} />
+                <NightLine key={match.id} match={match} court={sharesSlot(matches, match)} />
               ))}
             </section>
           ) : null}
@@ -157,7 +162,8 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 <span className="text-muted-foreground">vs {teamName(opponent(last.match, team))}</span>
               </div>
               <div className="mt-2 text-[13px] text-dim">
-                {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)} · Court {last.match.court}
+                {formatNight(last.match.date).replace(/^[^,]+, /, "")} · {formatTime(last.match.time)}
+                {sharesSlot(matches, last.match) ? ` · Court ${last.match.court}` : ""}
               </div>
             </section>
           ) : null}
@@ -194,13 +200,13 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         </div>
         <div className="grid grid-cols-2">
           {night.slots.map((slot, index) => (
-            <div key={slot.time} className={index === 1 ? "border-l border-border" : undefined}>
+            <div key={slot.time} className={[index % 2 === 1 ? "border-l border-border" : "", index >= 2 ? "border-t border-border" : ""].filter(Boolean).join(" ") || undefined}>
               <div className="flex justify-between px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
                 <b className="font-display text-xl font-semibold tracking-wide text-foreground">{formatTime(slot.time)}</b>
                 <span>Warm-up {warmupLabel(slot.time)}</span>
               </div>
               {slot.matches.map((match) => (
-                <MatchCard key={match.id} match={match} you={team} />
+                <MatchCard key={match.id} match={match} you={team} court={slot.matches.length > 1} />
               ))}
             </div>
           ))}
@@ -217,9 +223,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
             {lastNight.map((match) => {
               const result = results[match.id]
               return result ? (
-                <ScoreLine key={match.id} match={match} result={result} you={team} meta={`${formatTime(match.time)} · Court ${match.court}`} />
+                <ScoreLine key={match.id} match={match} result={result} you={team} meta={sharesSlot(matches, match) ? `${formatTime(match.time)} · Court ${match.court}` : formatTime(match.time)} />
               ) : (
-                <MatchCard key={match.id} match={match} you={team} />
+                <MatchCard key={match.id} match={match} you={team} court={sharesSlot(matches, match)} />
               )
             })}
           </section>

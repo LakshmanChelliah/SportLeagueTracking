@@ -103,7 +103,25 @@ describe("calendar", () => {
     expect(ics).toContain("20261007T190000")
     expect(ics).toContain("20261202T180000")
     expect(ics).toContain("Court 2")
+    expect(ics).toContain("LOCATION:Regina Street")
     expect(ics).toContain("METHOD:PUBLISH")
+  })
+
+  it("uses the Regina Street sheet for October 21", () => {
+    const night = matches.filter((match) => match.date === "2026-10-21")
+    expect(schedule.gym).toBe("Regina Street")
+    expect(night.map((match) => [match.time, match.home, match.away])).toEqual([
+      ["18:00", 1, 8],
+      ["19:00", 2, 7],
+      ["20:00", 3, 6],
+      ["21:00", 4, 5],
+    ])
+    const feed = buildCalendar(matches, 1, schedule.gym)
+    const event = feed.split("BEGIN:VEVENT").find((block) => block.includes("20261021T180000"))
+    expect(event).toContain("DTEND;TZID=America/Toronto:20261021T190000")
+    expect(event).toContain("vs Team 8")
+    expect(event).toContain("LOCATION:Regina Street")
+    expect(event).not.toContain("Court")
   })
 
   it("publishes a feed Outlook can subscribe to for every team", () => {
@@ -115,7 +133,7 @@ describe("calendar", () => {
 
     for (const team of TEAMS) {
       const file = readFileSync(`public/calendars/team-${team}.ics`, "utf8")
-      expect(file).toBe(buildCalendar(matches, team))
+      expect(file).toBe(buildCalendar(matches, team, schedule.gym))
     }
 
     const work = new URL(outlookSubscribeUrl("work", 1))

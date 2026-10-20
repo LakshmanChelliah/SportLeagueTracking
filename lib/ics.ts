@@ -1,4 +1,4 @@
-import { formatTime, matchStart, opponent } from "@/lib/schedule"
+import { formatTime, matchStart, opponent, sharesSlot } from "@/lib/schedule"
 import type { Match } from "@/lib/types"
 
 export const CALENDAR_FEED_ORIGIN = "https://lakshmanchelliah.github.io/SportLeagueTracking"
@@ -24,7 +24,8 @@ function stamp(date: string, time: string) {
 }
 
 function endTime(time: string) {
-  return time === "18:00" ? "19:00" : "20:00"
+  const [hour, minute] = time.split(":")
+  return `${String(Number(hour) + 1).padStart(2, "0")}:${minute}`
 }
 
 function utcStamp(date: Date) {
@@ -35,13 +36,14 @@ function escapeText(value: string) {
   return value.replaceAll("\\", "\\\\").replaceAll("\n", "\\n").replaceAll(",", "\\,").replaceAll(";", "\\;")
 }
 
-export function buildCalendar(matches: Match[], team: number) {
+export function buildCalendar(matches: Match[], team: number, gym = "Regina Street") {
   const title = calendarTitle(team)
   const events = matches
     .filter((match) => match.home === team || match.away === team)
     .map((match) => {
       const summary = `GD RA Volleyball · vs Team ${opponent(match, team)}`
-      const description = `${formatTime(match.time)} · Court ${match.court} · Double Gym. Warm up 10 minutes before.`
+      const place = sharesSlot(matches, match) ? `Court ${match.court} · ${gym}` : gym
+      const description = `${formatTime(match.time)} · ${place}. Warm up 10 minutes before.`
       return [
         "BEGIN:VEVENT",
         `UID:${match.id}-team${team}@gd-ra-volleyball`,
@@ -49,7 +51,7 @@ export function buildCalendar(matches: Match[], team: number) {
         `DTSTART;TZID=America/Toronto:${stamp(match.date, match.time)}`,
         `DTEND;TZID=America/Toronto:${stamp(match.date, endTime(match.time))}`,
         `SUMMARY:${escapeText(summary)}`,
-        `LOCATION:Double Gym`,
+        `LOCATION:${escapeText(gym)}`,
         `DESCRIPTION:${escapeText(description)}`,
         "END:VEVENT",
       ].join("\r\n")

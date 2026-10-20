@@ -10,7 +10,7 @@ import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
 import { WeekStrip } from "@/components/week-strip"
-import { defaultNight, formatNight, formatTime, involves, nightsOf, opponent, torontoDate, warmupLabel } from "@/lib/schedule"
+import { defaultNight, formatNight, formatTime, involves, nightsOf, opponent, sharesSlot, torontoDate, warmupLabel } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
 
@@ -38,9 +38,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         <div>
           <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
           <p className="text-sm text-muted-foreground max-md:hidden">
-            Double Gym · two courts · through December 2. Your matches are marked.
+            {league.schedule.gym} · one gym · through December 2. Your matches are marked.
           </p>
-          <p className="text-sm text-dim md:hidden">Double Gym · two courts · your match is marked.</p>
+          <p className="text-sm text-dim md:hidden">{league.schedule.gym} · one gym · your match is marked.</p>
         </div>
         {team ? <CalendarButton matches={matches} team={team} outlook label="Add to Outlook" /> : null}
       </div>
@@ -54,7 +54,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={results} />
         <div className="mb-3.5 flex items-baseline justify-between">
           <h2 className="font-display text-[28px] tracking-wide uppercase max-md:text-2xl">{formatNight(night.date)}</h2>
-          <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : "4 matches"}</span>
+          <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : `${night.slots.flatMap((slot) => slot.matches).length} matches`}</span>
         </div>
         <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">
           {night.slots.map((slot) => {
@@ -72,11 +72,11 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                   return (
                     <div key={match.id} className={hide ? "hidden md:block" : undefined}>
                       {result ? (
-                        <ScoreLine match={match} result={result} you={team} meta={`Court ${match.court}`} />
+                        <ScoreLine match={match} result={result} you={team} meta={slot.matches.length > 1 ? `Court ${match.court}` : formatTime(match.time)} />
                       ) : (
                         <>
                           <div className="max-md:hidden">
-                            <MatchCard match={match} you={team} />
+                            <MatchCard match={match} you={team} court={slot.matches.length > 1} />
                           </div>
                           {yours && team ? (
                             <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)] md:hidden">
@@ -90,7 +90,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                                   <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
                                 </div>
                               </div>
-                              <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {match.court}</div>
+                              {slot.matches.length > 1 ? (
+                                <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">Court {match.court}</div>
+                              ) : null}
                             </div>
                           ) : null}
                         </>
@@ -109,7 +111,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
               <span className="text-xs text-dim">{league.schedule.gym}</span>
             </div>
             {night.slots.flatMap((slot) => slot.matches).filter((match) => !involves(match, team)).map((match) => (
-              <NightLine key={match.id} match={match} />
+              <NightLine key={match.id} match={match} court={sharesSlot(matches, match)} />
             ))}
           </section>
         ) : null}

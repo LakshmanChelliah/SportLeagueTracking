@@ -3,7 +3,7 @@ import { teamName } from "@/lib/teams"
 import type { Match } from "@/lib/types"
 import { cn } from "cn"
 
-export function NightLine({ match, you }: { match: Match; you?: number | null }) {
+export function NightLine({ match, you, court = true }: { match: Match; you?: number | null; court?: boolean }) {
   const yours = you != null && involves(match, you)
   return (
     <div
@@ -19,7 +19,8 @@ export function NightLine({ match, you }: { match: Match; you?: number | null })
           {teamName(match.away)}
         </div>
         <div className="mt-0.5 text-xs text-dim">
-          {formatTime(match.time)} · Court {match.court}
+          {formatTime(match.time)}
+          {court ? ` · Court ${match.court}` : ""}
           {yours ? " · You" : ""}
         </div>
       </div>

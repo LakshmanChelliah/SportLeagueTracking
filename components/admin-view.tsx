@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLiveResults } from "@/components/use-live-results"
 import { coordinatorApiUrl } from "@/lib/endpoints"
-import { formatNight, formatTime, latestPlayedNight, nightsOf } from "@/lib/schedule"
+import { formatNight, formatTime, latestPlayedNight, nightsOf, sharesSlot } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match, Result } from "@/lib/types"
 
@@ -198,7 +198,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
                 className={`flex w-full items-center justify-between gap-2 border-t border-border px-4 py-3 text-left ${item.id === match?.id ? "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]" : ""}`}
               >
                 <span>
-                  <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{formatTime(item.time)} · Court {item.court}</span>
+                  <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{formatTime(item.time)}{sharesSlot(league.schedule.matches, item) ? ` · Court ${item.court}` : ""}</span>
                   <span className="font-display text-xl tracking-wide uppercase">{teamName(item.home)} vs {teamName(item.away)}</span>
                 </span>
                 <span className="text-[11px] tracking-[0.1em] text-dim uppercase">{results[item.id] ? "Saved" : "Open"}</span>
@@ -208,7 +208,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
         </section>
         {match ? (
           <form onSubmit={save} className="rounded-xl border border-border bg-panel px-5 py-5">
-            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">{formatTime(match.time)} · Court {match.court}</div>
+            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">{formatTime(match.time)}{sharesSlot(league.schedule.matches, match) ? ` · Court ${match.court}` : ""}</div>
             <h2 className="mt-1 font-display text-[32px] tracking-wide uppercase">{teamName(match.home)} vs {teamName(match.away)}</h2>
             <div className="mt-4 grid grid-cols-[1fr_auto_1fr] text-xs tracking-[0.08em] text-muted-foreground uppercase">
               <span>{teamName(match.home)}</span>

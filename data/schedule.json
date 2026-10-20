@@ -1,7 +1,7 @@
 {
   "league": "GD RA Volleyball",
   "season": "2026-27",
-  "gym": "Double Gym",
+  "gym": "Regina Street",
   "timezone": "America/Toronto",
   "through": "2026-12-02",
   "teams": [
@@ -85,31 +85,31 @@
       "time": "18:00",
       "court": 1,
       "home": 1,
-      "away": 6
-    },
-    {
-      "id": "2026-10-21-1800-c2",
-      "date": "2026-10-21",
-      "time": "18:00",
-      "court": 2,
-      "home": 7,
-      "away": 5
+      "away": 8
     },
     {
       "id": "2026-10-21-1900-c1",
       "date": "2026-10-21",
       "time": "19:00",
       "court": 1,
-      "home": 8,
-      "away": 4
+      "home": 2,
+      "away": 7
     },
     {
-      "id": "2026-10-21-1900-c2",
+      "id": "2026-10-21-2000-c1",
       "date": "2026-10-21",
-      "time": "19:00",
-      "court": 2,
-      "home": 2,
-      "away": 3
+      "time": "20:00",
+      "court": 1,
+      "home": 3,
+      "away": 6
+    },
+    {
+      "id": "2026-10-21-2100-c1",
+      "date": "2026-10-21",
+      "time": "21:00",
+      "court": 1,
+      "home": 4,
+      "away": 5
     },
     {
       "id": "2026-10-28-1800-c1",

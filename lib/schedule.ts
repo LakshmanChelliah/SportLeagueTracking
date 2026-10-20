@@ -54,7 +54,16 @@ export function formatTime(time: string) {
 }
 
 export function warmupLabel(time: string) {
-  return time === "18:00" ? "5:50 PM" : "6:50 PM"
+  const [hour, minute] = time.split(":").map(Number)
+  const total = hour * 60 + minute - 10
+  const warmed = Math.floor(total / 60)
+  const suffix = warmed >= 12 ? "PM" : "AM"
+  const hour12 = warmed % 12 || 12
+  return `${hour12}:${String(total % 60).padStart(2, "0")} ${suffix}`
+}
+
+export function sharesSlot(matches: Match[], match: Match) {
+  return matches.some((other) => other.id !== match.id && other.date === match.date && other.time === match.time)
 }
 
 export function involves(match: Match, team: number) {

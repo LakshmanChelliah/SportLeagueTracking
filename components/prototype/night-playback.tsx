@@ -69,7 +69,7 @@ export function NightPlayback({ matches }: { matches: Match[] }) {
       <div className="flex flex-1 flex-col justify-center px-5">
         {frame.kind === "slate" || !shown ? (
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[#e8572a] uppercase">Double Gym</p>
+            <p className="text-[11px] font-semibold tracking-[0.22em] text-[#e8572a] uppercase">Regina Street</p>
             <h1 className="mt-3 font-display text-[64px] leading-[0.84] tracking-wide uppercase">{formatNight(playbackDate)}</h1>
             <p className="mt-4 text-sm text-[#a1a1aa]">Four matches. Play them back, one game at a time.</p>
           </div>

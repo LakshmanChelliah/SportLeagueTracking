@@ -54,7 +54,7 @@ export function CalendarButton({
         <DialogHeader>
           <DialogTitle>{calendarTitle(team)}</DialogTitle>
           <DialogDescription>
-            Adds all {nights} games to Outlook. Each night is one hour at Double Gym, with the court in the details.
+            Adds all {nights} games to Outlook. Each game is one hour at Regina Street.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">
