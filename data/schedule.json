@@ -1,7 +1,7 @@
 {
   "league": "GD RA Volleyball",
   "season": "2026-27",
-  "gym": "Regina Street",
+  "gym": "Double Gym",
   "timezone": "America/Toronto",
   "through": "2026-12-02",
   "teams": [
@@ -14,78 +14,35 @@
     7,
     8
   ],
+  "venues": [
+    {
+      "id": "regina",
+      "name": "Regina Street PS",
+      "address": "2599 Regina St, Ottawa, ON K2B 8A5"
+    },
+    {
+      "id": "school-2",
+      "name": "School 2"
+    }
+  ],
   "matches": [
-    {
-      "id": "2026-10-07-1800-c1",
-      "date": "2026-10-07",
-      "time": "18:00",
-      "court": 1,
-      "home": 1,
-      "away": 8
-    },
-    {
-      "id": "2026-10-07-1800-c2",
-      "date": "2026-10-07",
-      "time": "18:00",
-      "court": 2,
-      "home": 2,
-      "away": 7
-    },
-    {
-      "id": "2026-10-07-1900-c1",
-      "date": "2026-10-07",
-      "time": "19:00",
-      "court": 1,
-      "home": 3,
-      "away": 6
-    },
-    {
-      "id": "2026-10-07-1900-c2",
-      "date": "2026-10-07",
-      "time": "19:00",
-      "court": 2,
-      "home": 4,
-      "away": 5
-    },
-    {
-      "id": "2026-10-14-1800-c1",
-      "date": "2026-10-14",
-      "time": "18:00",
-      "court": 1,
-      "home": 2,
-      "away": 5
-    },
-    {
-      "id": "2026-10-14-1800-c2",
-      "date": "2026-10-14",
-      "time": "18:00",
-      "court": 2,
-      "home": 3,
-      "away": 4
-    },
-    {
-      "id": "2026-10-14-1900-c1",
-      "date": "2026-10-14",
-      "time": "19:00",
-      "court": 1,
-      "home": 7,
-      "away": 1
-    },
-    {
-      "id": "2026-10-14-1900-c2",
-      "date": "2026-10-14",
-      "time": "19:00",
-      "court": 2,
-      "home": 8,
-      "away": 6
-    },
     {
       "id": "2026-10-21-1800-c1",
       "date": "2026-10-21",
       "time": "18:00",
       "court": 1,
       "home": 1,
-      "away": 8
+      "away": 8,
+      "venue": "regina"
+    },
+    {
+      "id": "2026-10-21-1800-c2",
+      "date": "2026-10-21",
+      "time": "18:00",
+      "court": 2,
+      "home": 3,
+      "away": 6,
+      "venue": "school-2"
     },
     {
       "id": "2026-10-21-1900-c1",
@@ -93,55 +50,53 @@
       "time": "19:00",
       "court": 1,
       "home": 2,
-      "away": 7
+      "away": 7,
+      "venue": "regina"
     },
     {
-      "id": "2026-10-21-2000-c1",
+      "id": "2026-10-21-1900-c2",
       "date": "2026-10-21",
-      "time": "20:00",
-      "court": 1,
-      "home": 3,
-      "away": 6
-    },
-    {
-      "id": "2026-10-21-2100-c1",
-      "date": "2026-10-21",
-      "time": "21:00",
-      "court": 1,
+      "time": "19:00",
+      "court": 2,
       "home": 4,
-      "away": 5
+      "away": 5,
+      "venue": "school-2"
     },
     {
       "id": "2026-10-28-1800-c1",
       "date": "2026-10-28",
       "time": "18:00",
       "court": 1,
-      "home": 7,
-      "away": 3
+      "home": 2,
+      "away": 5,
+      "venue": "regina"
     },
     {
       "id": "2026-10-28-1800-c2",
       "date": "2026-10-28",
       "time": "18:00",
       "court": 2,
-      "home": 8,
-      "away": 2
+      "home": 7,
+      "away": 1,
+      "venue": "school-2"
     },
     {
       "id": "2026-10-28-1900-c1",
       "date": "2026-10-28",
       "time": "19:00",
       "court": 1,
-      "home": 5,
-      "away": 1
+      "home": 3,
+      "away": 4,
+      "venue": "regina"
     },
     {
       "id": "2026-10-28-1900-c2",
       "date": "2026-10-28",
       "time": "19:00",
       "court": 2,
-      "home": 6,
-      "away": 4
+      "home": 8,
+      "away": 6,
+      "venue": "school-2"
     },
     {
       "id": "2026-11-04-1800-c1",

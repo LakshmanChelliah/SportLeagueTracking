@@ -10,5 +10,5 @@ const dir = join(root, "public", "calendars")
 
 await mkdir(dir, { recursive: true })
 for (const team of TEAMS) {
-  await writeFile(join(dir, `team-${team}.ics`), buildCalendar(schedule.matches, team, schedule.gym))
+  await writeFile(join(dir, `team-${team}.ics`), buildCalendar(schedule.matches, team, schedule.venues))
 }

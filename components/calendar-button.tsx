@@ -2,7 +2,7 @@
 
 import { buildCalendar, calendarTitle, outlookSubscribeUrl } from "@/lib/ics"
 import { involves } from "@/lib/schedule"
-import type { Match } from "@/lib/types"
+import type { Match, Venue } from "@/lib/types"
 import {
   Dialog,
   DialogContent,
@@ -18,16 +18,18 @@ const triggerClass =
 export function CalendarButton({
   matches,
   team,
+  venues,
   label,
   outlook = false,
 }: {
   matches: Match[]
   team: number
+  venues: Venue[]
   label: string
   outlook?: boolean
 }) {
   function download() {
-    const ics = buildCalendar(matches, team)
+    const ics = buildCalendar(matches, team, venues)
     const blob = new Blob([ics], { type: "text/calendar" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
@@ -54,7 +56,7 @@ export function CalendarButton({
         <DialogHeader>
           <DialogTitle>{calendarTitle(team)}</DialogTitle>
           <DialogDescription>
-            Adds all {nights} games to Outlook. Each game is one hour at Regina Street.
+            Adds all {nights} games to Outlook. Each game is one hour.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-2">

@@ -1,9 +1,11 @@
+import { LocationLabel } from "@/components/location-label"
 import { formatTime, involves } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
-import type { Match } from "@/lib/types"
+import type { Match, Venue } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 import { cn } from "cn"
 
-export function NightLine({ match, you, court = true }: { match: Match; you?: number | null; court?: boolean }) {
+export function NightLine({ match, you, venues }: { match: Match; you?: number | null; venues?: Venue[] }) {
   const yours = you != null && involves(match, you)
   return (
     <div
@@ -19,8 +21,7 @@ export function NightLine({ match, you, court = true }: { match: Match; you?: nu
           {teamName(match.away)}
         </div>
         <div className="mt-0.5 text-xs text-dim">
-          {formatTime(match.time)}
-          {court ? ` · Court ${match.court}` : ""}
+          {formatTime(match.time)} · <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />
           {yours ? " · You" : ""}
         </div>
       </div>

@@ -2,17 +2,19 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { LocationLabel, NightPlaces } from "@/components/location-label"
 import { formatNight, formatTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import { playbackDate, playbackMatches } from "@/lib/prototype"
-import type { Match } from "@/lib/types"
+import type { Match, Venue } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 
 type Frame =
   | { kind: "slate" }
   | { kind: "game"; matchIndex: number; game: number }
   | { kind: "final"; matchIndex: number }
 
-export function NightPlayback({ matches }: { matches: Match[] }) {
+export function NightPlayback({ matches, venues }: { matches: Match[]; venues: Venue[] }) {
   const night = useMemo(() => playbackMatches(matches), [matches])
   const frames = useMemo(() => {
     const list: Frame[] = [{ kind: "slate" }]
@@ -69,7 +71,9 @@ export function NightPlayback({ matches }: { matches: Match[] }) {
       <div className="flex flex-1 flex-col justify-center px-5">
         {frame.kind === "slate" || !shown ? (
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.22em] text-[#e8572a] uppercase">Regina Street</p>
+            <p className="text-[11px] font-semibold tracking-[0.22em] text-[#e8572a] uppercase">
+              <NightPlaces matches={night.map((item) => item.match)} venues={venues} gym="Double Gym" />
+            </p>
             <h1 className="mt-3 font-display text-[64px] leading-[0.84] tracking-wide uppercase">{formatNight(playbackDate)}</h1>
             <p className="mt-4 text-sm text-[#a1a1aa]">Four matches. Play them back, one game at a time.</p>
           </div>
@@ -77,7 +81,9 @@ export function NightPlayback({ matches }: { matches: Match[] }) {
           <div key={`${frame.kind}-${frame.matchIndex}-${"game" in frame ? frame.game : "final"}`}>
             <div className="flex items-baseline justify-between">
               <p className="font-display text-3xl tracking-wide">{formatTime(shown.match.time)}</p>
-              <p className="text-[12px] font-semibold tracking-[0.16em] text-[#e8572a] uppercase">Court {shown.match.court}</p>
+              <p className="text-[12px] font-semibold tracking-[0.16em] text-[#e8572a] uppercase">
+                <LocationLabel venue={findVenue(venues, shown.match)} fallback={`Court ${shown.match.court}`} />
+              </p>
             </div>
             <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-end gap-3">
               <div className="font-display text-[42px] leading-none tracking-wide uppercase">{teamName(shown.match.home)}</div>

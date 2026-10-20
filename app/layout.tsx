@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "GD RA Volleyball",
     template: "%s · GD RA Volleyball",
   },
-  description: "Schedule, standings, and scores for the GD RA Volleyball League. Regina Street, through December 2, 2026.",
+  description: "Schedule, standings, and scores for the GD RA Volleyball League through December 2, 2026.",
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

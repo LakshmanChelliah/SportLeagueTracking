@@ -24,40 +24,22 @@ RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:2026-10-07-1900-c1-team6@gd-ra-volleyball
-DTSTAMP:20261007T230000Z
-DTSTART;TZID=America/Toronto:20261007T190000
-DTEND;TZID=America/Toronto:20261007T200000
+UID:2026-10-21-1800-c2-team6@gd-ra-volleyball
+DTSTAMP:20261021T220000Z
+DTSTART;TZID=America/Toronto:20261021T180000
+DTEND;TZID=America/Toronto:20261021T190000
 SUMMARY:GD RA Volleyball · vs Team 3
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 1 · Regina Street. Warm up 10 minutes before.
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-10-14-1900-c2-team6@gd-ra-volleyball
-DTSTAMP:20261014T230000Z
-DTSTART;TZID=America/Toronto:20261014T190000
-DTEND;TZID=America/Toronto:20261014T200000
-SUMMARY:GD RA Volleyball · vs Team 8
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 2 · Regina Street. Warm up 10 minutes before.
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-10-21-2000-c1-team6@gd-ra-volleyball
-DTSTAMP:20261022T000000Z
-DTSTART;TZID=America/Toronto:20261021T200000
-DTEND;TZID=America/Toronto:20261021T210000
-SUMMARY:GD RA Volleyball · vs Team 3
-LOCATION:Regina Street
-DESCRIPTION:8:00 PM · Regina Street. Warm up 10 minutes before.
+LOCATION:School 2
+DESCRIPTION:6:00 PM · School 2. One court. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-28-1900-c2-team6@gd-ra-volleyball
 DTSTAMP:20261028T230000Z
 DTSTART;TZID=America/Toronto:20261028T190000
 DTEND;TZID=America/Toronto:20261028T200000
-SUMMARY:GD RA Volleyball · vs Team 4
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 2 · Regina Street. Warm up 10 minutes before.
+SUMMARY:GD RA Volleyball · vs Team 8
+LOCATION:School 2
+DESCRIPTION:7:00 PM · School 2. One court. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-04-1900-c1-team6@gd-ra-volleyball
@@ -65,8 +47,8 @@ DTSTAMP:20261105T000000Z
 DTSTART;TZID=America/Toronto:20261104T190000
 DTEND;TZID=America/Toronto:20261104T200000
 SUMMARY:GD RA Volleyball · vs Team 2
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 1 · Regina Street. Warm up 10 minutes before.
+LOCATION:Double Gym
+DESCRIPTION:7:00 PM · Court 1 · Double Gym. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-11-1800-c2-team6@gd-ra-volleyball
@@ -74,8 +56,8 @@ DTSTAMP:20261111T230000Z
 DTSTART;TZID=America/Toronto:20261111T180000
 DTEND;TZID=America/Toronto:20261111T190000
 SUMMARY:GD RA Volleyball · vs Team 7
-LOCATION:Regina Street
-DESCRIPTION:6:00 PM · Court 2 · Regina Street. Warm up 10 minutes before.
+LOCATION:Double Gym
+DESCRIPTION:6:00 PM · Court 2 · Double Gym. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-18-1900-c2-team6@gd-ra-volleyball
@@ -83,8 +65,8 @@ DTSTAMP:20261119T000000Z
 DTSTART;TZID=America/Toronto:20261118T190000
 DTEND;TZID=America/Toronto:20261118T200000
 SUMMARY:GD RA Volleyball · vs Team 5
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 2 · Regina Street. Warm up 10 minutes before.
+LOCATION:Double Gym
+DESCRIPTION:7:00 PM · Court 2 · Double Gym. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-25-1900-c1-team6@gd-ra-volleyball
@@ -92,8 +74,8 @@ DTSTAMP:20261126T000000Z
 DTSTART;TZID=America/Toronto:20261125T190000
 DTEND;TZID=America/Toronto:20261125T200000
 SUMMARY:GD RA Volleyball · vs Team 3
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 1 · Regina Street. Warm up 10 minutes before.
+LOCATION:Double Gym
+DESCRIPTION:7:00 PM · Court 1 · Double Gym. Warm up 10 minutes before.
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-02-1900-c2-team6@gd-ra-volleyball
@@ -101,7 +83,7 @@ DTSTAMP:20261203T000000Z
 DTSTART;TZID=America/Toronto:20261202T190000
 DTEND;TZID=America/Toronto:20261202T200000
 SUMMARY:GD RA Volleyball · vs Team 8
-LOCATION:Regina Street
-DESCRIPTION:7:00 PM · Court 2 · Regina Street. Warm up 10 minutes before.
+LOCATION:Double Gym
+DESCRIPTION:7:00 PM · Court 2 · Double Gym. Warm up 10 minutes before.
 END:VEVENT
 END:VCALENDAR

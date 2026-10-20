@@ -2,12 +2,14 @@
 
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
+import { LocationLabel } from "@/components/location-label"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
-import { diffLabel, formatTime, involves, opponent, seriesLabel, sharesSlot, warmupLabel } from "@/lib/schedule"
+import { diffLabel, formatTime, involves, opponent, seriesLabel } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName, type TeamId } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
+import { findVenue } from "@/lib/venues"
 import { cn } from "cn"
 
 export function TeamView({ league, team }: { league: LeagueData; team: TeamId }) {
@@ -32,14 +34,16 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
             <Stat value={row ? diffLabel(row.diff) : "0"} label="Point diff" positive={!!row && row.diff > 0} negative={!!row && row.diff < 0} />
           </div>
         </div>
-        <CalendarButton matches={league.schedule.matches} team={team} outlook label="Add to Outlook" />
+        <CalendarButton matches={league.schedule.matches} team={team} venues={league.schedule.venues} outlook label="Add to Outlook" />
       </div>
 
       {next ? (
         <section className="mb-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
             <h2 className="text-sm font-semibold">Next match</h2>
-            <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">{sharesSlot(league.schedule.matches, next) ? `Court ${next.court}` : league.schedule.gym}</span>
+            <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
+            </span>
           </div>
           <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)]">
             <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
@@ -49,7 +53,10 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <div className="flex items-baseline justify-between px-4 py-3.5">
             <span className="text-sm text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)}</span>
-            <span className="text-xs text-dim">Warm-up {warmupLabel(next.time)}</span>
+            <span className="text-xs text-dim">
+              {findVenue(league.schedule.venues, next) ? "One court · " : ""}
+              Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}
+            </span>
           </div>
         </section>
       ) : null}
@@ -58,17 +65,24 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
         <section className="mb-[18px] overflow-hidden rounded-xl border border-border bg-panel max-md:hidden">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
             <h2 className="text-sm font-semibold">Next match</h2>
-            <span className="text-xs text-dim">{sharesSlot(league.schedule.matches, next) ? `Court ${next.court}` : league.schedule.gym}</span>
+            <span className="text-xs text-dim">
+              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
+            </span>
           </div>
           <div className="grid grid-cols-[118px_1fr_auto_1fr] items-center gap-2 bg-[var(--highlight)] px-4 py-3 shadow-[inset_3px_0_0_var(--brand)]">
-            <span className="text-xs tracking-wider text-brand uppercase">{sharesSlot(league.schedule.matches, next) ? `Court ${next.court}` : league.schedule.gym}</span>
+            <span className="text-xs tracking-wider text-brand uppercase">
+              {findVenue(league.schedule.venues, next) ? "One court" : `Court ${next.court}`}
+            </span>
             <span className="font-display text-[26px] uppercase">{teamName(team)}</span>
             <span className="text-[11px] tracking-[0.14em] text-dim uppercase">vs</span>
             <span className="text-right font-display text-[26px] uppercase">{teamName(opponent(next, team))}</span>
           </div>
           <div className="flex items-baseline justify-between border-t border-border px-4 py-3.5">
-            <h2 className="text-sm font-medium text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)} · {league.schedule.gym}</h2>
-            <span className="text-xs text-dim">Warm up at {warmupLabel(next.time)}</span>
+            <h2 className="text-sm font-medium text-muted-foreground">
+              {formatLine(next.date)} · {formatTime(next.time)} ·{" "}
+              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={league.schedule.gym} />
+            </h2>
+            <span className="text-xs text-dim">Warm up at {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
           </div>
         </section>
       ) : null}
@@ -98,7 +112,9 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               >
                 <span className="font-display text-lg tracking-wide uppercase">{formatShort(match.date)}</span>
                 <span className="font-display text-base tracking-wide text-muted-foreground uppercase">{formatTime(match.time)}</span>
-                <span className="font-display text-sm tracking-wide text-dim uppercase">{sharesSlot(league.schedule.matches, match) ? `Court ${match.court}` : ""}</span>
+                <span className="font-display text-sm tracking-wide text-dim uppercase">
+                  <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                </span>
                 <span className="font-medium">vs {teamName(opponent(match, team))}</span>
                 <span className="text-right font-display text-lg">
                   {outcome === "Next" ? <span className="font-sans text-xs font-semibold tracking-[0.12em] text-brand uppercase">Next</span> : outcome}
@@ -121,7 +137,9 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                   )}
                 </div>
                 <div className="mt-1 font-display text-[26px] leading-none tracking-wide uppercase">vs {teamName(opponent(match, team))}</div>
-                <div className="mt-1.5 text-sm text-dim">{formatTime(match.time)}{sharesSlot(league.schedule.matches, match) ? ` · Court ${match.court}` : ""}</div>
+                <div className="mt-1.5 text-sm text-dim">
+                  {formatTime(match.time)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                </div>
                 {scoreText ? <div className="mt-1 text-xs text-dim">{scoreText}</div> : null}
               </div>
             </div>

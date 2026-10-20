@@ -14,7 +14,7 @@ const items = [
     href: "/prototype/playback",
     n: "02",
     title: "Night playback",
-    body: "Wednesday, Oct 7, one game at a time. Scrub it.",
+    body: "Wednesday, Oct 21, one game at a time. Scrub it.",
   },
   {
     href: "/prototype/odds",
