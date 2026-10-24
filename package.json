@@ -9,7 +9,8 @@
     "calendars": "node --experimental-strip-types --import ./scripts/register-calendars.mjs scripts/write-calendars.mjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sounds": "node scripts/generate-sounds.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
