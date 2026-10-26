@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { LocationLabel } from "@/components/location-label"
+import { SaveScoreSheet } from "@/components/save-score-sheet"
 import { getLiveStore, useLiveScore } from "@/components/use-live-score"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
@@ -13,6 +14,7 @@ import {
   isGamePoint,
   pickMatchId,
   RALLY_CAP,
+  scoreAction,
   setsWon,
   type GameIndex,
   type LiveBoard,
@@ -28,10 +30,11 @@ import { cn } from "cn"
 export function Scoreboard({ league }: { league: LeagueData }) {
   const { team } = useTeam()
   const snap = useLiveScore()
-  const { results } = useLiveResults(league.results)
+  const { results, reload } = useLiveResults(league.results)
   const requested = useSearchParams().get("match")
   const [resetFor, setResetFor] = useState<string | null>(null)
   const [picked, setPicked] = useState<string | null>(null)
+  const [saveOpen, setSaveOpen] = useState(false)
   useWakeLock()
   const queryMatch = requested && league.schedule.matches.some((item) => item.id === requested) ? requested : null
 
@@ -74,11 +77,14 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   const youSets = leftSide === "home" ? homeSets : awaySets
   const themSets = leftSide === "home" ? awaySets : homeSets
   const current = board.games[board.active]
-  const status = statusText(board, leftSide, teamName(leftTeam), teamName(rightTeam))
-  const ending = endControl(board)
+  const action = scoreAction(board)
+  const waitingOnNext = action.kind === "save" && current[0] === 0 && current[1] === 0
+  const status = waitingOnNext
+    ? "Save this score, or add a point to keep going."
+    : statusText(board, leftSide, teamName(leftTeam), teamName(rightTeam))
   const live = getLiveStore()
 
-  const action = "min-h-14 touch-manipulation rounded-xl px-2 text-base font-semibold whitespace-nowrap disabled:opacity-40"
+  const buttonClass = "min-h-14 touch-manipulation rounded-xl px-2 text-base font-semibold whitespace-nowrap disabled:opacity-40"
 
   return (
     <div className="mx-auto flex w-full max-w-[760px] flex-col gap-2 px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] max-md:min-h-0 md:w-[min(760px,calc(100%-48px))] md:gap-3 md:py-7">
@@ -167,11 +173,11 @@ export function Scoreboard({ league }: { league: LeagueData }) {
               live.reset(match.id)
               setResetFor(null)
             }}
-            className={cn(action, "bg-destructive/15 text-destructive")}
+            className={cn(buttonClass, "bg-destructive/15 text-destructive")}
           >
             Clear scores
           </button>
-          <button type="button" onClick={() => setResetFor(null)} className={cn(action, "border border-border")}>
+          <button type="button" onClick={() => setResetFor(null)} className={cn(buttonClass, "border border-border")}>
             Cancel
           </button>
         </div>
@@ -181,23 +187,29 @@ export function Scoreboard({ league }: { league: LeagueData }) {
             type="button"
             onClick={() => live.undo(match.id)}
             disabled={board.past.length === 0}
-            className={cn(action, "border border-border")}
+            className={cn(buttonClass, "border border-border")}
           >
             Undo
           </button>
           <button
             type="button"
-            onClick={() => live.endGame(match.id)}
-            disabled={!ending.canEnd}
-            className={cn(action, ending.canEnd ? "border border-transparent bg-brand text-[var(--brand-ink)]" : "border border-border")}
+            onClick={() => {
+              if (action.kind === "save") {
+                setSaveOpen(true)
+                return
+              }
+              live.endGame(match.id)
+            }}
+            disabled={action.kind === "end" && !action.enabled}
+            className={cn(buttonClass, action.kind === "save" || action.enabled ? "border border-transparent bg-brand text-[var(--brand-ink)]" : "border border-border")}
           >
-            {ending.label}
+            {action.label}
           </button>
           <button
             type="button"
             onClick={() => setResetFor(match.id)}
             disabled={!hasActivity(board)}
-            className={cn(action, "border border-border")}
+            className={cn(buttonClass, "border border-border")}
           >
             Reset
           </button>
@@ -206,14 +218,31 @@ export function Scoreboard({ league }: { league: LeagueData }) {
 
       <p className="sr-only">
         {snap.persistOk
-          ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. The coordinator posts the official result."
+          ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. Saving uses the coordinator password."
           : "This phone blocked saving. Stay on this page to keep the score."}
       </p>
       <p className="hidden text-center text-xs leading-5 text-dim md:block">
         {snap.persistOk
-          ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. The coordinator posts the official result."
+          ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. Saving uses the coordinator password."
           : "This phone blocked saving. Stay on this page to keep the score."}
       </p>
+      <SaveScoreSheet
+        open={saveOpen}
+        onOpenChange={setSaveOpen}
+        matchId={match.id}
+        leftName={teamName(leftTeam)}
+        rightName={teamName(rightTeam)}
+        when={`${formatNight(match.date)} · ${formatTime(match.time)}`}
+        games={board.games.map((game, index) => ({
+          label: `Game ${index + 1}`,
+          left: sideScore(game, leftSide),
+          right: sideScore(game, rightSide),
+          played: game[0] !== 0 || game[1] !== 0,
+        }))}
+        officialGames={board.games}
+        alreadyPosted={Boolean(results[match.id])}
+        onSaved={reload}
+      />
     </div>
   )
 }
@@ -280,14 +309,6 @@ function statusText(board: LiveBoard, left: Side, leftName: string, rightName: s
   }
   if (isGamePoint(home, away, "home") || isGamePoint(home, away, "away")) return "Game point"
   return "Rally to 21 · win by 2 · cap 25"
-}
-
-function endControl(board: LiveBoard) {
-  const [home, away] = board.games[board.active]
-  const closed = board.final[board.active] || gameWinner(home, away) != null
-  const canEnd = !(home === 0 && away === 0) && !(closed && board.active === 2)
-  const label = closed && board.active < 2 ? "Next game" : closed ? "Game done" : "End game"
-  return { canEnd, label }
 }
 
 function MatchPicker({

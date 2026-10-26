@@ -24,6 +24,7 @@ export function standings(matches: Match[], results: ResultsFile): Standing[] {
     if (match.home == null || match.away == null) continue
     const result = results[match.id]
     for (const [homeScore, awayScore] of result.games) {
+      if (homeScore === 0 && awayScore === 0) continue
       const home = rows.get(match.home)!
       const away = rows.get(match.away)!
       home.pointsFor += homeScore

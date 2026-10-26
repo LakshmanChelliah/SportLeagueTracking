@@ -7,6 +7,7 @@ import {
   clearBoard,
   createLiveStore,
   finishGame,
+  scoreAction,
   focusGame,
   gameWinner,
   isGamePoint,
@@ -112,6 +113,23 @@ describe("live score rules", () => {
       [0, 0],
     ])
     expect(undoBoard(reset, 8).games[0]).toEqual([15, 12])
+  })
+
+  it("turns End game into Save score only after the game is closed", () => {
+    let board = blankBoard(1)
+    expect(scoreAction(board)).toMatchObject({ kind: "end", enabled: false, label: "End game" })
+    board = applyPoint(board, "home", 1, 2)
+    expect(scoreAction(board).kind).toBe("end")
+    expect(scoreAction(board).enabled).toBe(true)
+    board.games[0] = [21, 18]
+    expect(scoreAction(board).label).toBe("End game")
+    board = finishGame(board, 3)
+    expect(scoreAction(board)).toMatchObject({ kind: "save", enabled: true, label: "Save score" })
+    board = applyPoint(board, "away", 1, 4)
+    expect(scoreAction(board).label).toBe("End game")
+    board.games[2] = [21, 19]
+    board.active = 2
+    expect(scoreAction(board).label).toBe("Save score")
   })
 
   it("counts a rules win, an early lead, and no point for a tie", () => {

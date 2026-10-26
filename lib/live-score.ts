@@ -104,6 +104,21 @@ export function focusGame(board: LiveBoard, active: GameIndex, now: number): Liv
   return { ...board, active, updatedAt: now }
 }
 
+/** After End game, the same button offers to post or share the score. */
+export function scoreAction(board: LiveBoard): { kind: "end" | "save"; enabled: boolean; label: string } {
+  const active = board.games[board.active]
+  const marked = board.final[board.active]
+  const won = gameWinner(active[0], active[1]) != null
+  const started = active[0] > 0 || active[1] > 0
+  const earlierMarked = board.final.slice(0, board.active).some(Boolean)
+  const readyToSave = (board.active === 2 && (marked || won)) || (earlierMarked && !started) || marked
+  if (readyToSave) {
+    const played = board.games.some(([home, away]) => home > 0 || away > 0)
+    return { kind: "save", enabled: played, label: "Save score" }
+  }
+  return { kind: "end", enabled: started, label: "End game" }
+}
+
 /** Closes the current game and moves on. A tied close awards no point. */
 export function finishGame(board: LiveBoard, now: number): LiveBoard {
   const [home, away] = board.games[board.active]

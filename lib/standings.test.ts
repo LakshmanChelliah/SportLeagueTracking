@@ -61,6 +61,20 @@ describe("standings", () => {
     expect(setCounts(results["2026-10-28-1800-c1"])).toEqual([1, 1])
   })
 
+  it("does not count a game that was never played", () => {
+    const results: ResultsFile = {
+      "2026-10-28-1800-c1": result([[21, 15], [0, 0], [0, 0]]),
+    }
+    const team1 = standings(rankingMatches, results).find((row) => row.team === 1)!
+    const team8 = standings(rankingMatches, results).find((row) => row.team === 8)!
+    expect(team1.wins).toBe(1)
+    expect(team1.losses).toBe(0)
+    expect(team8.wins).toBe(0)
+    expect(team8.losses).toBe(1)
+    expect(team1.form).toEqual(["W"])
+    expect(team1.pointsFor).toBe(21)
+  })
+
   it("records a forfeit as three 21–0 games", () => {
     const games = forfeitGames("away")
     expect(games).toEqual([[21, 0], [21, 0], [21, 0]])
