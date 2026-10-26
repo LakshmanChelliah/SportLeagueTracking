@@ -21,7 +21,7 @@ export function TeamGate() {
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] max-w-md py-7">
-      <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your team</p>
+      <p className="eyebrow text-brand">Your team</p>
       <h1 className="mt-3 mb-5 font-display text-4xl tracking-wide uppercase">Which team are you on?</h1>
       <TeamChoices onPick={pick} />
     </div>

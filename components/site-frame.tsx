@@ -29,7 +29,7 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
         >
           <div className="flex items-start justify-between gap-3">
             <DialogHeader>
-              <DialogTitle className="font-display text-3xl tracking-wide uppercase">Which team are you on?</DialogTitle>
+              <DialogTitle className="font-display text-3xl font-bold tracking-wide uppercase">Which team are you on?</DialogTitle>
               <DialogDescription>Your next match leads the page. The rest of the night and the standings stay with it.</DialogDescription>
             </DialogHeader>
             <ThemeToggle tone="surface" />

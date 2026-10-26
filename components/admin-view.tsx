@@ -150,7 +150,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
   if (!authed) {
     return (
       <div className="mx-auto w-[min(420px,calc(100%-48px))] py-16">
-        <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Coordinator</p>
+        <p className="eyebrow text-brand">Coordinator</p>
         <h1 className="mt-2 font-display text-5xl tracking-wide uppercase">Enter scores</h1>
         <p className="mt-2 mb-6 text-sm text-muted-foreground">The PIN stays on the server. Players never see this page in the menu on their phones.</p>
         <form onSubmit={unlock} className="space-y-4">
@@ -198,12 +198,12 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
                 className={`flex items-center justify-between gap-2 border-t border-border px-4 py-3 ${item.id === match?.id ? "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]" : ""}`}
               >
                 <button type="button" onClick={() => loadMatch(item)} className="min-w-0 flex-1 text-left">
-                  <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{slotTime(item)}</span>
+                  <span className="kicker block text-dim">{slotTime(item)}</span>
                   <span className="font-display text-xl leading-none tracking-wide uppercase">{matchTitle(item)}</span>
                 </button>
-                <span className="text-right text-[11px] tracking-[0.08em] text-dim uppercase">
+                <span className="kicker text-right text-dim">
                   <LocationLabel venue={findVenue(league.schedule.venues, item)} fallback={`Court ${item.court}`} />
-                  <span className="mt-1 block tracking-[0.1em]">{results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
+                  <span className="mt-1 block">{results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
                 </span>
               </div>
             ))}
@@ -211,9 +211,9 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
         </section>
         {match && !assignedTeams(match) ? (
           <section className="rounded-xl border border-border bg-panel px-5 py-5">
-            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">{slotTime(match)}</div>
+            <div className="eyebrow text-brand">{slotTime(match)}</div>
             <h2 className="mt-1 font-display text-[32px] leading-none tracking-wide uppercase">{match.label}</h2>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <p className="reading mt-3 text-muted-foreground">
               {match.label === "Free play"
                 ? "Open gym. There is no score for this hour."
                 : match.note ?? "This slot is filled from the standings. Scores open once the two teams are assigned."}
@@ -222,11 +222,11 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
         ) : null}
         {match && assignedTeams(match) ? (
           <form onSubmit={save} className="rounded-xl border border-border bg-panel px-5 py-5">
-            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
+            <div className="eyebrow text-brand">
               {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
             </div>
             <h2 className="mt-1 font-display text-[32px] leading-[0.95] tracking-wide uppercase">{teamName(match.home)} vs {teamName(match.away)}</h2>
-            <div className="mt-4 grid grid-cols-[1fr_auto_1fr] text-xs tracking-[0.08em] text-muted-foreground uppercase">
+            <div className="kicker mt-4 grid grid-cols-[1fr_auto_1fr] text-muted-foreground">
               <span>{teamName(match.home)}</span>
               <span />
               <span className="text-right">{teamName(match.away)}</span>

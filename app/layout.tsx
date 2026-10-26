@@ -1,19 +1,22 @@
 import type { Metadata, Viewport } from "next"
-import { Barlow_Condensed, Inter } from "next/font/google"
+import { Big_Shoulders, Source_Sans_3 } from "next/font/google"
 import { SiteFrame } from "@/components/site-frame"
 import { TeamProvider } from "@/components/team-provider"
 import { readTeamCookie } from "@/lib/read-team"
 import "./globals.css"
 
-const inter = Inter({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-source",
+  display: "swap",
 })
 
-const barlow = Barlow_Condensed({
+const display = Big_Shoulders({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-barlow",
+  axes: ["opsz"],
+  variable: "--font-display-face",
+  display: "swap",
+  fallback: ["Arial Narrow", "Arial"],
 })
 
 export const viewport: Viewport = {
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const team = process.env.STATIC_EXPORT === "1" ? null : await readTeamCookie()
   return (
-    <html lang="en" className={`dark ${inter.variable} ${barlow.variable} h-full overflow-x-hidden antialiased`}>
+    <html lang="en" className={`dark ${sourceSans.variable} ${display.variable} h-full overflow-x-hidden antialiased`}>
       <head>
         <script
           dangerouslySetInnerHTML={{

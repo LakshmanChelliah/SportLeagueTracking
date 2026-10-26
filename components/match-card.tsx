@@ -25,14 +25,14 @@ export function MatchCard({
         yours && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
       )}
     >
-      <span className={cn("text-xs tracking-wider text-dim uppercase", yours && "text-brand")}>
+      <span className={cn("kicker text-dim", yours && "text-brand")}>
         {lead === "time" ? slotTime(match) : <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />}
         {yours ? " · You" : ""}
       </span>
       {assignedTeams(match) ? (
         <>
           <span className="min-w-0 font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-[28px]">{teamName(match.home)}</span>
-          <span className="text-[11px] tracking-[0.14em] text-dim uppercase max-md:text-xs max-md:font-sans max-md:font-semibold">vs</span>
+          <span className="kicker text-dim max-md:text-xs">vs</span>
           <span className="min-w-0 text-right font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-left max-md:text-[28px]">
             {teamName(match.away)}
           </span>

@@ -34,7 +34,7 @@ export function TabBar() {
               key={item.label}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold tracking-wider uppercase transition-all active:scale-90",
+                "flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold tracking-[0.12em] uppercase transition-all active:scale-90",
                 active && "text-[var(--tab-active)]",
               )}
             >
