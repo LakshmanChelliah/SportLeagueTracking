@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { CalendarButton } from "@/components/calendar-button"
-import { LocationLabel, NightPlaces } from "@/components/location-label"
+import { LocationLabel } from "@/components/location-label"
 import { MatchCard } from "@/components/match-card"
 import { NightLine } from "@/components/night-line"
 import { ScoreLine } from "@/components/score-line"
@@ -50,9 +50,9 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         <div>
           <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase max-md:text-[28px]">Schedule</h1>
           <p className="text-sm text-muted-foreground max-md:hidden">
-            Regina Street PS · one gym · games one after another. Your match is marked.
+            One gym · games one after another. Your match is marked.
           </p>
-          <p className="text-sm text-dim md:hidden">Regina Street PS · one gym. Your match is marked.</p>
+          <p className="text-sm text-dim md:hidden">One gym. Your match is marked.</p>
         </div>
         {team ? <CalendarButton matches={matches} team={team} venues={league.schedule.venues} outlook label="Add to Outlook" /> : null}
       </div>
@@ -78,9 +78,13 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                   <section key={gym.key} className={hideGymOnMobile ? "hidden overflow-hidden rounded-xl border border-border bg-panel md:block" : "overflow-hidden rounded-xl border border-border bg-panel"}>
                     <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3.5">
                       <h3 className="text-sm font-semibold">
-                        <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
+                        {multiGym ? (
+                          <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
+                        ) : (
+                          "One court"
+                        )}
                       </h3>
-                      <span className="shrink-0 text-xs text-dim">One court</span>
+                      <span className="shrink-0 text-xs text-dim">{multiGym ? "One court" : "Games one after another"}</span>
                     </div>
                     {gym.matches.map((match) => {
                       const result = results[match.id]
@@ -138,7 +142,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                               match={match}
                               result={result}
                               you={team}
-                              meta={<LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />}
+                              meta={formatTime(match.time)}
                             />
                           ) : (
                             <>
@@ -158,7 +162,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                                     </div>
                                   </div>
                                   <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-                                    <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                                    Warm-up {warmupLabel(match.time)}
                                   </div>
                                 </div>
                               ) : null}
@@ -175,16 +179,10 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
             <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
               <h3 className="text-sm font-semibold">Rest of the night</h3>
-              <span className="text-xs text-dim">
-                <NightPlaces
-                  matches={restMatches}
-                  venues={league.schedule.venues}
-                  gym={league.schedule.gym}
-                />
-              </span>
+              <span className="text-xs text-dim">{formatNight(night.date).replace(/^[^,]+, /, "")}</span>
             </div>
             {restMatches.map((match) => (
-              <NightLine key={match.id} match={match} venues={league.schedule.venues} />
+              <NightLine key={match.id} match={match} />
             ))}
           </section>
         ) : null}

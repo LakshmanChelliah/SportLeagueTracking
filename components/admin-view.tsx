@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
-import { LocationLabel } from "@/components/location-label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,7 +11,6 @@ import { coordinatorApiUrl } from "@/lib/endpoints"
 import { assignedTeams, formatNight, latestPlayedNight, matchTitle, nightsOf, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match, Result } from "@/lib/types"
-import { findVenue } from "@/lib/venues"
 
 const PIN_KEY = "gdra-pin"
 
@@ -201,9 +199,8 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
                   <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{slotTime(item)}</span>
                   <span className="font-display text-xl leading-none tracking-wide uppercase">{matchTitle(item)}</span>
                 </button>
-                <span className="text-right text-[11px] tracking-[0.08em] text-dim uppercase">
-                  <LocationLabel venue={findVenue(league.schedule.venues, item)} fallback={`Court ${item.court}`} />
-                  <span className="mt-1 block tracking-[0.1em]">{results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
+                <span className="text-right text-[11px] tracking-[0.1em] text-dim uppercase">
+                  {results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}
                 </span>
               </div>
             ))}
@@ -222,9 +219,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
         ) : null}
         {match && assignedTeams(match) ? (
           <form onSubmit={save} className="rounded-xl border border-border bg-panel px-5 py-5">
-            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
-              {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
-            </div>
+            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">{slotTime(match)}</div>
             <h2 className="mt-1 font-display text-[32px] leading-[0.95] tracking-wide uppercase">{teamName(match.home)} vs {teamName(match.away)}</h2>
             <div className="mt-4 grid grid-cols-[1fr_auto_1fr] text-xs tracking-[0.08em] text-muted-foreground uppercase">
               <span>{teamName(match.home)}</span>

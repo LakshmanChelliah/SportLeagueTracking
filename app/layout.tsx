@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     default: "GD RA Volleyball",
     template: "%s · GD RA Volleyball",
   },
-  description: "Schedule, standings, and scores for the GD RA Volleyball League. One gym at Regina Street PS.",
+  description: "Schedule, standings, and scores for the GD RA Volleyball League.",
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

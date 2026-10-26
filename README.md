@@ -1,6 +1,6 @@
 # GD RA Volleyball
 
-Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, one gym at Regina Street PS. Regular season runs Wednesday nights from October 28, 2026 through April 28, 2027, four games one after another from 6:00 PM to 9:00 PM. October 21 was a practice and is not on the board. Playoffs are May 5, May 12, and May 19.
+Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, one gym at Regina Street Alternative School. Regular season runs Wednesday nights from October 28, 2026 through April 28, 2027, four games one after another from 6:00 PM to 9:00 PM. October 21 was a practice and is not on the board. Playoffs are May 5, May 12, and May 19.
 
 ## Run locally
 

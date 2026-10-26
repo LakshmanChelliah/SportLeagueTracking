@@ -2,14 +2,12 @@
 
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
-import { LocationLabel } from "@/components/location-label"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
 import { diffLabel, formatTime, involves, opponent, seriesLabel, slotTime, warmupLabel } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName, type TeamId } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
-import { findVenue } from "@/lib/venues"
 import { cn } from "cn"
 
 export function TeamView({ league, team }: { league: LeagueData; team: TeamId }) {
@@ -39,11 +37,8 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
 
       {next ? (
         <section className="mb-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
-          <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+          <div className="border-b border-border px-4 py-3">
             <h2 className="text-sm font-semibold">Next match</h2>
-            <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">
-              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
-            </span>
           </div>
           <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)]">
             <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
@@ -53,34 +48,25 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <div className="flex items-baseline justify-between px-4 py-3.5">
             <span className="text-sm text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)}</span>
-            <span className="text-xs text-dim">
-              {findVenue(league.schedule.venues, next) ? "One court · " : ""}
-              Warm-up {warmupLabel(next.time)}
-            </span>
+            <span className="text-xs text-dim">Warm-up {warmupLabel(next.time)}</span>
           </div>
         </section>
       ) : null}
 
       {next ? (
         <section className="mb-[18px] overflow-hidden rounded-xl border border-border bg-panel max-md:hidden">
-          <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
+          <div className="border-b border-border px-4 py-3.5">
             <h2 className="text-sm font-semibold">Next match</h2>
-            <span className="text-xs text-dim">
-              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
-            </span>
           </div>
           <div className="grid grid-cols-[118px_1fr_auto_1fr] items-center gap-2 bg-[var(--highlight)] px-4 py-3 shadow-[inset_3px_0_0_var(--brand)]">
-            <span className="text-xs tracking-wider text-brand uppercase">
-              {findVenue(league.schedule.venues, next) ? "One court" : `Court ${next.court}`}
-            </span>
+            <span className="text-xs tracking-wider text-brand uppercase">One court</span>
             <span className="font-display text-[26px] uppercase">{teamName(team)}</span>
             <span className="text-[11px] tracking-[0.14em] text-dim uppercase">vs</span>
             <span className="text-right font-display text-[26px] uppercase">{teamName(opponent(next, team))}</span>
           </div>
           <div className="flex items-baseline justify-between border-t border-border px-4 py-3.5">
             <h2 className="text-sm font-medium text-muted-foreground">
-              {formatLine(next.date)} · {formatTime(next.time)} ·{" "}
-              <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={league.schedule.gym} />
+              {formatLine(next.date)} · {formatTime(next.time)}
             </h2>
             <span className="text-xs text-dim">Warm up at {warmupLabel(next.time)}</span>
           </div>
@@ -105,16 +91,13 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
             <div key={match.id}>
               <div
                 className={cn(
-                  "hidden grid-cols-[92px_88px_80px_1fr_auto] items-center gap-3 border-t border-border py-3 md:grid",
+                  "hidden grid-cols-[92px_88px_1fr_auto] items-center gap-3 border-t border-border py-3 md:grid",
                   upcoming && next?.id === match.id && "bg-[var(--highlight)] px-3 shadow-[inset_3px_0_0_var(--brand)]",
                   upcoming && next?.id !== match.id && "text-muted-foreground",
                 )}
               >
                 <span className="font-display text-lg tracking-wide uppercase">{formatShort(match.date)}</span>
                 <span className="font-display text-base tracking-wide text-muted-foreground uppercase">{slotTime(match)}</span>
-                <span className="font-display text-sm tracking-wide text-dim uppercase">
-                  <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
-                </span>
                 <span className="font-medium">vs {teamName(opponent(match, team))}</span>
                 <span className="text-right font-display text-lg">
                   {outcome === "Next" ? <span className="font-sans text-xs font-semibold tracking-[0.12em] text-brand uppercase">Next</span> : outcome}
@@ -137,9 +120,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                   )}
                 </div>
                 <div className="mt-1 font-display text-[26px] leading-none tracking-wide uppercase">vs {teamName(opponent(match, team))}</div>
-                <div className="mt-1.5 text-sm text-dim">
-                  {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
-                </div>
+                <div className="mt-1.5 text-sm text-dim">{slotTime(match)}</div>
                 {scoreText ? <div className="mt-1 text-xs text-dim">{scoreText}</div> : null}
               </div>
             </div>

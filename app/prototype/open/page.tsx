@@ -6,5 +6,5 @@ export const metadata: Metadata = { title: "Title sequence" }
 
 export default function OpenPage() {
   const { schedule } = getLeague()
-  return <TitleSequence matches={schedule.matches} venues={schedule.venues} />
+  return <TitleSequence matches={schedule.matches} />
 }

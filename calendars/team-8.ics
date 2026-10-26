@@ -3,8 +3,8 @@ VERSION:2.0
 PRODID:-//GD RA Volleyball//Schedule//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-NAME:GD RA Volleyball · Team 8
-X-WR-CALNAME:GD RA Volleyball · Team 8
+NAME:GD RA Volleyball · How I Set My Mother
+X-WR-CALNAME:GD RA Volleyball · How I Set My Mother
 X-WR-TIMEZONE:America/Toronto
 BEGIN:VTIMEZONE
 TZID:America/Toronto
@@ -24,12 +24,219 @@ RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:2026-10-21-1800-c1-team8@gd-ra-volleyball
-DTSTAMP:20261021T220000Z
-DTSTART;TZID=America/Toronto:20261021T180000
-DTEND;TZID=America/Toronto:20261021T190000
-SUMMARY:GD RA Volleyball · vs Team 1
+UID:2026-10-28-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20261029T010000Z
+DTSTART;TZID=America/Toronto:20261028T210000
+DTEND;TZID=America/Toronto:20261028T220000
+SUMMARY:GD RA Volleyball · vs The Upsetters
 LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
-DESCRIPTION:6:00 PM · Regina Street PS. One court. Warm up 10 minutes before.
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-04-2000-c1-team8@gd-ra-volleyball
+DTSTAMP:20261105T010000Z
+DTSTART;TZID=America/Toronto:20261104T200000
+DTEND;TZID=America/Toronto:20261104T210000
+SUMMARY:GD RA Volleyball · vs Block Party
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:8:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-11-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20261112T000000Z
+DTSTART;TZID=America/Toronto:20261111T190000
+DTEND;TZID=America/Toronto:20261111T200000
+SUMMARY:GD RA Volleyball · vs Advanced Net-ronics
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-18-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20261119T020000Z
+DTSTART;TZID=America/Toronto:20261118T210000
+DTEND;TZID=America/Toronto:20261118T220000
+SUMMARY:GD RA Volleyball · vs Sets on the Beach
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-25-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20261125T230000Z
+DTSTART;TZID=America/Toronto:20261125T180000
+DTEND;TZID=America/Toronto:20261125T190000
+SUMMARY:GD RA Volleyball · vs Tank U\, Next
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-12-02-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20261203T000000Z
+DTSTART;TZID=America/Toronto:20261202T190000
+DTEND;TZID=America/Toronto:20261202T200000
+SUMMARY:GD RA Volleyball · vs The Bumpy Bunch
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-12-09-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20261209T230000Z
+DTSTART;TZID=America/Toronto:20261209T180000
+DTEND;TZID=America/Toronto:20261209T190000
+SUMMARY:GD RA Volleyball · vs Grand HEIST Auto
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-12-16-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20261217T020000Z
+DTSTART;TZID=America/Toronto:20261216T210000
+DTEND;TZID=America/Toronto:20261216T220000
+SUMMARY:GD RA Volleyball · vs The Upsetters
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-01-06-2000-c1-team8@gd-ra-volleyball
+DTSTAMP:20270107T010000Z
+DTSTART;TZID=America/Toronto:20270106T200000
+DTEND;TZID=America/Toronto:20270106T210000
+SUMMARY:GD RA Volleyball · vs Block Party
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:8:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-01-13-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20270114T000000Z
+DTSTART;TZID=America/Toronto:20270113T190000
+DTEND;TZID=America/Toronto:20270113T200000
+SUMMARY:GD RA Volleyball · vs Advanced Net-ronics
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-01-20-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20270121T020000Z
+DTSTART;TZID=America/Toronto:20270120T210000
+DTEND;TZID=America/Toronto:20270120T220000
+SUMMARY:GD RA Volleyball · vs Sets on the Beach
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-01-27-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20270127T230000Z
+DTSTART;TZID=America/Toronto:20270127T180000
+DTEND;TZID=America/Toronto:20270127T190000
+SUMMARY:GD RA Volleyball · vs Tank U\, Next
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-02-03-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20270204T000000Z
+DTSTART;TZID=America/Toronto:20270203T190000
+DTEND;TZID=America/Toronto:20270203T200000
+SUMMARY:GD RA Volleyball · vs The Bumpy Bunch
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-02-10-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20270210T230000Z
+DTSTART;TZID=America/Toronto:20270210T180000
+DTEND;TZID=America/Toronto:20270210T190000
+SUMMARY:GD RA Volleyball · vs Grand HEIST Auto
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-02-17-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20270218T020000Z
+DTSTART;TZID=America/Toronto:20270217T210000
+DTEND;TZID=America/Toronto:20270217T220000
+SUMMARY:GD RA Volleyball · vs The Upsetters
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-02-24-2000-c1-team8@gd-ra-volleyball
+DTSTAMP:20270225T010000Z
+DTSTART;TZID=America/Toronto:20270224T200000
+DTEND;TZID=America/Toronto:20270224T210000
+SUMMARY:GD RA Volleyball · vs Block Party
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:8:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-03-03-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20270304T000000Z
+DTSTART;TZID=America/Toronto:20270303T190000
+DTEND;TZID=America/Toronto:20270303T200000
+SUMMARY:GD RA Volleyball · vs Advanced Net-ronics
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-03-10-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20270311T020000Z
+DTSTART;TZID=America/Toronto:20270310T210000
+DTEND;TZID=America/Toronto:20270310T220000
+SUMMARY:GD RA Volleyball · vs Sets on the Beach
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-03-24-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20270324T220000Z
+DTSTART;TZID=America/Toronto:20270324T180000
+DTEND;TZID=America/Toronto:20270324T190000
+SUMMARY:GD RA Volleyball · vs Tank U\, Next
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-03-31-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20270331T230000Z
+DTSTART;TZID=America/Toronto:20270331T190000
+DTEND;TZID=America/Toronto:20270331T200000
+SUMMARY:GD RA Volleyball · vs The Bumpy Bunch
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-04-07-1800-c1-team8@gd-ra-volleyball
+DTSTAMP:20270407T220000Z
+DTSTART;TZID=America/Toronto:20270407T180000
+DTEND;TZID=America/Toronto:20270407T190000
+SUMMARY:GD RA Volleyball · vs Grand HEIST Auto
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:6:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-04-14-2100-c1-team8@gd-ra-volleyball
+DTSTAMP:20270415T010000Z
+DTSTART;TZID=America/Toronto:20270414T210000
+DTEND;TZID=America/Toronto:20270414T220000
+SUMMARY:GD RA Volleyball · vs The Upsetters
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:9:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-04-21-2000-c1-team8@gd-ra-volleyball
+DTSTAMP:20270422T000000Z
+DTSTART;TZID=America/Toronto:20270421T200000
+DTEND;TZID=America/Toronto:20270421T210000
+SUMMARY:GD RA Volleyball · vs Block Party
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:8:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
+END:VEVENT
+BEGIN:VEVENT
+UID:2027-04-28-1900-c1-team8@gd-ra-volleyball
+DTSTAMP:20270428T230000Z
+DTSTART;TZID=America/Toronto:20270428T190000
+DTEND;TZID=America/Toronto:20270428T200000
+SUMMARY:GD RA Volleyball · vs Advanced Net-ronics
+LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
+DESCRIPTION:7:00 PM · Regina Street Alternative School. One court. Warm up 10 minutes before.
 END:VEVENT
 END:VCALENDAR

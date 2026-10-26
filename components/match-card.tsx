@@ -1,4 +1,3 @@
-import { LocationLabel } from "@/components/location-label"
 import { assignedTeams, involves, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Venue } from "@/lib/types"
@@ -26,7 +25,7 @@ export function MatchCard({
       )}
     >
       <span className={cn("text-xs tracking-wider text-dim uppercase", yours && "text-brand")}>
-        {lead === "time" ? slotTime(match) : <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />}
+        {lead === "time" ? slotTime(match) : findVenue(venues, match) ? "One court" : `Court ${match.court}`}
         {yours ? " · You" : ""}
       </span>
       {assignedTeams(match) ? (

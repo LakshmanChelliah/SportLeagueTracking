@@ -1,7 +1,7 @@
 {
   "league": "GD RA Volleyball",
   "season": "2026-27",
-  "gym": "Regina Street PS",
+  "gym": "Regina Street Alternative School",
   "timezone": "America/Toronto",
   "through": "2027-05-19",
   "teams": [
@@ -17,7 +17,7 @@
   "venues": [
     {
       "id": "regina",
-      "name": "Regina Street PS",
+      "name": "Regina Street Alternative School",
       "address": "2599 Regina St, Ottawa, ON K2B 8A5"
     }
   ],
