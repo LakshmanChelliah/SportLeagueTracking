@@ -118,53 +118,73 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         <div className="md:hidden">
           <section className="overflow-hidden rounded-xl border border-border bg-panel">
             <div className="px-4 pt-4">
-              <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</div>
-              <div className="mt-1 text-[13px] text-muted-foreground">{recordLine(mine)}</div>
-              <div className="mt-4 font-display text-[34px] leading-none tracking-wide uppercase">{formatNight(focus.date)}</div>
-              <div className="mt-1.5 text-[13px] text-dim">
-                <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={league.schedule.gym} />
-                {" · warm-up "}
-                {warmupLabel(focus.time)}
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</div>
+                {mine && mine.wins + mine.losses > 0 ? (
+                  <div className="text-right text-xs text-muted-foreground">{recordLine(mine)}</div>
+                ) : null}
               </div>
-            </div>
-            <div className="mx-4 mt-4 overflow-hidden rounded-lg bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]">
-              <div className="grid grid-cols-2 gap-3 px-3.5 pt-3.5">
+              <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
                   <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                  <div className="mt-1 font-display text-4xl leading-none tracking-wide uppercase">{teamName(team)}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
+                  <div className="mt-1 font-display text-4xl leading-none tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
                 </div>
               </div>
-              <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">
-                <span className="font-display text-[28px] leading-none tracking-wide">{formatTime(focus.time)}</span>
-                <span className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-                  {findVenue(league.schedule.venues, focus) ? "One court" : `Court ${focus.court}`}
+              <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-3">
+                <span className="font-display text-3xl leading-none tracking-wide">{formatTime(focus.time)}</span>
+                <span className="text-right text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+                  <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
+                </span>
+              </div>
+              <div className="mt-2 text-[13px] leading-5 text-dim">
+                {formatNight(focus.date)}
+                {" · warm-up "}
+                {warmupLabel(focus.time)}
+                <span className="mt-0.5 block">
+                  <LocationLabel venue={findVenue(league.schedule.venues, focus)} fallback={league.schedule.gym} />
                 </span>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4">
-              <span className="font-display text-lg tracking-[0.06em] uppercase">
-                <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
-              </span>
-              <span className="flex items-center gap-2">
-                <KeepScoreLink matchId={focus.id} />
-                <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
-              </span>
+            <div className="grid grid-cols-2 gap-2 p-3">
+              <KeepScoreLink className="h-12 w-full justify-center" matchId={focus.id} />
+              <CalendarButton
+                className="flex h-12 w-full items-center justify-center whitespace-nowrap"
+                matches={[focus]}
+                team={team}
+                venues={league.schedule.venues}
+                label="Add to calendar"
+              />
             </div>
           </section>
 
           {others.length ? (
             <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
-              <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+              <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
                 <h2 className="text-sm font-semibold">Rest of the night</h2>
-                <span className="text-xs text-dim">{formatNight(night.date).replace(/^[^,]+, /, "")}</span>
+                <span className="min-w-0 truncate text-right text-xs text-dim">
+                  {multiGym ? (
+                    formatNight(night.date).replace(/^[^,]+, /, "")
+                  ) : (
+                    <NightPlaces matches={others} venues={league.schedule.venues} gym={league.schedule.gym} />
+                  )}
+                </span>
               </div>
-              {others.map((match) => (
-                <NightLine key={match.id} match={match} venues={league.schedule.venues} />
-              ))}
+              <div className="divide-y divide-border">
+                {others.map((match) => (
+                  <NightLine
+                    key={match.id}
+                    match={match}
+                    you={team}
+                    venues={league.schedule.venues}
+                    result={results[match.id]}
+                    showPlace={multiGym}
+                  />
+                ))}
+              </div>
             </section>
           ) : null}
 
@@ -183,9 +203,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           ) : null}
 
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
-            <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border px-4 py-1.5">
               <h2 className="text-sm font-semibold">Standings</h2>
-              <Link href="/standings" className="text-xs font-medium text-brand">Full table</Link>
+              <Link href="/standings" className="inline-flex min-h-11 items-center text-xs font-medium text-brand">Full table</Link>
             </div>
             <StandingsList rows={table} you={team} />
           </section>
@@ -198,9 +218,9 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           <h1 className="mt-2 font-display text-5xl uppercase">All caught up</h1>
           <p className="mt-2 text-sm text-muted-foreground">Every listed night for {teamName(team)} has a score.</p>
           <section className="mt-4 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
-            <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
+            <div className="flex items-center justify-between border-b border-border px-4 py-1.5">
               <h2 className="text-sm font-semibold">Standings</h2>
-              <Link href="/standings" className="text-xs font-medium text-brand">Full table</Link>
+              <Link href="/standings" className="inline-flex min-h-11 items-center text-xs font-medium text-brand">Full table</Link>
             </div>
             <StandingsList rows={table} you={team} />
           </section>

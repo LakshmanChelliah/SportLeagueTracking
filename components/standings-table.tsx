@@ -60,7 +60,7 @@ export function StandingsList({ rows, you }: { rows: Standing[]; you?: number | 
         <li
           key={row.team}
           className={cn(
-            "grid grid-cols-[28px_1fr_auto_auto] items-center gap-2 border-t border-border px-4 py-1.5 first:border-t-0",
+            "grid min-h-12 grid-cols-[28px_1fr_auto_auto] items-center gap-2 border-t border-border px-4 py-2.5 first:border-t-0",
             you === row.team && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
           )}
         >

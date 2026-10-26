@@ -25,7 +25,7 @@ export function WeekStrip({
             key={date}
             href={`/schedule?night=${date}`}
             className={cn(
-              "min-w-[76px] shrink-0 rounded-[10px] border border-border px-2 py-2.5 text-center",
+              "flex min-h-12 min-w-[76px] shrink-0 flex-col items-center justify-center rounded-[10px] border border-border px-2 py-2.5 text-center",
               "md:min-w-0 md:rounded-none md:border-0 md:border-r md:border-border md:px-1.5 md:py-3 md:last:border-r-0",
               active && "border-brand bg-[var(--chip)] md:shadow-[inset_0_-2px_0_var(--brand)]",
             )}

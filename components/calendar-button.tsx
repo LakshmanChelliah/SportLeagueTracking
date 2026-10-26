@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { cn } from "cn"
 
 const triggerClass =
   "rounded-lg bg-brand px-3.5 py-2.5 text-[13px] font-semibold text-[var(--brand-ink)] transition-transform active:scale-95 max-md:border max-md:border-border max-md:bg-transparent max-md:text-foreground"
@@ -21,12 +22,14 @@ export function CalendarButton({
   venues,
   label,
   outlook = false,
+  className,
 }: {
   matches: Match[]
   team: number
   venues: Venue[]
   label: string
   outlook?: boolean
+  className?: string
 }) {
   function download() {
     const ics = buildCalendar(matches, team, venues)
@@ -41,7 +44,7 @@ export function CalendarButton({
 
   if (!outlook) {
     return (
-      <button type="button" onClick={download} className={triggerClass}>
+      <button type="button" onClick={download} className={cn(triggerClass, className)}>
         {label}
       </button>
     )
@@ -51,7 +54,7 @@ export function CalendarButton({
 
   return (
     <Dialog>
-      <DialogTrigger className={triggerClass}>{label}</DialogTrigger>
+      <DialogTrigger className={cn(triggerClass, className)}>{label}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{calendarTitle(team)}</DialogTitle>
