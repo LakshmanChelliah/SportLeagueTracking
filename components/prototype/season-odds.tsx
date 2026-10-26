@@ -46,7 +46,7 @@ export function SeasonOdds({ matches }: { matches: Match[] }) {
 
       <div className="flex flex-1 flex-col px-5 pt-8 pb-8">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-[#a1a1aa] uppercase">
-          After Oct 21 · {teamName(leader.team)} leads
+          After Oct 28 · {teamName(leader.team)} leads
         </p>
         <h1 className="mt-3 font-display text-5xl leading-none tracking-wide uppercase">{teamName(team)}</h1>
 
@@ -79,7 +79,7 @@ export function SeasonOdds({ matches }: { matches: Match[] }) {
           </div>
         ) : (
           <p className="mt-10 max-w-sm text-sm leading-relaxed text-[#a1a1aa]">
-            Three sample nights are already in. Run the games that are left, ten times on screen, then a thousand more behind them.
+            October 28 is already in the sample. Run the games that are left, ten times on screen, then a thousand more behind them.
           </p>
         )}
 
@@ -97,7 +97,7 @@ export function SeasonOdds({ matches }: { matches: Match[] }) {
             {TEAMS.map((id) => {
               const share = Math.round((odds.titles[id] / odds.runs) * 100)
               return (
-                <li key={id} className="grid grid-cols-[72px_1fr_36px] items-center gap-3 text-sm">
+                <li key={id} className="grid grid-cols-[minmax(0,1.4fr)_1fr_36px] items-center gap-3 text-sm">
                   <span className={id === team ? "font-semibold" : "text-[#a1a1aa]"}>{teamName(id)}</span>
                   <span className="h-1.5 overflow-hidden rounded-full bg-white/10">
                     <span className="block h-full rounded-full bg-[#e8572a]" style={{ width: `${share}%`, opacity: id === team ? 1 : 0.45 }} />

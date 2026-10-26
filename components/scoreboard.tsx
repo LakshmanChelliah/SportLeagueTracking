@@ -19,7 +19,7 @@ import {
   type LiveGame,
   type Side,
 } from "@/lib/live-score"
-import { byStart, formatChip, formatNight, formatTime, involves } from "@/lib/schedule"
+import { assignedTeams, byStart, formatChip, formatNight, formatTime, involves, matchTitle } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -55,6 +55,15 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   const savedId = picked ?? queryMatch ?? snap.matchId
   const matchId = pickMatchId(matches, team, results, savedId, snap.boards)
   const match = matches.find((item) => item.id === matchId) ?? matches[0]
+  if (!assignedTeams(match)) {
+    return (
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-2 px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] md:w-[min(760px,calc(100%-48px))] md:py-7">
+        <h1 className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
+        <MatchPicker matches={matches} match={match} team={team} onPick={(id) => { setPicked(id); getLiveStore().select(id) }} />
+        <p className="text-sm text-muted-foreground">{matchTitle(match)}. Teams for this slot are not set yet, so there is nothing to score.</p>
+      </div>
+    )
+  }
   const board = snap.boards[match.id] ?? blankBoard(0)
   const yours = involves(match, team)
   const leftSide: Side = yours && match.away === team ? "away" : "home"
@@ -78,26 +87,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
         <span className="text-[11px] text-dim">{snap.persistOk ? "On this phone" : "Not saved"}</span>
       </div>
 
-      {matches.length > 1 ? (
-        <select
-          id="live-match"
-          aria-label="Match"
-          className="h-14 w-full truncate rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide outline-none md:text-2xl"
-          value={match.id}
-          onChange={(event) => {
-            setPicked(event.target.value)
-            live.select(event.target.value)
-          }}
-        >
-          {matches.map((item) => (
-            <option key={item.id} value={item.id}>{matchLabel(item, team, matches)}</option>
-          ))}
-        </select>
-      ) : (
-        <div className="flex h-14 items-center rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide uppercase md:text-2xl">
-          {teamName(match.home)} vs {teamName(match.away)}
-        </div>
-      )}
+      <MatchPicker matches={matches} match={match} team={team} onPick={(id) => { setPicked(id); live.select(id) }} />
 
       <div className="hidden items-baseline justify-between gap-3 text-sm text-muted-foreground md:flex">
         <span>{formatNight(match.date)} · {formatTime(match.time)}</span>
@@ -257,7 +247,7 @@ function ScorePad({
         className="flex min-h-0 flex-1 touch-manipulation flex-col items-center justify-center gap-1 px-2 py-2 active:bg-brand/25"
       >
         <span className={cn("text-[11px] font-semibold tracking-[0.16em] uppercase", yours ? "text-brand" : "text-dim")}>{role}</span>
-        <span className="font-display text-xl leading-none tracking-wide uppercase">{name}</span>
+        <span className="max-w-full text-center font-display text-base leading-tight tracking-wide text-balance uppercase md:text-xl">{name}</span>
         <span className={cn("font-display text-[clamp(4.25rem,24vw,7rem)] leading-none tracking-wide tabular-nums", score < other && "text-muted-foreground")}>
           {score}
         </span>
@@ -300,11 +290,44 @@ function endControl(board: LiveBoard) {
   return { canEnd, label }
 }
 
+function MatchPicker({
+  matches,
+  match,
+  team,
+  onPick,
+}: {
+  matches: Match[]
+  match: Match
+  team: number
+  onPick: (id: string) => void
+}) {
+  if (matches.length <= 1) {
+    return (
+      <div className="flex h-14 items-center rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide uppercase md:text-2xl">
+        {matchTitle(match)}
+      </div>
+    )
+  }
+  return (
+    <select
+      id="live-match"
+      aria-label="Match"
+      className="h-14 w-full truncate rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide outline-none md:text-2xl"
+      value={match.id}
+      onChange={(event) => onPick(event.target.value)}
+    >
+      {matches.map((item) => (
+        <option key={item.id} value={item.id}>{matchLabel(item, team, matches)}</option>
+      ))}
+    </select>
+  )
+}
+
 function matchLabel(match: Match, team: number, matches: Match[]) {
   const nights = new Set(matches.map((item) => item.date)).size
   const when = nights > 1 ? `${formatChip(match.date)} · ${formatTime(match.time)}` : formatTime(match.time)
   const you = involves(match, team) ? " · You" : ""
-  return `${when} · ${teamName(match.home)} vs ${teamName(match.away)}${you}`
+  return `${when} · ${matchTitle(match)}${you}`
 }
 
 function sideScore(game: LiveGame, side: Side) {

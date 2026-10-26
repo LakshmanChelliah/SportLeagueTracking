@@ -1,5 +1,5 @@
 import { LocationLabel } from "@/components/location-label"
-import { formatTime, involves, setCounts } from "@/lib/schedule"
+import { assignedTeams, involves, setCounts, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Result, Venue } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -19,9 +19,10 @@ export function NightLine({
   showPlace?: boolean
 }) {
   const yours = you != null && involves(match, you)
-  const sets = result ? setCounts(result) : null
-  const home = yours && match.home === you ? "You" : teamName(match.home)
-  const away = yours && match.away === you ? "You" : teamName(match.away)
+  const sets = result && assignedTeams(match) ? setCounts(result) : null
+  const title = assignedTeams(match)
+    ? `${yours && match.home === you ? "You" : teamName(match.home)} vs ${yours && match.away === you ? "You" : teamName(match.away)}`
+    : match.label ?? "To be set"
   return (
     <div
       className={cn(
@@ -29,13 +30,10 @@ export function NightLine({
         yours && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
       )}
     >
-      <div className="w-[4.75rem] shrink-0 font-display text-lg leading-none tracking-wide">{formatTime(match.time)}</div>
+      <div className="w-[5.75rem] shrink-0 font-display text-base leading-none tracking-wide">{slotTime(match)}</div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-medium">
-          {home}
-          <span className="font-normal text-dim"> vs </span>
-          {away}
-        </div>
+        <div className="truncate text-[15px] font-medium">{title}</div>
+        {match.note ? <div className="mt-0.5 truncate text-xs text-dim">{match.note}</div> : null}
         {showPlace ? (
           <div className="mt-0.5 truncate text-xs text-dim">
             <LocationLabel venue={findVenue(venues, match)} fallback={`Court ${match.court}`} />

@@ -76,7 +76,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
           <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
             <h2 className="font-display text-2xl leading-none tracking-wide uppercase">{formatNight(night.date)}</h2>
             <span className="shrink-0 text-xs text-dim">
-              {playedCount ? `${playedCount} of ${ordered.length} final` : `${ordered.length} matches`}
+              {playedCount ? `${playedCount} of ${ordered.length} final` : `${ordered.length} ${ordered.length === 1 ? "match" : "matches"}`}
             </span>
           </div>
           <div className="border-b border-border px-4 py-2.5 text-xs text-dim">

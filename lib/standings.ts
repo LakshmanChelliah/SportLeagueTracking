@@ -21,6 +21,7 @@ export function standings(matches: Match[], results: ResultsFile): Standing[] {
     .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time) || a.court - b.court)
 
   for (const match of played) {
+    if (match.home == null || match.away == null) continue
     const result = results[match.id]
     for (const [homeScore, awayScore] of result.games) {
       const home = rows.get(match.home)!

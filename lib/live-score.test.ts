@@ -129,13 +129,13 @@ describe("live score rules", () => {
 
   it("keeps a saved match, otherwise the one already being scored", () => {
     const started = applyPoint(blankBoard(5), "away", 1, 9)
-    expect(pickMatchId(matches, 1, {}, null, {})).toBe("2026-10-21-1800-c1")
-    expect(pickMatchId(matches, 2, {}, null, { "2026-10-21-1900-c1": started })).toBe("2026-10-21-1900-c1")
-    expect(pickMatchId(matches, 2, {}, "2026-10-21-1800-c1", { "2026-10-21-1900-c1": started })).toBe("2026-10-21-1800-c1")
+    expect(pickMatchId(matches, 1, {}, null, {})).toBe("2026-10-28-2000-c1")
+    expect(pickMatchId(matches, 2, {}, null, { "2026-10-28-1800-c1": started })).toBe("2026-10-28-1800-c1")
+    expect(pickMatchId(matches, 2, {}, "2026-10-28-2000-c1", { "2026-10-28-1800-c1": started })).toBe("2026-10-28-2000-c1")
     const results: ResultsFile = {
-      "2026-10-21-1900-c1": { games: [[21, 0], [21, 0], [21, 0]] },
+      "2026-10-28-1800-c1": { games: [[21, 0], [21, 0], [21, 0]] },
     }
-    expect(pickMatchId(matches, 2, results, null, {})).toBe("2026-10-21-1900-c1")
+    expect(pickMatchId(matches, 2, results, null, {})).toBe("2026-11-04-2100-c1")
   })
 })
 

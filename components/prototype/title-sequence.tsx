@@ -39,11 +39,11 @@ export function TitleSequence({ matches, venues }: { matches: Match[]; venues: V
         <div key={run} className="flex flex-1 flex-col justify-center px-5 pb-16">
           <div className="proto-wipe h-[3px] w-28 bg-[#e8572a]" />
           <p className="proto-rise proto-d1 mt-8 text-[13px] font-semibold tracking-[0.28em] text-[#e8572a] uppercase">GD RA Volleyball</p>
-          <div className="proto-rise proto-d4 mt-8 font-display text-[clamp(76px,18vw,168px)] leading-[0.78] tracking-wide uppercase">
+          <div className="proto-rise proto-d4 mt-8 font-display text-[clamp(40px,8vw,92px)] leading-[0.84] tracking-wide uppercase text-balance">
             {teamName(team)}
           </div>
           <div className="proto-rise proto-d5 mt-4 text-[12px] font-semibold tracking-[0.32em] text-[#71717a] uppercase">versus</div>
-          <div className="proto-rise proto-d6 mt-4 font-display text-[clamp(76px,18vw,168px)] leading-[0.78] tracking-wide uppercase">
+          <div className="proto-rise proto-d6 mt-4 font-display text-[clamp(40px,8vw,92px)] leading-[0.84] tracking-wide uppercase text-balance">
             {teamName(foe)}
           </div>
           <p className="proto-rise proto-d7 mt-10 text-sm tracking-[0.12em] text-[#a1a1aa] uppercase">
