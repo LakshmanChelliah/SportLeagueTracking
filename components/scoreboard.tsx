@@ -69,85 +69,79 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   const ending = endControl(board)
   const live = getLiveStore()
 
+  const action = "min-h-14 touch-manipulation rounded-xl px-2 text-base font-semibold whitespace-nowrap disabled:opacity-40"
+
   return (
-    <div className="mx-auto flex w-[min(720px,calc(100%-32px))] flex-col gap-3 py-5 md:w-[min(760px,calc(100%-48px))] md:py-7">
-      <div className="flex items-baseline justify-between gap-3">
-        <h1 className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
-        <span className="text-xs text-dim">{snap.persistOk ? "On this phone" : "Not saved"}</span>
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-2 px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] max-md:min-h-0 md:w-[min(760px,calc(100%-48px))] md:gap-3 md:py-7">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
+        <span className="text-[11px] text-dim">{snap.persistOk ? "On this phone" : "Not saved"}</span>
       </div>
 
-      <section className="overflow-hidden rounded-xl border border-border bg-panel">
-        <div className="px-4 py-3">
-          {matches.length > 1 ? (
-            <>
-              <label htmlFor="live-match" className="text-xs tracking-wider text-dim uppercase">Match</label>
-              <select
-                id="live-match"
-                className="mt-1 w-full truncate bg-transparent font-display text-xl tracking-wide outline-none md:text-2xl"
-                value={match.id}
-                onChange={(event) => {
-                  setPicked(event.target.value)
-                  live.select(event.target.value)
-                }}
-              >
-                {matches.map((item) => (
-                  <option key={item.id} value={item.id}>{matchLabel(item, team, matches)}</option>
-                ))}
-              </select>
-            </>
-          ) : (
-            <>
-              <div className="text-xs tracking-wider text-dim uppercase">Match</div>
-              <div className="mt-1 font-display text-2xl tracking-wide uppercase">
-                {teamName(match.home)} vs {teamName(match.away)}
-              </div>
-            </>
-          )}
+      {matches.length > 1 ? (
+        <select
+          id="live-match"
+          aria-label="Match"
+          className="h-14 w-full truncate rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide outline-none md:text-2xl"
+          value={match.id}
+          onChange={(event) => {
+            setPicked(event.target.value)
+            live.select(event.target.value)
+          }}
+        >
+          {matches.map((item) => (
+            <option key={item.id} value={item.id}>{matchLabel(item, team, matches)}</option>
+          ))}
+        </select>
+      ) : (
+        <div className="flex h-14 items-center rounded-xl border border-border bg-panel px-3 font-display text-base tracking-wide uppercase md:text-2xl">
+          {teamName(match.home)} vs {teamName(match.away)}
         </div>
-        <div className="flex items-baseline justify-between gap-3 border-t border-border px-4 py-2.5 text-sm text-muted-foreground">
-          <span>{formatNight(match.date)} · {formatTime(match.time)}</span>
-          <span className="shrink-0 text-right">
-            <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
-          </span>
-        </div>
-      </section>
+      )}
+
+      <div className="hidden items-baseline justify-between gap-3 text-sm text-muted-foreground md:flex">
+        <span>{formatNight(match.date)} · {formatTime(match.time)}</span>
+        <span className="shrink-0 text-right">
+          <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+        </span>
+      </div>
 
       {results[match.id] ? (
-        <p className="text-sm text-muted-foreground">Official score is already posted. This board stays on your phone.</p>
+        <p className="text-xs leading-4 text-muted-foreground">Official score is already posted. This board stays on your phone.</p>
       ) : null}
 
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-3xl tracking-wide uppercase">Games {youSets}–{themSets}</h2>
-        <span className="text-xs tracking-[0.14em] text-dim uppercase">Game {board.active + 1} of 3</span>
+      <div className="flex items-stretch gap-2">
+        <div className="flex w-[4.5rem] shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-panel">
+          <span className="text-[10px] tracking-[0.14em] text-dim uppercase">Games</span>
+          <span className="font-display text-2xl leading-none tabular-nums">{youSets}–{themSets}</span>
+        </div>
+        <div className="grid min-w-0 flex-1 grid-cols-3 gap-2">
+          {board.games.map((game, index) => {
+            const gameIndex = index as GameIndex
+            const closed = board.final[gameIndex] || gameWinner(game[0], game[1]) != null
+            const selected = board.active === gameIndex
+            return (
+              <button
+                key={gameIndex}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => live.showGame(match.id, gameIndex)}
+                className={cn(
+                  "flex min-h-14 touch-manipulation flex-col items-center justify-center gap-0.5 overflow-hidden rounded-xl border px-1",
+                  selected ? "border-brand bg-[var(--highlight)]" : "border-border bg-panel",
+                )}
+              >
+                <span className="max-w-full truncate text-[10px] tracking-[0.14em] text-dim uppercase">G{gameIndex + 1}{closed ? " · final" : ""}</span>
+                <span className="font-display text-xl leading-none tabular-nums">
+                  {sideScore(game, leftSide)}–{sideScore(game, rightSide)}
+                </span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        {board.games.map((game, index) => {
-          const gameIndex = index as GameIndex
-          const closed = board.final[gameIndex] || gameWinner(game[0], game[1]) != null
-          const selected = board.active === gameIndex
-          return (
-            <button
-              key={gameIndex}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => live.showGame(match.id, gameIndex)}
-              className={cn(
-                "flex flex-col items-center gap-1 rounded-lg border px-2 py-2",
-                selected ? "border-brand bg-[var(--highlight)]" : "border-border bg-panel",
-              )}
-            >
-              <span className="text-[11px] tracking-[0.14em] text-dim uppercase">G{gameIndex + 1}</span>
-              <span className="font-display text-2xl leading-none tabular-nums">
-                {sideScore(game, leftSide)}–{sideScore(game, rightSide)}
-              </span>
-              <span className={cn("text-[10px] tracking-[0.14em] uppercase", closed ? "text-dim" : "invisible")}>Final</span>
-            </button>
-          )
-        })}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:min-h-80 md:flex-none">
         <ScorePad
           role={yours ? "You" : "Home"}
           name={teamName(leftTeam)}
@@ -173,7 +167,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
       <p className="sr-only" aria-live="polite">
         {teamName(leftTeam)} {sideScore(current, leftSide)}, {teamName(rightTeam)} {sideScore(current, rightSide)}. Game {board.active + 1}. {status}
       </p>
-      <p className="text-center text-[13px] text-muted-foreground" aria-hidden="true">{status}</p>
+      <p className="truncate text-center text-xs text-muted-foreground" aria-hidden="true">{status}</p>
 
       {resetFor === match.id ? (
         <div className="grid grid-cols-2 gap-2">
@@ -183,11 +177,11 @@ export function Scoreboard({ league }: { league: LeagueData }) {
               live.reset(match.id)
               setResetFor(null)
             }}
-            className="h-11 rounded-lg bg-destructive/15 text-sm font-semibold text-destructive"
+            className={cn(action, "bg-destructive/15 text-destructive")}
           >
             Clear scores
           </button>
-          <button type="button" onClick={() => setResetFor(null)} className="h-11 rounded-lg border border-border text-sm font-semibold">
+          <button type="button" onClick={() => setResetFor(null)} className={cn(action, "border border-border")}>
             Cancel
           </button>
         </div>
@@ -197,7 +191,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
             type="button"
             onClick={() => live.undo(match.id)}
             disabled={board.past.length === 0}
-            className="h-11 rounded-lg border border-border text-sm font-semibold disabled:pointer-events-none disabled:opacity-40"
+            className={cn(action, "border border-border")}
           >
             Undo
           </button>
@@ -205,10 +199,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
             type="button"
             onClick={() => live.endGame(match.id)}
             disabled={!ending.canEnd}
-            className={cn(
-              "h-11 rounded-lg border text-sm font-semibold disabled:pointer-events-none disabled:opacity-40",
-              ending.canEnd ? "border-transparent bg-brand text-[var(--brand-ink)]" : "border-border",
-            )}
+            className={cn(action, ending.canEnd ? "border border-transparent bg-brand text-[var(--brand-ink)]" : "border border-border")}
           >
             {ending.label}
           </button>
@@ -216,14 +207,19 @@ export function Scoreboard({ league }: { league: LeagueData }) {
             type="button"
             onClick={() => setResetFor(match.id)}
             disabled={!hasActivity(board)}
-            className="h-11 rounded-lg border border-border text-sm font-semibold disabled:pointer-events-none disabled:opacity-40"
+            className={cn(action, "border border-border")}
           >
             Reset
           </button>
         </div>
       )}
 
-      <p className="text-center text-xs leading-5 text-dim">
+      <p className="sr-only">
+        {snap.persistOk
+          ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. The coordinator posts the official result."
+          : "This phone blocked saving. Stay on this page to keep the score."}
+      </p>
+      <p className="hidden text-center text-xs leading-5 text-dim md:block">
         {snap.persistOk
           ? "Switching apps or locking the screen keeps this score on this phone. End a game at 10 to the hour. A tie gives no point. The coordinator posts the official result."
           : "This phone blocked saving. Stay on this page to keep the score."}
@@ -252,21 +248,21 @@ function ScorePad({
   onRemove: () => void
 }) {
   return (
-    <div className={cn("flex min-h-64 flex-col rounded-xl border select-none", yours ? "border-brand bg-[var(--highlight)]" : "border-border bg-panel")}>
+    <div className={cn("flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border select-none md:min-h-80", yours ? "border-brand bg-[var(--highlight)]" : "border-border bg-panel")}>
       <button
         type="button"
         onClick={onAdd}
         aria-disabled={score >= RALLY_CAP}
         aria-label={`Add a point for ${name}`}
-        className="flex flex-1 touch-manipulation flex-col items-center px-3 pt-4 pb-2"
+        className="flex min-h-0 flex-1 touch-manipulation flex-col items-center justify-center gap-1 px-2 py-2 active:bg-brand/25"
       >
         <span className={cn("text-[11px] font-semibold tracking-[0.16em] uppercase", yours ? "text-brand" : "text-dim")}>{role}</span>
-        <span className="mt-2 font-display text-[22px] leading-none tracking-wide uppercase">{name}</span>
-        <span className={cn("mt-2 font-display text-[92px] leading-none tracking-wide tabular-nums md:text-[112px]", score < other && "text-muted-foreground")}>
+        <span className="font-display text-xl leading-none tracking-wide uppercase">{name}</span>
+        <span className={cn("font-display text-[clamp(4.25rem,24vw,7rem)] leading-none tracking-wide tabular-nums", score < other && "text-muted-foreground")}>
           {score}
         </span>
-        <span className="mt-2 text-xs font-semibold tracking-[0.16em] text-brand uppercase">{score >= RALLY_CAP ? "Cap" : "+1"}</span>
-        <span className={cn("mt-1 h-4 text-[11px] font-semibold tracking-[0.14em] uppercase", gamePoint ? "text-brand" : "invisible")}>
+        <span className="text-lg font-bold tracking-[0.18em] text-brand uppercase">{score >= RALLY_CAP ? "Cap" : "+1"}</span>
+        <span className={cn("h-4 text-[11px] font-semibold tracking-[0.14em] uppercase", gamePoint ? "text-brand" : "invisible")}>
           Game point
         </span>
       </button>
@@ -275,7 +271,7 @@ function ScorePad({
         onClick={onRemove}
         disabled={score === 0}
         aria-label={`Remove a point for ${name}`}
-        className="mx-3 mb-3 h-11 touch-manipulation rounded-lg border border-border bg-background text-sm font-semibold disabled:opacity-40"
+        className="h-14 shrink-0 touch-manipulation border-t border-border bg-background text-lg font-bold disabled:opacity-40"
       >
         −1
       </button>
@@ -317,7 +313,7 @@ function sideScore(game: LiveGame, side: Side) {
 
 function ScoreSkeleton() {
   return (
-    <div className="mx-auto w-[min(720px,calc(100%-32px))] py-5 md:py-7" aria-busy="true">
+    <div className="mx-auto w-full max-w-[760px] px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] md:py-7" aria-busy="true">
       <h1 className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
       <p className="mt-3 text-sm text-dim">Loading the score on this phone.</p>
     </div>

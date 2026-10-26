@@ -44,7 +44,13 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
     <>
       <div className="h-[3px] bg-brand" />
       <SiteHeader />
-      <div className="flex-1 overflow-x-hidden pb-[72px] md:pb-0">
+      <div
+        className={
+          pathname.startsWith("/score")
+            ? "flex-1 overflow-x-hidden max-md:overflow-y-auto md:pb-0"
+            : "flex-1 overflow-x-hidden pb-[calc(var(--tab-clearance)+12px)] md:pb-0"
+        }
+      >
         <PageTransition>{children}</PageTransition>
       </div>
       <SiteFooter />

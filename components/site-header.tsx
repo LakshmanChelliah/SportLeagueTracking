@@ -36,8 +36,8 @@ export function SiteHeader() {
   }, [pathname])
 
   return (
-    <header className="border-b border-[var(--header-border)] bg-[var(--header-bg)] text-[var(--header-fg)]">
-      <div className="mx-auto flex h-16 w-[min(1120px,calc(100%-48px))] items-center gap-7 max-md:h-14 max-md:w-[calc(100%-40px)]">
+    <header className="h-14 border-b border-[var(--header-border)] bg-[var(--header-bg)] text-[var(--header-fg)] md:h-16">
+      <div className="mx-auto flex h-full w-[min(1120px,calc(100%-48px))] items-center gap-7 max-md:w-[calc(100%-40px)]">
         <Link href="/" className="flex items-baseline gap-2.5 transition-opacity active:opacity-70">
           <span className="font-display text-[26px] leading-none tracking-[0.06em]">GD RA</span>
           <span className="text-xs font-medium tracking-[0.16em] text-[var(--header-muted)] uppercase max-md:hidden">Volleyball</span>

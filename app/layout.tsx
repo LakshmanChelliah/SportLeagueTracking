@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Barlow_Condensed, Inter } from "next/font/google"
 import { SiteFrame } from "@/components/site-frame"
 import { TeamProvider } from "@/components/team-provider"
@@ -15,6 +15,12 @@ const barlow = Barlow_Condensed({
   weight: ["500", "600", "700"],
   variable: "--font-barlow",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   title: {
