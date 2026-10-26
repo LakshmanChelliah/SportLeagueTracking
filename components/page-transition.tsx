@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { useRef } from "react"
 
-const ORDER = ["/", "/schedule", "/standings", "/rules", "/team", "/admin"]
+const ORDER = ["/", "/score", "/schedule", "/standings", "/rules", "/team", "/admin"]
 
 function pageIndex(path: string) {
   if (path === "/") return 0

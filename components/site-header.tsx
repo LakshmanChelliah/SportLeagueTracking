@@ -9,6 +9,7 @@ import { cn } from "cn"
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/score", label: "Score" },
   { href: "/schedule", label: "Schedule" },
   { href: "/standings", label: "Standings" },
   { href: "/rules", label: "Rules" },

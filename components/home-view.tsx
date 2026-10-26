@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
+import { KeepScoreLink } from "@/components/keep-score-link"
 import { Countdown } from "@/components/countdown"
 import { LocationLabel, NightPlaces } from "@/components/location-label"
 import { MatchCard } from "@/components/match-card"
@@ -106,6 +107,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <span className="font-display text-[22px] tracking-[0.06em] uppercase">
                 <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
               </span>
+              <KeepScoreLink matchId={focus.id} />
               <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
             </div>
           </div>
@@ -143,11 +145,14 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-between gap-3 px-4 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4">
               <span className="font-display text-lg tracking-[0.06em] uppercase">
                 <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
               </span>
-              <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
+              <span className="flex items-center gap-2">
+                <KeepScoreLink matchId={focus.id} />
+                <CalendarButton matches={[focus]} team={team} venues={league.schedule.venues} label="Add to calendar" />
+              </span>
             </div>
           </section>
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
+import { KeepScoreLink } from "@/components/keep-score-link"
 import { LocationLabel } from "@/components/location-label"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
@@ -58,6 +59,9 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}
             </span>
           </div>
+          <div className="flex justify-end border-t border-border px-4 py-3">
+            <KeepScoreLink matchId={next.id} />
+          </div>
         </section>
       ) : null}
 
@@ -82,7 +86,10 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               {formatLine(next.date)} · {formatTime(next.time)} ·{" "}
               <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={league.schedule.gym} />
             </h2>
-            <span className="text-xs text-dim">Warm up at {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
+            <span className="flex items-center gap-3">
+              <span className="text-xs text-dim">Warm up at {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
+              <KeepScoreLink matchId={next.id} />
+            </span>
           </div>
         </section>
       ) : null}
