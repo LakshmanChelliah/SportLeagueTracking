@@ -12,8 +12,13 @@ export type Match = {
   time: "18:00" | "19:00" | "20:00" | "21:00"
   court: 1 | 2
   venue?: string
-  home: TeamId
-  away: TeamId
+  home?: TeamId
+  away?: TeamId
+  /** Playoff or open-gym slot whose teams are not assigned yet. */
+  label?: string
+  note?: string
+  /** Local end time when the slot runs longer than an hour. */
+  until?: "22:00"
 }
 
 export type ScheduleFile = {

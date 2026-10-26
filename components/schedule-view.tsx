@@ -66,7 +66,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={results} />
         <div className="mb-3.5 flex items-baseline justify-between">
           <h2 className="font-display text-[28px] tracking-wide uppercase max-md:text-2xl">{formatNight(night.date)}</h2>
-          <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : "4 matches"}</span>
+          <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : `${nightMatches.length} ${nightMatches.length === 1 ? "match" : "matches"}`}</span>
         </div>
         <div className={multiGym ? "grid grid-cols-2 gap-4 max-md:grid-cols-1" : "grid grid-cols-1 gap-4"}>
           {groupedByGym
@@ -99,11 +99,11 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                                   <div className="grid grid-cols-2 gap-3">
                                     <div>
                                       <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                                      <div className="font-display text-[30px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
                                     </div>
                                     <div className="text-right">
                                       <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
+                                      <div className="font-display text-[30px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(match, team))}</div>
                                     </div>
                                   </div>
                                   <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
@@ -150,11 +150,11 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                                   <div className="grid grid-cols-2 gap-3">
                                     <div>
                                       <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                                      <div className="font-display text-[30px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
                                     </div>
                                     <div className="text-right">
                                       <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-                                      <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(match, team))}</div>
+                                      <div className="font-display text-[30px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(match, team))}</div>
                                     </div>
                                   </div>
                                   <div className="mt-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">

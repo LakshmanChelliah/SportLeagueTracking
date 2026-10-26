@@ -6,13 +6,13 @@ import type { ScheduleFile } from "@/lib/types"
 const schedule = JSON.parse(readFileSync("data/schedule.json", "utf8")) as ScheduleFile
 
 describe("prototypes", () => {
-  it("plays back the four Oct 21 matches with sample scores", () => {
+  it("plays back the four Oct 28 matches with sample scores", () => {
     const night = playbackMatches(schedule.matches)
     expect(night.map((item) => item.match.id)).toEqual([
-      "2026-10-21-1800-c1",
-      "2026-10-21-1900-c1",
-      "2026-10-21-2000-c1",
-      "2026-10-21-2100-c1",
+      "2026-10-28-1800-c1",
+      "2026-10-28-1900-c1",
+      "2026-10-28-2000-c1",
+      "2026-10-28-2100-c1",
     ])
     expect(night.every((item) => item.result.games.length === 3)).toBe(true)
   })

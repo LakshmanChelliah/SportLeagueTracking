@@ -5,7 +5,7 @@ import { CalendarButton } from "@/components/calendar-button"
 import { LocationLabel } from "@/components/location-label"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
-import { diffLabel, formatTime, involves, opponent, seriesLabel } from "@/lib/schedule"
+import { diffLabel, formatTime, involves, opponent, seriesLabel, slotTime, warmupLabel } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName, type TeamId } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
@@ -27,7 +27,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase max-md:hidden">
             {mine === team ? "My team" : "Team"}
           </div>
-          <h1 className="font-display text-[72px] leading-[0.85] tracking-wide uppercase max-md:text-4xl">{teamName(team)}</h1>
+          <h1 className="font-display text-[clamp(40px,6vw,72px)] leading-[0.88] tracking-wide uppercase text-balance max-md:text-4xl">{teamName(team)}</h1>
           <div className="mt-3 flex gap-7 max-md:mt-3.5 max-md:gap-5">
             <Stat value={row && row.wins + row.losses > 0 ? ordinal(row.rank) : "-"} label="Rank" />
             <Stat value={row ? `${row.wins}–${row.losses}` : "0–0"} label="Games" />
@@ -47,15 +47,15 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           </div>
           <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)]">
             <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-            <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+            <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
             <div className="mt-3 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-            <div className="font-display text-[40px] leading-none tracking-wide uppercase">{teamName(opponent(next, team))}</div>
+            <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(next, team))}</div>
           </div>
           <div className="flex items-baseline justify-between px-4 py-3.5">
             <span className="text-sm text-muted-foreground">{formatLine(next.date)} · {formatTime(next.time)}</span>
             <span className="text-xs text-dim">
               {findVenue(league.schedule.venues, next) ? "One court · " : ""}
-              Warm-up {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}
+              Warm-up {warmupLabel(next.time)}
             </span>
           </div>
         </section>
@@ -82,7 +82,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               {formatLine(next.date)} · {formatTime(next.time)} ·{" "}
               <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={league.schedule.gym} />
             </h2>
-            <span className="text-xs text-dim">Warm up at {next.time === "18:00" ? "5:50 PM" : "6:50 PM"}</span>
+            <span className="text-xs text-dim">Warm up at {warmupLabel(next.time)}</span>
           </div>
         </section>
       ) : null}
@@ -111,7 +111,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 )}
               >
                 <span className="font-display text-lg tracking-wide uppercase">{formatShort(match.date)}</span>
-                <span className="font-display text-base tracking-wide text-muted-foreground uppercase">{formatTime(match.time)}</span>
+                <span className="font-display text-base tracking-wide text-muted-foreground uppercase">{slotTime(match)}</span>
                 <span className="font-display text-sm tracking-wide text-dim uppercase">
                   <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
                 </span>
@@ -138,7 +138,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 </div>
                 <div className="mt-1 font-display text-[26px] leading-none tracking-wide uppercase">vs {teamName(opponent(match, team))}</div>
                 <div className="mt-1.5 text-sm text-dim">
-                  {formatTime(match.time)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+                  {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
                 </div>
                 {scoreText ? <div className="mt-1 text-xs text-dim">{scoreText}</div> : null}
               </div>
@@ -146,6 +146,9 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           )
         })}
       </div>
+      <p className="mt-6 text-sm text-muted-foreground">
+        Playoffs are May 5, May 12, and May 19. Those opponents come from the standings.
+      </p>
       <p className="mt-8 text-sm text-dim md:hidden">
         <Link href="/rules" className="underline underline-offset-4">League rules</Link>
       </p>

@@ -1,6 +1,6 @@
 # GD RA Volleyball
 
-Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, one gym at Regina Street PS. The board currently lists Wednesday, October 21, 2026: four games, one after another, from 6:00 PM to 9:00 PM.
+Schedule, standings, and score entry for the GD RA Volleyball League. Eight teams, one gym at Regina Street PS. Regular season runs Wednesday nights from October 28, 2026 through April 28, 2027, four games one after another from 6:00 PM to 9:00 PM. October 21 was a practice and is not on the board. Playoffs are May 5, May 12, and May 19.
 
 ## Run locally
 
@@ -14,7 +14,7 @@ Open [http://localhost:3000](http://localhost:3000). Pick your team in the heade
 
 ## Calendar
 
-On Schedule or a team page, **Add to Outlook** subscribes that team’s games. Team 1, for example, gets every Team 1 night. Work and school accounts open Outlook on the web. Outlook.com is the personal account. The same dialog can download an `.ics` file for Outlook desktop, Apple Calendar, or Google Calendar.
+On Schedule or a team page, **Add to Outlook** subscribes that team’s games. Grand HEIST Auto, for example, gets every Grand HEIST Auto night. Work and school accounts open Outlook on the web. Outlook.com is the personal account. The same dialog can download an `.ics` file for Outlook desktop, Apple Calendar, or Google Calendar.
 
 Those links read `https://lakshmanchelliah.github.io/SportLeagueTracking/calendars/team-1.ics` (and teams 2–8). `npm run calendars` writes the files, and `npm run build:pages` copies them onto the public board. Publish that board once so Outlook can fetch them.
 
