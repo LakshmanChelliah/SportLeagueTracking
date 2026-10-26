@@ -3,19 +3,21 @@ import type { Match, ResultsFile, TeamId } from "@/lib/types"
 
 /** Sample scores for the prototypes only. The live board stays empty. */
 export const sampleResults: ResultsFile = {
-  "2026-10-21-1800-c1": { games: [[21, 15], [18, 21], [21, 16]] },
-  "2026-10-21-1900-c1": { games: [[21, 19], [21, 17], [19, 21]] },
-  "2026-10-21-2000-c1": { games: [[21, 18], [16, 21], [25, 23]] },
-  "2026-10-21-2100-c1": { games: [[21, 12], [21, 14], [21, 11]] },
+  "2026-10-28-1800-c1": { games: [[21, 15], [18, 21], [21, 16]] },
+  "2026-10-28-1900-c1": { games: [[21, 19], [21, 17], [19, 21]] },
+  "2026-10-28-2000-c1": { games: [[21, 18], [16, 21], [25, 23]] },
+  "2026-10-28-2100-c1": { games: [[21, 12], [21, 14], [21, 11]] },
 }
 
-export const playbackDate = "2026-10-21"
+export const playbackDate = "2026-10-28"
 
 export function playbackMatches(matches: Match[]) {
   return matches
-    .filter((match) => match.date === playbackDate)
+    .filter((match): match is Match & { home: TeamId; away: TeamId } =>
+      match.date === playbackDate && match.home != null && match.away != null && Boolean(sampleResults[match.id]),
+    )
     .sort((a, b) => a.time.localeCompare(b.time) || a.court - b.court)
-    .map((match) => ({ match, result: sampleResults[match.id] }))
+    .map((match) => ({ match, result: sampleResults[match.id]! }))
 }
 
 function mulberry32(seed: number) {
@@ -35,8 +37,9 @@ export type SeasonOdds = {
 }
 
 export function simulateSeason(matches: Match[], runs = 1000, seed = 20261007): SeasonOdds {
-  const remaining = matches.filter((match) => !sampleResults[match.id])
-  const base = standings(matches, sampleResults)
+  const league = matches.filter((match): match is Match & { home: TeamId; away: TeamId } => match.home != null && match.away != null)
+  const remaining = league.filter((match) => !sampleResults[match.id])
+  const base = standings(league, sampleResults)
   const rate = new Map(
     base.map((row) => [row.team, row.wins + row.losses === 0 ? 0.5 : row.wins / (row.wins + row.losses)]),
   )
@@ -56,7 +59,7 @@ export function simulateSeason(matches: Match[], runs = 1000, seed = 20261007): 
       }) as [[number, number], [number, number], [number, number]]
       results[match.id] = { games }
     }
-    const champ = standings(matches, results)[0].team
+    const champ = standings(league, results)[0].team
     titles[champ] += 1
     if (run < 10) illustrated.push(champ)
   }

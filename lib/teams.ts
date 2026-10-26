@@ -11,8 +11,20 @@ export function parseTeam(value: string | undefined | null): TeamId | null {
   return n as TeamId
 }
 
+/** Numbers come from the October 21 practice matches, which are not on the board. */
+export const TEAM_NAMES: Record<TeamId, string> = {
+  1: "Grand HEIST Auto",
+  2: "Advanced Net-ronics",
+  3: "The Bumpy Bunch",
+  4: "Block Party",
+  5: "Tank U, Next",
+  6: "The Upsetters",
+  7: "Sets on the Beach",
+  8: "How I Set My Mother",
+}
+
 export function teamName(team: number) {
-  return `Team ${team}`
+  return TEAM_NAMES[team as TeamId] ?? `Team ${team}`
 }
 
 export function ordinal(n: number) {

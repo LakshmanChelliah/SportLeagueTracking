@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLiveResults } from "@/components/use-live-results"
 import { coordinatorApiUrl } from "@/lib/endpoints"
-import { formatNight, formatTime, latestPlayedNight, nightsOf } from "@/lib/schedule"
+import { assignedTeams, formatNight, latestPlayedNight, matchTitle, nightsOf, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match, Result } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -198,23 +198,34 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
                 className={`flex items-center justify-between gap-2 border-t border-border px-4 py-3 ${item.id === match?.id ? "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]" : ""}`}
               >
                 <button type="button" onClick={() => loadMatch(item)} className="min-w-0 flex-1 text-left">
-                  <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{formatTime(item.time)}</span>
-                  <span className="font-display text-xl tracking-wide uppercase">{teamName(item.home)} vs {teamName(item.away)}</span>
+                  <span className="block text-[11px] tracking-[0.08em] text-dim uppercase">{slotTime(item)}</span>
+                  <span className="font-display text-xl leading-none tracking-wide uppercase">{matchTitle(item)}</span>
                 </button>
                 <span className="text-right text-[11px] tracking-[0.08em] text-dim uppercase">
                   <LocationLabel venue={findVenue(league.schedule.venues, item)} fallback={`Court ${item.court}`} />
-                  <span className="mt-1 block tracking-[0.1em]">{results[item.id] ? "Saved" : "Open"}</span>
+                  <span className="mt-1 block tracking-[0.1em]">{results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
                 </span>
               </div>
             ))}
           </div>
         </section>
-        {match ? (
+        {match && !assignedTeams(match) ? (
+          <section className="rounded-xl border border-border bg-panel px-5 py-5">
+            <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">{slotTime(match)}</div>
+            <h2 className="mt-1 font-display text-[32px] leading-none tracking-wide uppercase">{match.label}</h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {match.label === "Free play"
+                ? "Open gym. There is no score for this hour."
+                : match.note ?? "This slot is filled from the standings. Scores open once the two teams are assigned."}
+            </p>
+          </section>
+        ) : null}
+        {match && assignedTeams(match) ? (
           <form onSubmit={save} className="rounded-xl border border-border bg-panel px-5 py-5">
             <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">
-              {formatTime(match.time)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
+              {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
             </div>
-            <h2 className="mt-1 font-display text-[32px] tracking-wide uppercase">{teamName(match.home)} vs {teamName(match.away)}</h2>
+            <h2 className="mt-1 font-display text-[32px] leading-[0.95] tracking-wide uppercase">{teamName(match.home)} vs {teamName(match.away)}</h2>
             <div className="mt-4 grid grid-cols-[1fr_auto_1fr] text-xs tracking-[0.08em] text-muted-foreground uppercase">
               <span>{teamName(match.home)}</span>
               <span />
@@ -261,7 +272,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
               <span>Forfeit. Records the match as 21–0, 21–0, 21–0 when a team has four players or fewer.</span>
             </div>
             {forfeit ? (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 <Button type="button" variant={forfeitSide === "home" ? "default" : "outline"} onClick={() => writeDraft({ games, forfeit, forfeitSide: "home" })}>{teamName(match.home)} forfeits</Button>
                 <Button type="button" variant={forfeitSide === "away" ? "default" : "outline"} onClick={() => writeDraft({ games, forfeit, forfeitSide: "away" })}>{teamName(match.away)} forfeits</Button>
               </div>

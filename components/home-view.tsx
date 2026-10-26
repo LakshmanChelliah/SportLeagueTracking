@@ -77,7 +77,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-7">
             <div>
               <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">You</div>
-              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase">{teamName(team)}</div>
+              <div className="font-display text-[clamp(36px,4.4vw,68px)] leading-[0.86] tracking-wide uppercase text-balance">{teamName(team)}</div>
             </div>
             <div className="min-w-28 text-center">
               <div className="font-display text-5xl leading-none tracking-wide">
@@ -90,7 +90,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
             </div>
             <div className="text-right">
               <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-              <div className="font-display text-[88px] leading-[0.82] tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
+              <div className="font-display text-[clamp(36px,4.4vw,68px)] leading-[0.86] tracking-wide uppercase text-balance">{teamName(opponent(focus, team))}</div>
             </div>
           </div>
           <div className="mt-[22px] flex items-end justify-between border-t border-border pt-4">
@@ -129,11 +129,11 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <div className="grid grid-cols-2 gap-3 px-3.5 pt-3.5">
                 <div>
                   <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
-                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(team)}</div>
+                  <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
-                  <div className="font-display text-[44px] leading-none tracking-wide uppercase">{teamName(opponent(focus, team))}</div>
+                  <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(focus, team))}</div>
                 </div>
               </div>
               <div className="mt-3 flex items-baseline justify-between border-t border-border px-3.5 py-2.5">

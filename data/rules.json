@@ -39,12 +39,12 @@
     {
       "n": "08",
       "title": "Season",
-      "body": "This board currently lists Wednesday, October 21, 2026. More nights will be added. The season runs through Wednesday, May 5, 2027."
+      "body": "Regular season is Wednesday nights from October 28, 2026 through April 28, 2027 at Regina Street PS. October 21 was a practice and is not on the board. Playoffs are May 5, May 12, and May 19."
     }
   ],
   "playoffs": [
-    { "week": "Week 1", "name": "Quarterfinals", "series": "Best of three" },
-    { "week": "Week 2", "name": "Semifinals", "series": "Best of three" },
-    { "week": "Week 3", "name": "Final", "series": "Best of five" }
+    { "week": "May 5", "name": "Quarterfinals", "series": "Best of three · 1st vs 8th, 2nd vs 7th, 3rd vs 6th, 4th vs 5th" },
+    { "week": "May 12", "name": "Semifinals", "series": "Best of three · then free play" },
+    { "week": "May 19", "name": "Final", "series": "Best of five · 6:00–10:00 PM, then awards" }
   ]
 }

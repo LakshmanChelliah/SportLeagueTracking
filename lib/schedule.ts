@@ -1,4 +1,5 @@
-import type { Match, Result, ResultsFile } from "@/lib/types"
+import { teamName } from "@/lib/teams"
+import type { Match, Result, ResultsFile, TeamId } from "@/lib/types"
 
 const TZ = "America/Toronto"
 
@@ -18,7 +19,9 @@ export function latestPlayedNight(dates: string[], now: Date) {
 }
 
 function zoneOffset(date: string) {
-  return date < "2026-11-01" ? "-04:00" : "-05:00"
+  // EDT until the first Sunday in November, then EST until the second Sunday in March.
+  if (date < "2026-11-01" || (date >= "2027-03-14" && date < "2027-11-07")) return "-04:00"
+  return "-05:00"
 }
 
 export function matchStart(match: Pick<Match, "date" | "time">) {
@@ -53,6 +56,23 @@ export function formatTime(time: string) {
   return `${hour12}:${String(minute).padStart(2, "0")} ${suffix}`
 }
 
+export function slotTime(match: Pick<Match, "time" | "until">) {
+  if (!match.until) return formatTime(match.time)
+  const [start, startSuffix] = formatTime(match.time).split(" ")
+  const [end, endSuffix] = formatTime(match.until).split(" ")
+  if (startSuffix === endSuffix) return `${start}–${end} ${endSuffix}`
+  return `${formatTime(match.time)}–${formatTime(match.until)}`
+}
+
+export function assignedTeams(match: Match): match is Match & { home: TeamId; away: TeamId } {
+  return match.home != null && match.away != null
+}
+
+export function matchTitle(match: Pick<Match, "home" | "away" | "label">) {
+  if (match.home != null && match.away != null) return `${teamName(match.home)} vs ${teamName(match.away)}`
+  return match.label ?? "To be set"
+}
+
 export function warmupLabel(time: string) {
   const [hour, minute] = time.split(":").map(Number)
   const total = hour * 60 + minute - 10
@@ -71,7 +91,9 @@ export function involves(match: Match, team: number) {
 }
 
 export function opponent(match: Match, team: number) {
-  return match.home === team ? match.away : match.home
+  if (match.home === team && match.away != null) return match.away
+  if (match.away === team && match.home != null) return match.home
+  throw new Error(`Team ${team} is not in match ${match.id}`)
 }
 
 export function byStart(a: Match, b: Match) {

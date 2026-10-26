@@ -15,18 +15,19 @@ export function TeamChoices({
   onPick: (team: TeamId) => void
 }) {
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid gap-2">
       {TEAMS.map((team) => (
         <button
           key={team}
           type="button"
           onClick={() => onPick(team)}
           className={cn(
-            "rounded-lg border border-border px-2 py-3 font-display text-xl tracking-wide uppercase transition-transform active:scale-95",
+            "flex items-center gap-3 rounded-lg border border-border px-3 py-2.5 text-left transition-transform active:scale-[0.99]",
             selected === team ? "border-brand bg-brand/15 text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
-          {team}
+          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand font-display text-sm text-[var(--brand-ink)]">{team}</span>
+          <span className="font-display text-xl leading-none tracking-wide uppercase">{teamName(team)}</span>
         </button>
       ))}
     </div>
@@ -39,14 +40,14 @@ export function TeamButton() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex items-center gap-2 rounded-full border border-[var(--team-ring)] bg-transparent py-1.5 pr-2.5 pl-2 text-[13px] font-medium text-[var(--header-fg)]">
-        <span className="grid size-[22px] place-items-center rounded-full bg-brand font-display text-[15px] font-bold text-[var(--brand-ink)]">
+      <DialogTrigger className="inline-flex max-w-[46vw] items-center gap-2 rounded-full border border-[var(--team-ring)] bg-transparent py-1.5 pr-2.5 pl-2 text-[13px] font-medium text-[var(--header-fg)] md:max-w-none">
+        <span className="grid size-[22px] shrink-0 place-items-center rounded-full bg-brand font-display text-[15px] font-bold text-[var(--brand-ink)]">
           {team ?? "?"}
         </span>
-        {team ? teamName(team) : "My team"}
-        <ChevronDown className="size-3.5 text-[var(--header-muted)]" />
+        <span className="truncate">{team ? teamName(team) : "My team"}</span>
+        <ChevronDown className="size-3.5 shrink-0 text-[var(--header-muted)]" />
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl tracking-wide uppercase">Your team</DialogTitle>
           <DialogDescription>Home, schedule, and your nights follow this choice. Standings still show the whole league.</DialogDescription>
