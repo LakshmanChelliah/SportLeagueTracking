@@ -25,7 +25,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
       <div className="mb-[18px] flex items-end justify-between gap-6 max-md:mb-2 max-md:flex-col max-md:items-start max-md:gap-4">
         <div>
-          <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase max-md:hidden">
+          <div className="eyebrow text-brand max-md:hidden">
             {mine === team ? "My team" : "Team"}
           </div>
           <h1 className="font-display text-[clamp(40px,6vw,72px)] leading-[0.88] tracking-wide uppercase text-balance max-md:text-4xl">{teamName(team)}</h1>
@@ -41,15 +41,15 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
       {next ? (
         <section className="mb-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3">
-            <h2 className="text-sm font-semibold">Next match</h2>
-            <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">
+            <h2 className="section-label">Next match</h2>
+            <span className="kicker text-right text-brand">
               <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
             </span>
           </div>
           <div className="bg-[var(--highlight)] px-4 py-4 shadow-[inset_3px_0_0_var(--brand)]">
-            <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+            <div className="kicker text-brand">You</div>
             <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
-            <div className="mt-3 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+            <div className="kicker mt-3 text-dim">Opponent</div>
             <div className="font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(next, team))}</div>
           </div>
           <div className="flex items-baseline justify-between px-4 py-3.5">
@@ -68,7 +68,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
       {next ? (
         <section className="mb-[18px] overflow-hidden rounded-xl border border-border bg-panel max-md:hidden">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-            <h2 className="text-sm font-semibold">Next match</h2>
+            <h2 className="section-label">Next match</h2>
             <span className="text-xs text-dim">
               <LocationLabel venue={findVenue(league.schedule.venues, next)} fallback={`Court ${next.court}`} />
             </span>
@@ -78,7 +78,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
               {findVenue(league.schedule.venues, next) ? "One court" : `Court ${next.court}`}
             </span>
             <span className="font-display text-[26px] uppercase">{teamName(team)}</span>
-            <span className="text-[11px] tracking-[0.14em] text-dim uppercase">vs</span>
+            <span className="kicker text-dim">vs</span>
             <span className="text-right font-display text-[26px] uppercase">{teamName(opponent(next, team))}</span>
           </div>
           <div className="flex items-baseline justify-between border-t border-border px-4 py-3.5">
@@ -94,7 +94,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
         </section>
       ) : null}
 
-      <h2 className="mb-2 font-display text-sm tracking-[0.08em] text-muted-foreground uppercase max-md:mt-4">Season</h2>
+      <h2 className="eyebrow mb-2 text-muted-foreground max-md:mt-4">Season</h2>
       <div>
         {matches.map((match) => {
           const result = results[match.id]
@@ -124,7 +124,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 </span>
                 <span className="font-medium">vs {teamName(opponent(match, team))}</span>
                 <span className="text-right font-display text-lg">
-                  {outcome === "Next" ? <span className="font-sans text-xs font-semibold tracking-[0.12em] text-brand uppercase">Next</span> : outcome}
+                  {outcome === "Next" ? <span className="kicker text-brand">Next</span> : outcome}
                   {scoreText ? <small className="mt-0.5 block font-sans text-xs font-normal tracking-normal text-dim">{scoreText}</small> : null}
                 </span>
               </div>
@@ -138,7 +138,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-display text-xl tracking-wide uppercase">{formatShort(match.date)}</span>
                   {outcome === "Next" ? (
-                    <span className="text-xs font-semibold tracking-[0.12em] text-brand uppercase">Next</span>
+                    <span className="kicker text-brand">Next</span>
                   ) : (
                     <span className="font-display text-base">{outcome}</span>
                   )}
@@ -153,7 +153,7 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
           )
         })}
       </div>
-      <p className="mt-6 text-sm text-muted-foreground">
+      <p className="reading mt-6 max-w-3xl text-muted-foreground">
         Playoffs are May 5, May 12, and May 19. Those opponents come from the standings.
       </p>
       <p className="mt-8 text-sm text-dim md:hidden">
@@ -167,7 +167,7 @@ function Stat({ value, label, positive, negative }: { value: string; label: stri
   return (
     <div>
       <b className={cn("block font-display text-[28px] leading-none tracking-wide", positive && "text-pos", negative && "text-neg")}>{value}</b>
-      <span className="text-[11px] tracking-[0.12em] text-dim uppercase">{label}</span>
+      <span className="kicker text-dim">{label}</span>
     </div>
   )
 }

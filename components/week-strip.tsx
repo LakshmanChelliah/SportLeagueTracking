@@ -33,7 +33,7 @@ export function WeekStrip({
             <span className={cn("block font-display text-lg tracking-wide uppercase md:text-xl", !played && date !== nextDate && date !== selected && "text-muted-foreground")}>
               {formatChip(date)}
             </span>
-            <span className={cn("mt-0.5 block text-[10px] tracking-[0.12em] uppercase", date === nextDate ? "text-brand" : "text-dim", state === "-" && "max-md:hidden")}>
+            <span className={cn("kicker mt-0.5 block", date === nextDate ? "text-brand" : "text-dim", state === "-" && "max-md:hidden")}>
               {state}
             </span>
           </Link>

@@ -43,7 +43,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
       <div className="mb-[18px] hidden items-end justify-between gap-4 md:flex">
         <div>
           <h1 className="mb-1 font-display text-[42px] leading-none tracking-wide uppercase">Schedule</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="reading text-muted-foreground">
             Regina Street PS · one gym · games one after another. Your match is marked.
           </p>
         </div>
@@ -108,7 +108,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                 return (
                   <section key={gym.key} className="overflow-hidden rounded-xl border border-border bg-panel">
                     <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3.5">
-                      <h3 className="text-sm font-semibold">
+                      <h3 className="section-label">
                         <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
                       </h3>
                       <span className="shrink-0 text-xs text-dim">One court</span>
@@ -127,7 +127,7 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
             : night.slots.map((slot) => (
                 <section key={slot.time} className="overflow-hidden rounded-xl border border-border bg-panel">
                   <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-                    <h3 className="text-sm font-semibold">{formatTime(slot.time)}</h3>
+                    <h3 className="section-label">{formatTime(slot.time)}</h3>
                     <span className="text-xs text-dim">Warm-up {warmupLabel(slot.time)}</span>
                   </div>
                   {slot.matches.map((match) => {

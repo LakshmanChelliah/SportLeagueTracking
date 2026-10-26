@@ -49,7 +49,7 @@ export function TeamButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl tracking-wide uppercase">Your team</DialogTitle>
+          <DialogTitle className="font-display text-2xl font-bold tracking-wide uppercase">Your team</DialogTitle>
           <DialogDescription>Home, schedule, and your nights follow this choice. Standings still show the whole league.</DialogDescription>
         </DialogHeader>
         <TeamChoices

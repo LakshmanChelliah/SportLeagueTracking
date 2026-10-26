@@ -40,7 +40,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-full w-[min(1120px,calc(100%-48px))] items-center gap-7 max-md:w-[calc(100%-40px)]">
         <Link href="/" className="flex items-baseline gap-2.5 transition-opacity active:opacity-70">
           <span className="font-display text-[26px] leading-none tracking-[0.06em]">GD RA</span>
-          <span className="text-xs font-medium tracking-[0.16em] text-[var(--header-muted)] uppercase max-md:hidden">Volleyball</span>
+          <span className="eyebrow text-[var(--header-muted)] max-md:hidden">Volleyball</span>
         </Link>
         <nav ref={navRef} className="relative flex h-full items-stretch max-md:hidden">
           {links.map((link) => {
@@ -51,7 +51,7 @@ export function SiteHeader() {
                 href={link.href}
                 data-active={active ? "true" : undefined}
                 className={cn(
-                  "flex items-center px-3 text-sm font-medium transition-all duration-200 active:scale-95",
+                  "flex items-center px-3 text-[15px] font-medium tracking-tight transition-all duration-200 active:scale-95",
                   active ? "text-[var(--header-fg)]" : "text-[var(--header-muted)]",
                 )}
               >
@@ -65,7 +65,7 @@ export function SiteHeader() {
           />
         </nav>
         <div className="ml-auto flex items-center gap-4">
-          <span className="text-xs tracking-[0.12em] text-[var(--header-muted)] uppercase max-md:hidden">2026–27</span>
+          <span className="kicker text-[var(--header-muted)] max-md:hidden">2026–27</span>
           <ThemeToggle />
           <TeamButton />
         </div>

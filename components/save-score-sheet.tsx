@@ -115,7 +115,7 @@ export function SaveScoreSheet({
     <Dialog open={open} onOpenChange={close}>
       <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-3xl tracking-wide uppercase">Save score</DialogTitle>
+          <DialogTitle className="font-display text-3xl font-bold tracking-wide uppercase">Save score</DialogTitle>
           <DialogDescription>
             {leftName} vs {rightName}. {when}.
             {alreadyPosted ? " This replaces the official score." : ""}

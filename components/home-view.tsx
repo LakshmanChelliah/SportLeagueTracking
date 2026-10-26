@@ -72,12 +72,12 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
       {team && focus ? (
         <section className="hidden flex-col md:flex">
           <div className="mb-[18px] flex items-baseline justify-between gap-3">
-            <span className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</span>
+            <span className="eyebrow text-brand">Your next match</span>
             <span className="text-[13px] text-muted-foreground">{recordLine(mine)}</span>
           </div>
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-7">
             <div>
-              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">You</div>
+              <div className="mb-1.5 kicker text-dim">You</div>
               <div className="font-display text-[clamp(36px,4.4vw,68px)] leading-[0.86] tracking-wide uppercase text-balance">{teamName(team)}</div>
             </div>
             <div className="min-w-28 text-center">
@@ -85,12 +85,12 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 {formatTime(focus.time).replace(" PM", "")}
                 <span className="ml-0.5 text-xl tracking-[0.08em] text-muted-foreground">PM</span>
               </div>
-              <div className="mt-1.5 text-[13px] tracking-[0.08em] text-muted-foreground uppercase">
+              <div className="kicker mt-1.5 text-muted-foreground">
                 {findVenue(league.schedule.venues, focus) ? "One court" : `Court ${focus.court}`}
               </div>
             </div>
             <div className="text-right">
-              <div className="mb-1.5 text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+              <div className="mb-1.5 kicker text-dim">Opponent</div>
               <div className="font-display text-[clamp(36px,4.4vw,68px)] leading-[0.86] tracking-wide uppercase text-balance">{teamName(opponent(focus, team))}</div>
             </div>
           </div>
@@ -119,24 +119,24 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           <section className="overflow-hidden rounded-xl border border-border bg-panel">
             <div className="px-4 pt-4">
               <div className="flex items-baseline justify-between gap-3">
-                <div className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Your next match</div>
+                <div className="eyebrow text-brand">Your next match</div>
                 {mine && mine.wins + mine.losses > 0 ? (
                   <div className="text-right text-xs text-muted-foreground">{recordLine(mine)}</div>
                 ) : null}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">You</div>
+                  <div className="kicker text-brand">You</div>
                   <div className="mt-1 font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(team)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[11px] font-semibold tracking-[0.16em] text-dim uppercase">Opponent</div>
+                  <div className="kicker text-dim">Opponent</div>
                   <div className="mt-1 font-display text-[32px] leading-[0.9] tracking-wide uppercase text-balance">{teamName(opponent(focus, team))}</div>
                 </div>
               </div>
               <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-3">
                 <span className="font-display text-3xl leading-none tracking-wide">{formatTime(focus.time)}</span>
-                <span className="text-right text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+                <span className="kicker text-right text-muted-foreground">
                   <Countdown startIso={matchStart(focus).toISOString()} nowIso={nowIso} />
                 </span>
               </div>
@@ -164,7 +164,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
           {others.length ? (
             <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
               <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
-                <h2 className="text-sm font-semibold">Rest of the night</h2>
+                <h2 className="section-label">Rest of the night</h2>
                 <span className="min-w-0 truncate text-right text-xs text-dim">
                   {multiGym ? (
                     formatNight(night.date).replace(/^[^,]+, /, "")
@@ -190,7 +190,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
 
           {last ? (
             <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel px-4 py-3.5">
-              <div className="text-xs font-semibold tracking-[0.14em] text-dim uppercase">Last match</div>
+              <div className="kicker text-dim">Last match</div>
               <div className="mt-2 font-display text-[32px] leading-none tracking-wide uppercase">
                 {seriesLabel(teamSets(last.match, last.result, team).setsFor, teamSets(last.match, last.result, team).setsAgainst)}{" "}
                 <span className="text-muted-foreground">vs {teamName(opponent(last.match, team))}</span>
@@ -204,7 +204,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
 
           <section className="mt-3 overflow-hidden rounded-xl border border-border bg-panel">
             <div className="flex items-center justify-between border-b border-border px-4 py-1.5">
-              <h2 className="text-sm font-semibold">Standings</h2>
+              <h2 className="section-label">Standings</h2>
               <Link href="/standings" className="inline-flex min-h-11 items-center text-xs font-medium text-brand">Full table</Link>
             </div>
             <StandingsList rows={table} you={team} />
@@ -214,12 +214,12 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
 
       {team && !focus ? (
         <section>
-          <p className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Season on this board</p>
+          <p className="eyebrow text-brand">Season on this board</p>
           <h1 className="mt-2 font-display text-5xl uppercase">All caught up</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Every listed night for {teamName(team)} has a score.</p>
+          <p className="reading mt-2 text-muted-foreground">Every listed night for {teamName(team)} has a score.</p>
           <section className="mt-4 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
             <div className="flex items-center justify-between border-b border-border px-4 py-1.5">
-              <h2 className="text-sm font-semibold">Standings</h2>
+              <h2 className="section-label">Standings</h2>
               <Link href="/standings" className="inline-flex min-h-11 items-center text-xs font-medium text-brand">Full table</Link>
             </div>
             <StandingsList rows={table} you={team} />
@@ -229,7 +229,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
 
       <section className="mt-[22px] hidden overflow-hidden rounded-xl border border-border bg-panel md:block">
         <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-          <h2 className="text-sm font-semibold">The full night</h2>
+          <h2 className="section-label">The full night</h2>
           <span className="text-xs text-dim">
             {formatNight(night.date)}
             {multiGym ? (
@@ -254,7 +254,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
                 const venue = findVenue(league.schedule.venues, sample)
                 return (
                   <div key={gym.key} className={index === 1 ? "border-l border-border" : undefined}>
-                    <div className="flex items-baseline justify-between gap-3 px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                    <div className="kicker flex items-baseline justify-between gap-3 px-4 pt-3 pb-2 text-muted-foreground">
                       <b className="font-display text-xl font-semibold tracking-wide text-foreground normal-case">
                         <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
                       </b>
@@ -268,7 +268,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               })
             : night.slots.map((slot, index) => (
                 <div key={slot.time} className={index === 1 ? "border-l border-border" : undefined}>
-                  <div className="flex justify-between px-4 pt-3 pb-2 text-xs tracking-[0.08em] text-muted-foreground uppercase">
+                  <div className="kicker flex justify-between px-4 pt-3 pb-2 text-muted-foreground">
                     <b className="font-display text-xl font-semibold tracking-wide text-foreground">{formatTime(slot.time)}</b>
                     <span>Warm-up {warmupLabel(slot.time)}</span>
                   </div>
@@ -284,7 +284,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         {lastNight.length ? (
           <section className="overflow-hidden rounded-xl border border-border bg-panel">
             <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-              <h2 className="text-sm font-semibold">Last night</h2>
+              <h2 className="section-label">Last night</h2>
               <span className="text-xs text-dim">{formatNight(lastNightDate!)} · Final</span>
             </div>
             {lastNight.map((match) => {
@@ -310,7 +310,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
         ) : null}
         <section className="overflow-hidden rounded-xl border border-border bg-panel">
           <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
-            <h2 className="text-sm font-semibold">Standings</h2>
+            <h2 className="section-label">Standings</h2>
             <span className="text-xs text-dim">{Object.keys(results).length ? "Live" : "No games yet"}</span>
           </div>
           <StandingsList rows={table} you={team} />

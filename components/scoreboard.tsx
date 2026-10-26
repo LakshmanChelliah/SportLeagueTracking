@@ -61,7 +61,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   if (!assignedTeams(match)) {
     return (
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-2 px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] md:w-[min(760px,calc(100%-48px))] md:py-7">
-        <h1 className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
+        <h1 className="eyebrow text-brand">Live score</h1>
         <MatchPicker matches={matches} match={match} team={team} onPick={(id) => { setPicked(id); getLiveStore().select(id) }} />
         <p className="text-sm text-muted-foreground">{matchTitle(match)}. Teams for this slot are not set yet, so there is nothing to score.</p>
       </div>
@@ -89,7 +89,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   return (
     <div className="mx-auto flex w-full max-w-[760px] flex-col gap-2 px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] max-md:min-h-0 md:w-[min(760px,calc(100%-48px))] md:gap-3 md:py-7">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-[11px] font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
+        <h1 className="eyebrow text-brand">Live score</h1>
         <span className="text-[11px] text-dim">{snap.persistOk ? "On this phone" : "Not saved"}</span>
       </div>
 
@@ -108,7 +108,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
 
       <div className="flex items-stretch gap-2">
         <div className="flex w-[4.5rem] shrink-0 flex-col items-center justify-center rounded-xl border border-border bg-panel">
-          <span className="text-[10px] tracking-[0.14em] text-dim uppercase">Games</span>
+          <span className="kicker text-dim">Games</span>
           <span className="font-display text-2xl leading-none tabular-nums">{youSets}–{themSets}</span>
         </div>
         <div className="grid min-w-0 flex-1 grid-cols-3 gap-2">
@@ -127,7 +127,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
                   selected ? "border-brand bg-[var(--highlight)]" : "border-border bg-panel",
                 )}
               >
-                <span className="max-w-full truncate text-[10px] tracking-[0.14em] text-dim uppercase">G{gameIndex + 1}{closed ? " · final" : ""}</span>
+                <span className="kicker max-w-full truncate text-dim">G{gameIndex + 1}{closed ? " · final" : ""}</span>
                 <span className="font-display text-xl leading-none tabular-nums">
                   {sideScore(game, leftSide)}–{sideScore(game, rightSide)}
                 </span>
@@ -275,13 +275,13 @@ function ScorePad({
         aria-label={`Add a point for ${name}`}
         className="flex min-h-0 flex-1 touch-manipulation flex-col items-center justify-center gap-1 px-2 py-2 active:bg-brand/25"
       >
-        <span className={cn("text-[11px] font-semibold tracking-[0.16em] uppercase", yours ? "text-brand" : "text-dim")}>{role}</span>
+        <span className={cn("kicker", yours ? "text-brand" : "text-dim")}>{role}</span>
         <span className="max-w-full text-center font-display text-base leading-tight tracking-wide text-balance uppercase md:text-xl">{name}</span>
-        <span className={cn("font-display text-[clamp(4.25rem,24vw,7rem)] leading-none tracking-wide tabular-nums", score < other && "text-muted-foreground")}>
+        <span className={cn("font-display text-[clamp(4.25rem,24vw,7rem)] font-extrabold leading-none tracking-normal tabular-nums", score < other && "text-muted-foreground")}>
           {score}
         </span>
-        <span className="text-lg font-bold tracking-[0.18em] text-brand uppercase">{score >= RALLY_CAP ? "Cap" : "+1"}</span>
-        <span className={cn("h-4 text-[11px] font-semibold tracking-[0.14em] uppercase", gamePoint ? "text-brand" : "invisible")}>
+        <span className="font-display text-2xl font-extrabold leading-none tracking-[0.08em] text-brand uppercase">{score >= RALLY_CAP ? "Cap" : "+1"}</span>
+        <span className={cn("kicker h-4", gamePoint ? "text-brand" : "invisible")}>
           Game point
         </span>
       </button>
@@ -290,7 +290,7 @@ function ScorePad({
         onClick={onRemove}
         disabled={score === 0}
         aria-label={`Remove a point for ${name}`}
-        className="h-14 shrink-0 touch-manipulation border-t border-border bg-background text-lg font-bold disabled:opacity-40"
+        className="h-14 shrink-0 touch-manipulation border-t border-border bg-background font-display text-2xl font-extrabold disabled:opacity-40"
       >
         −1
       </button>
@@ -358,7 +358,7 @@ function sideScore(game: LiveGame, side: Side) {
 function ScoreSkeleton() {
   return (
     <div className="mx-auto w-full max-w-[760px] px-3 py-2 max-md:h-[calc(100dvh-3.5rem-3px-var(--tab-clearance))] md:py-7" aria-busy="true">
-      <h1 className="text-xs font-semibold tracking-[0.16em] text-brand uppercase">Live score</h1>
+      <h1 className="eyebrow text-brand">Live score</h1>
       <p className="mt-3 text-sm text-dim">Loading the score on this phone.</p>
     </div>
   )

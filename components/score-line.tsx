@@ -26,12 +26,12 @@ export function ScoreLine({
   return (
     <article className={cn("border-t border-border py-3 first:border-t-0", yours && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)] max-md:bg-transparent max-md:shadow-none")}>
       {meta ? (
-        <div className="flex items-center gap-2.5 px-4 pb-1.5 text-[11px] tracking-[0.1em] text-dim uppercase">
+        <div className="kicker flex items-center gap-2.5 px-4 pb-1.5 text-dim">
           <span>{meta}{yours ? " · You" : ""}{result.forfeit ? " · Forfeit" : ""}</span>
           <span className="ml-auto text-muted-foreground">Final</span>
         </div>
       ) : null}
-      <div className="grid grid-cols-[1fr_36px_36px_36px_32px] px-4 pb-1 text-center text-[11px] tracking-[0.08em] text-dim uppercase max-md:hidden">
+      <div className="kicker grid grid-cols-[1fr_36px_36px_36px_32px] px-4 pb-1 text-center text-dim max-md:hidden">
         <span />
         <span>G1</span>
         <span>G2</span>

@@ -7,10 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-source), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-source), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), "Arial Narrow", sans-serif;
   --color-brand: var(--brand);
   --color-pos: var(--pos);
   --color-neg: var(--neg);
@@ -184,16 +184,56 @@
   --team-ring: rgba(255, 255, 255, 0.3);
 }
 
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+@utility kicker {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+@utility reading {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+@utility section-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    font-synthesis: none;
   }
   html {
     @apply font-sans;
   }
+  .font-display {
+    font-weight: 700;
+    font-optical-sizing: auto;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+}
+
+/* Condensed display is already tight. tracking-wide was tuned for Barlow and opens Big Shoulders too far. */
+.font-display.tracking-wide {
+  letter-spacing: 0.015em;
 }
 
 @media (prefers-reduced-motion: no-preference) {
