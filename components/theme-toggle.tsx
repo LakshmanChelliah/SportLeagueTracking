@@ -6,9 +6,12 @@ import { cn } from "cn"
 
 export const THEME_COOKIE = "gdra-theme"
 
+const themeColor = { light: "#0c3969", dark: "#09090b" }
+
 export function applyTheme(theme: "light" | "dark") {
   document.documentElement.classList.toggle("light", theme === "light")
   document.cookie = `${THEME_COOKIE}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor[theme])
 }
 
 function readTheme(): "light" | "dark" {
@@ -19,7 +22,9 @@ export function ThemeToggle({ tone = "header" }: { tone?: "header" | "surface" }
   const [theme, setTheme] = useState<"light" | "dark" | null>(null)
 
   useEffect(() => {
-    setTheme(readTheme())
+    const current = readTheme()
+    setTheme(current)
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor[current])
   }, [])
 
   const light = theme === "light"
