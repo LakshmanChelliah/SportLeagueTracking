@@ -1,4 +1,4 @@
-const CACHE = "gdra-v3"
+const CACHE = "gdra-v4"
 const SHELL = ["./offline.html", "./", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"]
 
 self.addEventListener("install", (event) => {
