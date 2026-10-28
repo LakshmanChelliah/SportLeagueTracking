@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
+import { InstallButton } from "@/components/install-button"
 import { PageTransition } from "@/components/page-transition"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
@@ -32,7 +33,10 @@ export function SiteFrame({ children }: { children: React.ReactNode }) {
               <DialogTitle className="font-display text-3xl font-bold tracking-wide uppercase">Which team are you on?</DialogTitle>
               <DialogDescription>Your next match leads the page. The rest of the night and the standings stay with it.</DialogDescription>
             </DialogHeader>
-            <ThemeToggle tone="surface" />
+            <div className="flex items-center gap-2">
+              <InstallButton tone="surface" />
+              <ThemeToggle tone="surface" />
+            </div>
           </div>
           <TeamChoices onPick={setTeam} />
         </DialogContent>
