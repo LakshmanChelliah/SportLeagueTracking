@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLayoutEffect, useRef, useState } from "react"
+import { InstallButton } from "@/components/install-button"
 import { TeamButton } from "@/components/team-picker"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "cn"
@@ -64,8 +65,9 @@ export function SiteHeader() {
             style={{ left: bar?.left ?? 0, width: bar?.width ?? 0 }}
           />
         </nav>
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 md:gap-4">
           <span className="kicker text-[var(--header-muted)] max-md:hidden">2026–27</span>
+          <InstallButton />
           <ThemeToggle />
           <TeamButton />
         </div>
