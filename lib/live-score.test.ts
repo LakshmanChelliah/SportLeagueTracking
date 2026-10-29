@@ -5,6 +5,7 @@ import {
   blankBoard,
   BOARDS_KEY,
   clearBoard,
+  courtSides,
   createLiveStore,
   finishGame,
   scoreAction,
@@ -14,6 +15,8 @@ import {
   loadBoards,
   MATCH_KEY,
   parseBoards,
+  parseSides,
+  SIDES_KEY,
   pickMatchId,
   setsWon,
   undoBoard,
@@ -223,6 +226,21 @@ describe("live score storage", () => {
     live.reload()
     expect(live.getSnapshot().boards["2026-10-21-1800-c1"].games[0][1]).toBe(1)
     expect(storage.dump()[MATCH_KEY]).toBeUndefined()
+  })
+
+  it("remembers which end the teams are on", () => {
+    expect(courtSides("away", false)).toEqual({ left: "away", right: "home" })
+    expect(courtSides("away", true)).toEqual({ left: "home", right: "away" })
+    const storage = memoryStorage()
+    const first = createLiveStore(storage)
+    first.switchSides("2026-10-28-2000-c1")
+    expect(first.getSnapshot().sides["2026-10-28-2000-c1"]).toBe(true)
+    const second = createLiveStore(storage)
+    expect(second.getSnapshot().sides["2026-10-28-2000-c1"]).toBe(true)
+    second.switchSides("2026-10-28-2000-c1")
+    expect(second.getSnapshot().sides["2026-10-28-2000-c1"]).toBeUndefined()
+    expect(parseSides(storage.dump()[SIDES_KEY])).toEqual({})
+    expect(parseSides("{")).toEqual({})
   })
 
   it("undo returns to the game where the last point was scored", () => {

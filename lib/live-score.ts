@@ -3,6 +3,7 @@ import type { Match, ResultsFile } from "@/lib/types"
 
 export const BOARDS_KEY = "gdra-live-scores"
 export const MATCH_KEY = "gdra-live-match"
+export const SIDES_KEY = "gdra-live-sides"
 export const RALLY_TARGET = 21
 export const RALLY_CAP = 25
 
@@ -40,6 +41,33 @@ export function blankBoard(now = 0): LiveBoard {
     past: [],
     updatedAt: now,
   }
+}
+
+export function oppositeSide(side: Side): Side {
+  return side === "home" ? "away" : "home"
+}
+
+/** Which pad is on the left after the teams change ends. Scores stay stored as home and away. */
+export function courtSides(naturalLeft: Side, swapped: boolean): { left: Side; right: Side } {
+  const left = swapped ? oppositeSide(naturalLeft) : naturalLeft
+  return { left, right: oppositeSide(left) }
+}
+
+export function parseSides(raw: string | null): Record<string, boolean> {
+  if (!raw) return {}
+  let value: unknown
+  try {
+    value = JSON.parse(raw)
+  } catch {
+    return {}
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
+  const sides: Record<string, boolean> = {}
+  for (const [id, swapped] of Object.entries(value)) {
+    if (!id || id.length > 80 || swapped !== true) continue
+    sides[id] = true
+  }
+  return sides
 }
 
 export function gameWinner(home: number, away: number): Side | null {
@@ -194,6 +222,14 @@ export function loadBoards(storage: ScoreStorage) {
   }
 }
 
+export function loadSides(storage: ScoreStorage) {
+  try {
+    return parseSides(storage.getItem(SIDES_KEY))
+  } catch {
+    return {}
+  }
+}
+
 export function loadSelectedMatch(storage: ScoreStorage) {
   try {
     const value = storage.getItem(MATCH_KEY)
@@ -208,18 +244,20 @@ export type LiveSnapshot = {
   ready: true
   boards: Record<string, LiveBoard>
   matchId: string | null
+  sides: Record<string, boolean>
   persistOk: boolean
 }
 
 export function createLiveStore(storage: ScoreStorage, initialPersistOk = true) {
   let boards = loadBoards(storage)
   let matchId = loadSelectedMatch(storage)
+  let sides = loadSides(storage)
   let persistOk = initialPersistOk
-  let snapshot: LiveSnapshot = { ready: true, boards, matchId, persistOk }
+  let snapshot: LiveSnapshot = { ready: true, boards, matchId, sides, persistOk }
   const listeners = new Set<() => void>()
 
   function publish() {
-    snapshot = { ready: true, boards, matchId, persistOk }
+    snapshot = { ready: true, boards, matchId, sides, persistOk }
     for (const listener of listeners) listener()
   }
 
@@ -227,6 +265,7 @@ export function createLiveStore(storage: ScoreStorage, initialPersistOk = true) 
     try {
       storage.setItem(BOARDS_KEY, JSON.stringify(boards))
       storage.setItem(MATCH_KEY, matchId ?? "")
+      storage.setItem(SIDES_KEY, JSON.stringify(sides))
       persistOk = true
     } catch {
       persistOk = false
@@ -252,9 +291,11 @@ export function createLiveStore(storage: ScoreStorage, initialPersistOk = true) 
     reload() {
       let storedBoards: Record<string, LiveBoard>
       let storedMatch: string | null
+      let storedSides: Record<string, boolean>
       try {
         storedBoards = loadBoards(storage)
         storedMatch = loadSelectedMatch(storage)
+        storedSides = loadSides(storage)
       } catch {
         return
       }
@@ -265,14 +306,19 @@ export function createLiveStore(storage: ScoreStorage, initialPersistOk = true) 
         if (!stored || board.updatedAt >= stored.updatedAt) merged[id] = board
       }
       const nextMatch = persistOk ? (storedMatch ?? matchId) : matchId
+      const nextSides = persistOk ? storedSides : sides
       const keys = Object.keys(merged)
+      const sideKeys = Object.keys(nextSides)
       const same =
         nextMatch === matchId &&
         keys.length === Object.keys(boards).length &&
-        keys.every((id) => merged[id] === boards[id])
+        keys.every((id) => merged[id] === boards[id]) &&
+        sideKeys.length === Object.keys(sides).length &&
+        sideKeys.every((id) => nextSides[id] === sides[id])
       if (same) return
       boards = merged
       matchId = nextMatch
+      sides = nextSides
       publish()
     },
     select(id: string) {
@@ -305,6 +351,15 @@ export function createLiveStore(storage: ScoreStorage, initialPersistOk = true) 
       const current = boards[id] ?? blankBoard(0)
       commitMatch(id, current, clearBoard(current, now))
     },
+    switchSides(id: string) {
+      const next = { ...sides }
+      if (next[id]) delete next[id]
+      else next[id] = true
+      sides = next
+      matchId = id
+      write()
+      publish()
+    },
   }
 }
 
@@ -324,7 +379,7 @@ type ScoreWindow = {
 export function watchScorePersistence(reload: () => void, doc: ScoreDocument, win: ScoreWindow) {
   const onStorage = (event: Event) => {
     const key = "key" in event ? (event as StorageEvent).key : null
-    if (key == null || key === BOARDS_KEY || key === MATCH_KEY) reload()
+    if (key == null || key === BOARDS_KEY || key === MATCH_KEY || key === SIDES_KEY) reload()
   }
   const onVisible = () => {
     if (doc.visibilityState === "visible") reload()

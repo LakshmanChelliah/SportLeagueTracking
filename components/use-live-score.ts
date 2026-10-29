@@ -7,6 +7,7 @@ export type ScoreSnapshot = {
   ready: boolean
   boards: LiveSnapshot["boards"]
   matchId: string | null
+  sides: Record<string, boolean>
   persistOk: boolean
 }
 
@@ -14,6 +15,7 @@ const SERVER_SNAPSHOT: ScoreSnapshot = {
   ready: false,
   boards: {},
   matchId: null,
+  sides: {},
   persistOk: true,
 }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { ArrowLeftRight } from "lucide-react"
 import { LocationLabel } from "@/components/location-label"
 import { SaveScoreSheet } from "@/components/save-score-sheet"
 import { getLiveStore, useLiveScore } from "@/components/use-live-score"
@@ -9,6 +10,7 @@ import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
 import {
   blankBoard,
+  courtSides,
   gameWinner,
   hasActivity,
   isGamePoint,
@@ -69,8 +71,8 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   }
   const board = snap.boards[match.id] ?? blankBoard(0)
   const yours = involves(match, team)
-  const leftSide: Side = yours && match.away === team ? "away" : "home"
-  const rightSide: Side = leftSide === "home" ? "away" : "home"
+  const swapped = snap.sides[match.id] === true
+  const { left: leftSide, right: rightSide } = courtSides(yours && match.away === team ? "away" : "home", swapped)
   const leftTeam = match[leftSide]
   const rightTeam = match[rightSide]
   const [homeSets, awaySets] = setsWon(board)
@@ -137,24 +139,38 @@ export function Scoreboard({ league }: { league: LeagueData }) {
         </div>
       </div>
 
+      <button
+        type="button"
+        aria-pressed={swapped}
+        onClick={() => live.switchSides(match.id)}
+        className={cn(
+          buttonClass,
+          "flex w-full items-center justify-center gap-2",
+          swapped ? "border border-transparent bg-brand text-[var(--brand-ink)]" : "border border-border",
+        )}
+      >
+        <ArrowLeftRight className="size-5" aria-hidden="true" />
+        Switch sides
+      </button>
+
       <div className="grid min-h-0 flex-1 grid-cols-2 gap-2 md:min-h-80 md:flex-none">
         <ScorePad
-          role={yours ? "You" : "Home"}
+          role={padRole(yours, match[leftSide] === team, leftSide)}
           name={teamName(leftTeam)}
           score={sideScore(current, leftSide)}
           other={sideScore(current, rightSide)}
           gamePoint={isGamePoint(current[0], current[1], leftSide)}
-          yours={yours}
+          yours={yours && match[leftSide] === team}
           onAdd={() => live.addPoint(match.id, leftSide)}
           onRemove={() => live.removePoint(match.id, leftSide)}
         />
         <ScorePad
-          role={yours ? "Opponent" : "Away"}
+          role={padRole(yours, match[rightSide] === team, rightSide)}
           name={teamName(rightTeam)}
           score={sideScore(current, rightSide)}
           other={sideScore(current, leftSide)}
           gamePoint={isGamePoint(current[0], current[1], rightSide)}
-          yours={false}
+          yours={yours && match[rightSide] === team}
           onAdd={() => live.addPoint(match.id, rightSide)}
           onRemove={() => live.removePoint(match.id, rightSide)}
         />
@@ -349,6 +365,11 @@ function matchLabel(match: Match, team: number, matches: Match[]) {
   const when = nights > 1 ? `${formatChip(match.date)} · ${formatTime(match.time)}` : formatTime(match.time)
   const you = involves(match, team) ? " · You" : ""
   return `${when} · ${matchTitle(match)}${you}`
+}
+
+function padRole(inMatch: boolean, usersTeam: boolean, side: Side) {
+  if (!inMatch) return side === "home" ? "Home" : "Away"
+  return usersTeam ? "You" : "Opponent"
 }
 
 function sideScore(game: LiveGame, side: Side) {
