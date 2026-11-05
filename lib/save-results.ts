@@ -1,8 +1,11 @@
 import { readFile, writeFile } from "node:fs/promises"
 import path from "node:path"
+import { get, put } from "@vercel/blob"
 import type { ResultsFile } from "@/lib/types"
 
 const FILE = "data/results.json"
+const BLOB_PATHNAME = "results.json"
+const DEFAULT_REPO = "LakshmanChelliah/SportLeagueTracking"
 
 export type FetchLike = typeof fetch
 
@@ -27,6 +30,10 @@ export function githubConfig() {
     repo,
     branch: process.env.GITHUB_BRANCH ?? "main",
   }
+}
+
+export function blobConfigured() {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID)
 }
 
 function githubHeaders(token: string) {
@@ -56,9 +63,51 @@ async function readGitHubResults(fetchImpl: FetchLike) {
     headers: githubHeaders(config.token),
   })
   if (current.status === 404) return { results: {} as ResultsFile, sha: undefined }
-  if (!current.ok) throw new Error("Could not read the current results file from GitHub.")
+  if (!current.ok) {
+    throw new Error(`Could not read the current results file from GitHub (${current.status}).`)
+  }
   const body = (await current.json()) as { sha?: string; content?: string }
   return { results: parseGitHubResults(body), sha: body.sha }
+}
+
+async function readBlobResults(): Promise<ResultsFile | null> {
+  const found = await get(BLOB_PATHNAME, { access: "private", useCache: false })
+  if (!found || found.statusCode !== 200) return null
+  const json = await new Response(found.stream).text()
+  return JSON.parse(json) as ResultsFile
+}
+
+async function writeBlobResults(json: string) {
+  try {
+    await put(BLOB_PATHNAME, json, {
+      access: "private",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/json",
+      cacheControlMaxAge: 0,
+    })
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "unknown error"
+    throw new Error(`Could not save the score. ${detail}`)
+  }
+}
+
+async function readCommittedResults(fetchImpl: FetchLike): Promise<ResultsFile> {
+  try {
+    const disk = await readResultsFile()
+    if (Object.keys(disk).length > 0) return disk
+  } catch {
+    // The file is absent in some runtimes. The public copy is the backup.
+  }
+  const config = githubConfig()
+  const repo = config?.repo ?? DEFAULT_REPO
+  const branch = config?.branch ?? "main"
+  const response = await fetchImpl(
+    `https://raw.githubusercontent.com/${repo}/${branch}/data/results.json`,
+    { cache: "no-store" },
+  )
+  if (!response.ok) return {}
+  return JSON.parse(await response.text()) as ResultsFile
 }
 
 async function commitToGitHub(json: string, sha: string | undefined, fetchImpl: FetchLike) {
@@ -84,9 +133,17 @@ export async function readResultsFile() {
 }
 
 export async function readStoredResults(fetchImpl: FetchLike = fetch) {
+  if (blobConfigured()) {
+    const stored = await readBlobResults()
+    if (stored) return stored
+    return readCommittedResults(fetchImpl)
+  }
   if (githubConfig()) {
-    const remote = await readGitHubResults(fetchImpl)
-    return remote.results
+    try {
+      return (await readGitHubResults(fetchImpl)).results
+    } catch {
+      return readCommittedResults(fetchImpl)
+    }
   }
   return readResultsFile()
 }
@@ -95,6 +152,13 @@ export async function updateStoredResults(
   change: (current: ResultsFile) => ResultsFile,
   fetchImpl: FetchLike = fetch,
 ) {
+  if (blobConfigured()) {
+    const stored = await readBlobResults()
+    const current = stored ?? (await readCommittedResults(fetchImpl))
+    const next = change(cloneResults(current))
+    await writeBlobResults(serializeResults(next))
+    return "blob" as const
+  }
   if (githubConfig()) {
     const remote = await readGitHubResults(fetchImpl)
     const next = change(cloneResults(remote.results))

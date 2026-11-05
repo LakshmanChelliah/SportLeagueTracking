@@ -29,6 +29,6 @@ describe("prototypes", () => {
 
   it("keeps sample scores off the real results file", () => {
     expect(Object.keys(sampleResults).length).toBe(4)
-    expect(readFileSync("data/results.json", "utf8")).toBe("{}\n")
+    expect(JSON.parse(readFileSync("data/results.json", "utf8"))).not.toEqual(sampleResults)
   })
 })

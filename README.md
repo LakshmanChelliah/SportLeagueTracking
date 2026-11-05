@@ -28,14 +28,15 @@ The public board is [https://lakshmanchelliah.github.io/SportLeagueTracking/](ht
 ADMIN_PIN=choose-a-pin npm run dev
 ```
 
-Without `GITHUB_TOKEN`, saving writes `data/results.json` on this machine, and the running app reads that file from `/api/results`. The public board is static, so score entry runs on a Node host for this app (Vercel, or any host that can run `next start`). That host reads the current `data/results.json` from GitHub, merges the one match, and commits the file. Home, schedule, standings, and team then load that file, so points update without republishing the HTML.
+Without `GITHUB_TOKEN`, saving writes `data/results.json` on this machine, and the running app reads that file from `/api/results`. On the coordinator host, `BLOB_READ_WRITE_TOKEN` (set when the Vercel Blob store is connected) is the live score file. Saving reads that blob, merges the one match, and writes it back. The copy committed in this repo is only the fallback from the last deploy. A GitHub token is optional; when it is missing or rejected, scores still save.
 
-GitHub Pages cannot check the PIN. After the coordinator host has a URL, rebuild the public site once with `NEXT_PUBLIC_COORDINATOR_URL` set to that origin. The published pages post scores there and read results from the raw `main` copy of `data/results.json`.
+GitHub Pages cannot check the PIN. After the coordinator host has a URL, rebuild the public site once with `NEXT_PUBLIC_COORDINATOR_URL` set to that origin. The published pages post scores there.
 
 | Variable | Where | Purpose |
 | --- | --- | --- |
 | `ADMIN_PIN` | Coordinator host | Coordinator PIN. Never shipped to the browser. |
-| `GITHUB_TOKEN` | Coordinator host | Fine-grained token with contents write on this repo. |
+| `BLOB_READ_WRITE_TOKEN` | Coordinator host | Read and write the live `results.json` blob. Connected with the Vercel Blob store. |
+| `GITHUB_TOKEN` | Coordinator host | Optional. Fine-grained token with contents write, used only when blob storage is not configured. |
 | `GITHUB_REPO` | Coordinator host | `owner/name`, for example `LakshmanChelliah/SportLeagueTracking`. |
 | `GITHUB_BRANCH` | Coordinator host | Branch that stores `data/results.json`. Defaults to `main`. |
 | `NEXT_PUBLIC_COORDINATOR_URL` | Pages build | Origin of the coordinator host, with no path. The public form posts to `/api/results` on it. |
