@@ -17,6 +17,8 @@ export type Match = {
   /** Playoff or open-gym slot whose teams are not assigned yet. */
   label?: string
   note?: string
+  /** Called off. The match stays on the board, is not played, and does not count. */
+  cancelled?: boolean
   /** Local end time when the slot runs longer than an hour. */
   until?: "22:00"
 }

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLiveResults } from "@/components/use-live-results"
 import { coordinatorApiUrl } from "@/lib/endpoints"
-import { assignedTeams, formatNight, latestPlayedNight, matchTitle, nightsOf, slotTime } from "@/lib/schedule"
+import { assignedTeams, formatNight, isCancelled, latestPlayedNight, matchTitle, nightsOf, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match, Result } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -203,13 +203,20 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
                 </button>
                 <span className="kicker text-right text-dim">
                   <LocationLabel venue={findVenue(league.schedule.venues, item)} fallback={`Court ${item.court}`} />
-                  <span className="mt-1 block">{results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
+                  <span className={`mt-1 block ${isCancelled(item) ? "text-neg" : ""}`}>{isCancelled(item) ? "Cancelled" : results[item.id] ? "Saved" : assignedTeams(item) ? "Open" : "Later"}</span>
                 </span>
               </div>
             ))}
           </div>
         </section>
-        {match && !assignedTeams(match) ? (
+        {match && isCancelled(match) ? (
+          <section className="rounded-xl border border-border bg-panel px-5 py-5">
+            <div className="eyebrow text-neg">Cancelled</div>
+            <h2 className="mt-1 font-display text-[32px] leading-none tracking-wide uppercase">{matchTitle(match)}</h2>
+            <p className="reading mt-3 text-muted-foreground">This match will not be played, so there is no score to enter.</p>
+          </section>
+        ) : null}
+        {match && !isCancelled(match) && !assignedTeams(match) ? (
           <section className="rounded-xl border border-border bg-panel px-5 py-5">
             <div className="eyebrow text-brand">{slotTime(match)}</div>
             <h2 className="mt-1 font-display text-[32px] leading-none tracking-wide uppercase">{match.label}</h2>
@@ -220,7 +227,7 @@ export function AdminView({ league, nowIso }: { league: LeagueData; nowIso: stri
             </p>
           </section>
         ) : null}
-        {match && assignedTeams(match) ? (
+        {match && !isCancelled(match) && assignedTeams(match) ? (
           <form onSubmit={save} className="rounded-xl border border-border bg-panel px-5 py-5">
             <div className="eyebrow text-brand">
               {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />

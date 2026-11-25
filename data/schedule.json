@@ -281,7 +281,8 @@
       "court": 1,
       "venue": "regina",
       "home": 2,
-      "away": 5
+      "away": 5,
+      "cancelled": true
     },
     {
       "id": "2026-12-16-1900-c1",
@@ -290,7 +291,8 @@
       "court": 1,
       "venue": "regina",
       "home": 3,
-      "away": 4
+      "away": 4,
+      "cancelled": true
     },
     {
       "id": "2026-12-16-2000-c1",
@@ -299,7 +301,8 @@
       "court": 1,
       "venue": "regina",
       "home": 7,
-      "away": 1
+      "away": 1,
+      "cancelled": true
     },
     {
       "id": "2026-12-16-2100-c1",
@@ -308,7 +311,8 @@
       "court": 1,
       "venue": "regina",
       "home": 8,
-      "away": 6
+      "away": 6,
+      "cancelled": true
     },
     {
       "id": "2027-01-06-1800-c1",

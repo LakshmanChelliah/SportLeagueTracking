@@ -1,5 +1,5 @@
 import { LocationLabel } from "@/components/location-label"
-import { assignedTeams, involves, slotTime } from "@/lib/schedule"
+import { assignedTeams, involves, isCancelled, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Venue } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -17,6 +17,7 @@ export function MatchCard({
   lead?: "place" | "time"
 }) {
   const yours = you != null && involves(match, you)
+  const calledOff = isCancelled(match)
   return (
     <div
       className={cn(
@@ -31,15 +32,16 @@ export function MatchCard({
       </span>
       {assignedTeams(match) ? (
         <>
-          <span className="min-w-0 font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-[28px]">{teamName(match.home)}</span>
-          <span className="kicker text-dim max-md:text-xs">vs</span>
-          <span className="min-w-0 text-right font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-left max-md:text-[28px]">
+          <span className={cn("min-w-0 font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-[28px]", calledOff && "text-muted-foreground line-through decoration-1")}>{teamName(match.home)}</span>
+          <span className={cn("kicker max-md:text-xs", calledOff ? "text-neg" : "text-dim")}>{calledOff ? "Cancelled" : "vs"}</span>
+          <span className={cn("min-w-0 text-right font-display text-[22px] leading-[0.9] tracking-wide uppercase text-balance max-md:text-left max-md:text-[28px]", calledOff && "text-muted-foreground line-through decoration-1")}>
             {teamName(match.away)}
           </span>
         </>
       ) : (
         <span className="col-span-3 min-w-0">
-          <span className="block font-display text-[22px] leading-[0.9] tracking-wide uppercase max-md:text-[28px]">{match.label}</span>
+          <span className={cn("block font-display text-[22px] leading-[0.9] tracking-wide uppercase max-md:text-[28px]", calledOff && "text-muted-foreground line-through decoration-1")}>{match.label}</span>
+          {calledOff ? <span className="kicker mt-1 block text-neg">Cancelled</span> : null}
           {match.note ? <span className="mt-1 block text-xs tracking-normal text-dim normal-case">{match.note}</span> : null}
         </span>
       )}

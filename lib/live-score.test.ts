@@ -157,6 +157,10 @@ describe("live score rules", () => {
       "2026-10-28-1800-c1": { games: [[21, 0], [21, 0], [21, 0]] },
     }
     expect(pickMatchId(matches, 2, results, null, {})).toBe("2026-11-04-2100-c1")
+    const calledOff = matches.map((match) =>
+      match.id === "2026-10-28-2000-c1" ? { ...match, cancelled: true } : match,
+    )
+    expect(pickMatchId(calledOff, 1, {}, "2026-10-28-2000-c1", {})).not.toBe("2026-10-28-2000-c1")
   })
 })
 

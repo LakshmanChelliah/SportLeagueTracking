@@ -1,4 +1,4 @@
-import { formatTime, matchStart, opponent } from "@/lib/schedule"
+import { formatTime, isCancelled, matchStart, opponent } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import { findVenue } from "@/lib/venues"
 import type { Match, Venue } from "@/lib/types"
@@ -45,10 +45,12 @@ export function buildCalendar(matches: Match[], team: number, venues: Venue[] = 
     .filter((match) => match.home === team || match.away === team)
     .map((match) => {
       const venue = findVenue(venues, match)
-      const summary = `GD RA Volleyball · vs ${teamName(opponent(match, team))}`
-      const description = venue
-        ? `${formatTime(match.time)} · ${venue.name}. One court. Warm up 10 minutes before.`
-        : `${formatTime(match.time)} · Court ${match.court} · Double Gym. Warm up 10 minutes before.`
+      const calledOff = isCancelled(match)
+      const summary = `${calledOff ? "Cancelled · " : ""}GD RA Volleyball · vs ${teamName(opponent(match, team))}`
+      const place = venue
+        ? `${formatTime(match.time)} · ${venue.name}. One court.`
+        : `${formatTime(match.time)} · Court ${match.court} · Double Gym.`
+      const description = calledOff ? `Cancelled. ${place}` : `${place} Warm up 10 minutes before.`
       const location = venue?.address ?? venue?.name ?? "Double Gym"
       return [
         "BEGIN:VEVENT",
@@ -59,6 +61,7 @@ export function buildCalendar(matches: Match[], team: number, venues: Venue[] = 
         `SUMMARY:${escapeText(summary)}`,
         `LOCATION:${escapeText(location)}`,
         `DESCRIPTION:${escapeText(description)}`,
+        ...(calledOff ? ["STATUS:CANCELLED"] : []),
         "END:VEVENT",
       ].join("\r\n")
     })

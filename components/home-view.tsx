@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
+import { CancelledNotes } from "@/components/cancelled-note"
 import { KeepScoreLink } from "@/components/keep-score-link"
 import { Countdown } from "@/components/countdown"
 import { LocationLabel, NightPlaces } from "@/components/location-label"
@@ -18,12 +19,14 @@ import {
   formatNight,
   formatTime,
   gymsOf,
+  isCancelled,
   lastPlayed,
   matchStart,
   nextUnplayed,
   nightHasGyms,
   nightsOf,
   opponent,
+  upcomingCancelledNights,
   seriesLabel,
   warmupLabel,
 } from "@/lib/schedule"
@@ -60,15 +63,18 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
   const mine = team ? table.find((row) => row.team === team) : undefined
   const previousDates = nights.filter((item) => item.date < night.date).map((item) => item.date)
   const lastNightDate = [...previousDates].reverse().find((date) =>
-    matches.some((match) => match.date === date && results[match.id]),
+    matches.some((match) => match.date === date && results[match.id] && !isCancelled(match)),
   )
   const lastNight = lastNightDate ? matches.filter((match) => match.date === lastNightDate) : []
   const last = team ? lastPlayed(matches, team, results) : null
 
   const others = focus ? night.slots.flatMap((slot) => slot.matches).filter((match) => match.id !== focus.id) : []
 
+  const calledOff = upcomingCancelledNights(matches, now)
+
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5 max-md:pb-6">
+      <CancelledNotes dates={calledOff} />
       {team && focus ? (
         <section className="hidden flex-col md:flex">
           <div className="mb-[18px] flex items-baseline justify-between gap-3">
@@ -288,7 +294,7 @@ export function HomeView({ league, nowIso: serverNowIso }: { league: LeagueData;
               <span className="text-xs text-dim">{formatNight(lastNightDate!)} · Final</span>
             </div>
             {lastNight.map((match) => {
-              const result = results[match.id]
+              const result = isCancelled(match) ? undefined : results[match.id]
               return result ? (
                 <ScoreLine
                   key={match.id}

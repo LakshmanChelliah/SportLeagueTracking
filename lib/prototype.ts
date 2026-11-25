@@ -1,3 +1,4 @@
+import { isCancelled } from "@/lib/schedule"
 import { standings } from "@/lib/standings"
 import type { Match, ResultsFile, TeamId } from "@/lib/types"
 
@@ -37,7 +38,9 @@ export type SeasonOdds = {
 }
 
 export function simulateSeason(matches: Match[], runs = 1000, seed = 20261007): SeasonOdds {
-  const league = matches.filter((match): match is Match & { home: TeamId; away: TeamId } => match.home != null && match.away != null)
+  const league = matches.filter((match): match is Match & { home: TeamId; away: TeamId } =>
+    match.home != null && match.away != null && !isCancelled(match),
+  )
   const remaining = league.filter((match) => !sampleResults[match.id])
   const base = standings(league, sampleResults)
   const rate = new Map(

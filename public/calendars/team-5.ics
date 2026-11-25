@@ -91,9 +91,10 @@ UID:2026-12-16-1800-c1-team5@gd-ra-volleyball
 DTSTAMP:20261216T230000Z
 DTSTART;TZID=America/Toronto:20261216T180000
 DTEND;TZID=America/Toronto:20261216T190000
-SUMMARY:GD RA Volleyball · vs Advanced Net-ronics
+SUMMARY:Cancelled · GD RA Volleyball · vs Advanced Net-ronics
 LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
-DESCRIPTION:6:00 PM · Regina Street PS. One court. Warm up 10 minutes before.
+DESCRIPTION:Cancelled. 6:00 PM · Regina Street PS. One court.
+STATUS:CANCELLED
 END:VEVENT
 BEGIN:VEVENT
 UID:2027-01-06-1900-c1-team5@gd-ra-volleyball
