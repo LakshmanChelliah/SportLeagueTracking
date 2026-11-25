@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs"
 import { buildCalendar, outlookSubscribeUrl } from "./ics"
 import { TEAMS } from "./teams"
 import { forfeitGames, parseResult } from "./results"
-import { gymsOf, latestPlayedNight, matchStart, nextUnplayed, setCounts } from "./schedule"
+import { cancelledNights, gymsOf, involves, latestPlayedNight, matchStart, nextUnplayed, setCounts } from "./schedule"
 import { standings } from "./standings"
 import { teamName } from "./teams"
 import type { Match, ResultsFile } from "./types"
@@ -90,6 +90,22 @@ describe("standings", () => {
     expect(team3.diff).toBe(63)
   })
 
+  it("ignores a cancelled match even when a score was saved", () => {
+    const calledOff = rankingMatches.map((match) =>
+      match.id === "2026-10-28-1800-c1" ? { ...match, cancelled: true } : match,
+    )
+    const results: ResultsFile = {
+      "2026-10-28-1800-c1": result([[21, 15], [21, 15], [21, 15]]),
+    }
+    const team1 = standings(calledOff, results).find((row) => row.team === 1)!
+    const team8 = standings(calledOff, results).find((row) => row.team === 8)!
+    expect(team1.wins).toBe(0)
+    expect(team1.losses).toBe(0)
+    expect(team1.pointsFor).toBe(0)
+    expect(team8.wins).toBe(0)
+    expect(team8.pointsFor).toBe(0)
+  })
+
   it("leaves every team level when no scores are in", () => {
     const table = standings(matches, {})
     expect(table.map((row) => row.team)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
@@ -103,6 +119,26 @@ describe("schedule", () => {
     expect(latestPlayedNight(dates, new Date("2026-10-15T03:30:00Z"))).toBe("2026-10-14")
     expect(latestPlayedNight(dates, new Date("2026-10-07T16:00:00Z"))).toBe("2026-10-07")
     expect(latestPlayedNight(dates, new Date("2026-10-01T16:00:00Z"))).toBe("2026-10-07")
+  })
+
+  it("keeps December 16 on the board as cancelled and skips it", () => {
+    const night = matches.filter((match) => match.date === "2026-12-16")
+    expect(night.map((match) => [match.time, match.home, match.away, match.cancelled])).toEqual([
+      ["18:00", 2, 5, true],
+      ["19:00", 3, 4, true],
+      ["20:00", 7, 1, true],
+      ["21:00", 8, 6, true],
+    ])
+    expect(cancelledNights(matches)).toContain("2026-12-16")
+    const results: ResultsFile = {}
+    for (const match of matches) {
+      if (involves(match, 2) && match.date < "2026-12-16") {
+        results[match.id] = result([[21, 15], [21, 15], [21, 15]])
+      }
+    }
+    const next = nextUnplayed(matches, 2, results)
+    expect(next && next.date > "2026-12-16").toBe(true)
+    expect(next?.cancelled).toBeUndefined()
   })
 
   it("picks the earliest unplayed match for a team", () => {
@@ -167,6 +203,12 @@ describe("calendar", () => {
     expect(ics).toContain("2599 Regina St\\, Ottawa\\, ON K2B 8A5")
     expect(ics).toContain("METHOD:PUBLISH")
     expect(ics).not.toContain("20261021")
+    expect(ics).toContain("DTSTART;TZID=America/Toronto:20261216T190000")
+    expect(ics).toContain("SUMMARY:Cancelled · GD RA Volleyball · vs Block Party")
+    expect(ics).toContain("DESCRIPTION:Cancelled. 7:00 PM · Regina Street PS. One court.")
+    expect(ics).toContain("STATUS:CANCELLED")
+    const october = ics.split("BEGIN:VEVENT").find((event) => event.includes("20261028T190000"))
+    expect(october).not.toContain("STATUS:CANCELLED")
   })
 
   it("publishes a feed Outlook can subscribe to for every team", () => {

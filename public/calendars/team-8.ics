@@ -91,9 +91,10 @@ UID:2026-12-16-2100-c1-team8@gd-ra-volleyball
 DTSTAMP:20261217T020000Z
 DTSTART;TZID=America/Toronto:20261216T210000
 DTEND;TZID=America/Toronto:20261216T220000
-SUMMARY:GD RA Volleyball · vs The Upsetters
+SUMMARY:Cancelled · GD RA Volleyball · vs The Upsetters
 LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
-DESCRIPTION:9:00 PM · Regina Street PS. One court. Warm up 10 minutes before.
+DESCRIPTION:Cancelled. 9:00 PM · Regina Street PS. One court.
+STATUS:CANCELLED
 END:VEVENT
 BEGIN:VEVENT
 UID:2027-01-06-2000-c1-team8@gd-ra-volleyball

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { CalendarButton } from "@/components/calendar-button"
+import { CancelledNotes } from "@/components/cancelled-note"
 import { LocationLabel, NightPlaces } from "@/components/location-label"
 import { MatchCard } from "@/components/match-card"
 import { NightLine } from "@/components/night-line"
@@ -11,9 +12,10 @@ import { TeamChoices } from "@/components/team-picker"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
 import { WeekStrip } from "@/components/week-strip"
-import { byStart, defaultNight, formatNight, formatTime, gymsOf, nightHasGyms, nightsOf, torontoDate, warmupLabel } from "@/lib/schedule"
-import type { LeagueData } from "@/lib/types"
+import { byStart, cancelledNights, defaultNight, formatNight, formatTime, gymsOf, isCancelled, nextOpenDate, nightHasGyms, nightsOf, upcomingCancelledNights, warmupLabel } from "@/lib/schedule"
+import type { LeagueData, Match, ResultsFile } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
+import { cn } from "cn"
 
 export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueData; nowIso: string }) {
   const { team, setTeam } = useTeam()
@@ -29,14 +31,14 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
   const dates = nights.map((night) => night.date)
   const selected = defaultNight(matches, requested, now)
   const night = nights.find((item) => item.date === selected) ?? nights[0]
-  const today = torontoDate(now)
-  const nextDate = dates.find((date) => date >= today) ?? null
+  const nextDate = nextOpenDate(matches, now)
+  const calledOff = cancelledNights(matches)
   const nightMatches = night.slots.flatMap((slot) => slot.matches)
-  const playedCount = nightMatches.filter((match) => results[match.id]).length
   const gyms = gymsOf(nightMatches)
   const groupedByGym = nightHasGyms(nightMatches)
   const multiGym = groupedByGym && gyms.length > 1
   const ordered = [...nightMatches].sort(byStart)
+  const nightOff = ordered.length > 0 && ordered.every(isCancelled)
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
@@ -69,19 +71,22 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         </div>
       ) : null}
       <div className={!team ? "max-md:hidden" : undefined}>
+        <CancelledNotes dates={upcomingCancelledNights(matches, now).filter((date) => date !== selected)} />
         <div className={dates.length < 2 ? "max-md:hidden" : undefined}>
-          <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={results} />
+          <WeekStrip dates={dates} selected={selected} nextDate={nextDate} results={results} cancelledDates={calledOff} />
         </div>
         <section className="overflow-hidden rounded-xl border border-border bg-panel md:hidden">
           <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3">
             <h2 className="font-display text-2xl leading-none tracking-wide uppercase">{formatNight(night.date)}</h2>
-            <span className="shrink-0 text-xs text-dim">
-              {playedCount ? `${playedCount} of ${ordered.length} final` : `${ordered.length} ${ordered.length === 1 ? "match" : "matches"}`}
-            </span>
+            <span className={cn("shrink-0 text-xs", nightOff ? "text-neg" : "text-dim")}>{nightCount(ordered, results, false)}</span>
           </div>
           <div className="border-b border-border px-4 py-2.5 text-xs text-dim">
-            <NightPlaces matches={ordered} venues={league.schedule.venues} gym={league.schedule.gym} />
-            {multiGym ? " · two gyms" : " · one court"}
+            {nightOff ? "No games that night." : (
+              <>
+                <NightPlaces matches={ordered} venues={league.schedule.venues} gym={league.schedule.gym} />
+                {multiGym ? " · two gyms" : " · one court"}
+              </>
+            )}
           </div>
           <div className="divide-y divide-border">
             {ordered.map((match) => (
@@ -98,23 +103,24 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
         </section>
         <div className="mb-3.5 hidden items-baseline justify-between md:flex">
           <h2 className="font-display text-[28px] tracking-wide uppercase">{formatNight(night.date)}</h2>
-          <span className="text-[13px] text-dim">{playedCount ? `${playedCount} final` : `${ordered.length} matches`}</span>
+          <span className={cn("text-[13px]", nightOff ? "text-neg" : "text-dim")}>{nightCount(ordered, results, true)}</span>
         </div>
         <div className={multiGym ? "hidden gap-4 md:grid md:grid-cols-2" : "hidden gap-4 md:grid md:grid-cols-1"}>
           {groupedByGym
             ? gyms.map((gym) => {
                 const sample = gym.matches[0]
                 const venue = findVenue(league.schedule.venues, sample)
+                const gymOff = gym.matches.every(isCancelled)
                 return (
                   <section key={gym.key} className="overflow-hidden rounded-xl border border-border bg-panel">
                     <div className="flex items-baseline justify-between gap-3 border-b border-border px-4 py-3.5">
                       <h3 className="section-label">
                         <LocationLabel venue={venue} fallback={venue?.name ?? `Gym ${sample.court}`} />
                       </h3>
-                      <span className="shrink-0 text-xs text-dim">One court</span>
+                      <span className={cn("shrink-0 text-xs", gymOff ? "text-neg" : "text-dim")}>{gymOff ? "Cancelled" : "One court"}</span>
                     </div>
                     {gym.matches.map((match) => {
-                      const result = results[match.id]
+                      const result = isCancelled(match) ? undefined : results[match.id]
                       return result ? (
                         <ScoreLine key={match.id} match={match} result={result} you={team} meta={formatTime(match.time)} />
                       ) : (
@@ -128,10 +134,12 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
                 <section key={slot.time} className="overflow-hidden rounded-xl border border-border bg-panel">
                   <div className="flex items-baseline justify-between border-b border-border px-4 py-3.5">
                     <h3 className="section-label">{formatTime(slot.time)}</h3>
-                    <span className="text-xs text-dim">Warm-up {warmupLabel(slot.time)}</span>
+                    <span className={cn("text-xs", slot.matches.every(isCancelled) ? "text-neg" : "text-dim")}>
+                      {slot.matches.every(isCancelled) ? "Cancelled" : `Warm-up ${warmupLabel(slot.time)}`}
+                    </span>
                   </div>
                   {slot.matches.map((match) => {
-                    const result = results[match.id]
+                    const result = isCancelled(match) ? undefined : results[match.id]
                     return result ? (
                       <ScoreLine
                         key={match.id}
@@ -150,4 +158,15 @@ export function ScheduleView({ league, nowIso: serverNowIso }: { league: LeagueD
       </div>
     </div>
   )
+}
+
+function nightCount(matches: Match[], results: ResultsFile, compact: boolean) {
+  const calledOff = matches.filter(isCancelled).length
+  if (matches.length > 0 && calledOff === matches.length) return "Cancelled"
+  const playable = matches.length - calledOff
+  const played = matches.filter((match) => !isCancelled(match) && results[match.id]).length
+  if (played) return compact ? `${played} final` : `${played} of ${playable} final`
+  if (calledOff) return `${playable} ${playable === 1 ? "match" : "matches"} · ${calledOff} cancelled`
+  if (compact) return `${playable} matches`
+  return `${playable} ${playable === 1 ? "match" : "matches"}`
 }

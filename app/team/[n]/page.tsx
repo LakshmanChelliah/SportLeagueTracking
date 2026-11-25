@@ -20,5 +20,5 @@ export default async function TeamPage({ params }: { params: Promise<{ n: string
   const { n } = await params
   const team = parseTeam(n)
   if (!team) notFound()
-  return <TeamView league={getLeague()} team={team} />
+  return <TeamView league={getLeague()} team={team} nowIso={new Date().toISOString()} />
 }

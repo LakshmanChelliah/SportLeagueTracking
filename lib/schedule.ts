@@ -68,6 +68,34 @@ export function assignedTeams(match: Match): match is Match & { home: TeamId; aw
   return match.home != null && match.away != null
 }
 
+export function isCancelled(match: Pick<Match, "cancelled">) {
+  return match.cancelled === true
+}
+
+/** Dates whose every match is called off, in schedule order. */
+export function cancelledNights(matches: Match[]) {
+  const rows = new Map<string, { total: number; calledOff: number }>()
+  for (const match of matches) {
+    const row = rows.get(match.date) ?? { total: 0, calledOff: 0 }
+    row.total += 1
+    if (isCancelled(match)) row.calledOff += 1
+    rows.set(match.date, row)
+  }
+  return [...rows.entries()].filter(([, row]) => row.calledOff === row.total).map(([date]) => date)
+}
+
+export function upcomingCancelledNights(matches: Match[], now: Date) {
+  const today = torontoDate(now)
+  return cancelledNights(matches).filter((date) => date >= today)
+}
+
+export function nextOpenDate(matches: Match[], now: Date) {
+  const today = torontoDate(now)
+  const calledOff = new Set(cancelledNights(matches))
+  const dates = [...new Set(matches.map((match) => match.date))]
+  return dates.find((date) => date >= today && !calledOff.has(date)) ?? null
+}
+
 export function matchTitle(match: Pick<Match, "home" | "away" | "label">) {
   if (match.home != null && match.away != null) return `${teamName(match.home)} vs ${teamName(match.away)}`
   return match.label ?? "To be set"
@@ -139,9 +167,11 @@ export function defaultNight(matches: Match[], requested: string | undefined, no
 }
 
 export function nextUnplayed(matches: Match[], team: number, results: ResultsFile) {
-  return matches
-    .filter((match) => involves(match, team) && !results[match.id])
-    .sort(byStart)[0] ?? null
+  return (
+    matches
+      .filter((match) => involves(match, team) && !isCancelled(match) && !results[match.id])
+      .sort(byStart)[0] ?? null
+  )
 }
 
 export function lastPlayed(matches: Match[], team: number, results: ResultsFile) {

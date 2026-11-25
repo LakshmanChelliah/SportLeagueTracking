@@ -2,24 +2,25 @@
 
 import Link from "next/link"
 import { CalendarButton } from "@/components/calendar-button"
+import { CancelledNotes } from "@/components/cancelled-note"
 import { KeepScoreLink } from "@/components/keep-score-link"
 import { LocationLabel } from "@/components/location-label"
 import { useTeam } from "@/components/team-provider"
 import { useLiveResults } from "@/components/use-live-results"
-import { diffLabel, formatTime, involves, opponent, seriesLabel, slotTime, warmupLabel } from "@/lib/schedule"
+import { diffLabel, formatTime, involves, isCancelled, nextUnplayed, opponent, seriesLabel, slotTime, upcomingCancelledNights, warmupLabel } from "@/lib/schedule"
 import { standings, teamSets } from "@/lib/standings"
 import { ordinal, teamName, type TeamId } from "@/lib/teams"
 import type { LeagueData } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
 import { cn } from "cn"
 
-export function TeamView({ league, team }: { league: LeagueData; team: TeamId }) {
+export function TeamView({ league, team, nowIso }: { league: LeagueData; team: TeamId; nowIso: string }) {
   const { team: mine } = useTeam()
   const { results } = useLiveResults(league.results)
   const matches = league.schedule.matches.filter((match) => involves(match, team))
   const table = standings(league.schedule.matches, results)
   const row = table.find((item) => item.team === team)
-  const next = matches.find((match) => !results[match.id])
+  const next = nextUnplayed(league.schedule.matches, team, results)
 
   return (
     <div className="mx-auto w-[min(1120px,calc(100%-48px))] py-7 max-md:w-[calc(100%-32px)] max-md:pt-5">
@@ -37,6 +38,8 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
         </div>
         <CalendarButton matches={league.schedule.matches} team={team} venues={league.schedule.venues} outlook label="Add to Outlook" />
       </div>
+
+      <CancelledNotes dates={upcomingCancelledNights(league.schedule.matches, new Date(nowIso))} />
 
       {next ? (
         <section className="mb-3 overflow-hidden rounded-xl border border-border bg-panel md:hidden">
@@ -106,15 +109,16 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 return `${mineScore}–${oppScore}`
               }).join(", ")
             : null
-          const outcome = sets ? seriesLabel(sets.setsFor, sets.setsAgainst) : next?.id === match.id ? "Next" : "-"
-          const upcoming = !result
+          const calledOff = isCancelled(match)
+          const outcome = sets ? seriesLabel(sets.setsFor, sets.setsAgainst) : calledOff ? "Cancelled" : next?.id === match.id ? "Next" : "-"
+          const upcoming = !result && !calledOff
           return (
             <div key={match.id}>
               <div
                 className={cn(
                   "hidden grid-cols-[92px_88px_80px_1fr_auto] items-center gap-3 border-t border-border py-3 md:grid",
                   upcoming && next?.id === match.id && "bg-[var(--highlight)] px-3 shadow-[inset_3px_0_0_var(--brand)]",
-                  upcoming && next?.id !== match.id && "text-muted-foreground",
+                  (calledOff || (upcoming && next?.id !== match.id)) && "text-muted-foreground",
                 )}
               >
                 <span className="font-display text-lg tracking-wide uppercase">{formatShort(match.date)}</span>
@@ -122,9 +126,9 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 <span className="font-display text-sm tracking-wide text-dim uppercase">
                   <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
                 </span>
-                <span className="font-medium">vs {teamName(opponent(match, team))}</span>
+                <span className={cn("font-medium", calledOff && "text-muted-foreground line-through decoration-1")}>vs {teamName(opponent(match, team))}</span>
                 <span className="text-right font-display text-lg">
-                  {outcome === "Next" ? <span className="kicker text-brand">Next</span> : outcome}
+                  {outcome === "Next" ? <span className="kicker text-brand">Next</span> : outcome === "Cancelled" ? <span className="kicker text-neg">Cancelled</span> : outcome}
                   {scoreText ? <small className="mt-0.5 block font-sans text-xs font-normal tracking-normal text-dim">{scoreText}</small> : null}
                 </span>
               </div>
@@ -132,18 +136,20 @@ export function TeamView({ league, team }: { league: LeagueData; team: TeamId })
                 className={cn(
                   "mt-2 rounded-xl border border-border bg-panel px-4 py-3.5 md:hidden",
                   upcoming && next?.id === match.id && "bg-[var(--highlight)] shadow-[inset_3px_0_0_var(--brand)]",
-                  upcoming && next?.id !== match.id && "text-muted-foreground",
+                  (calledOff || (upcoming && next?.id !== match.id)) && "text-muted-foreground",
                 )}
               >
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-display text-xl tracking-wide uppercase">{formatShort(match.date)}</span>
                   {outcome === "Next" ? (
                     <span className="kicker text-brand">Next</span>
+                  ) : outcome === "Cancelled" ? (
+                    <span className="kicker text-neg">Cancelled</span>
                   ) : (
                     <span className="font-display text-base">{outcome}</span>
                   )}
                 </div>
-                <div className="mt-1 font-display text-[26px] leading-none tracking-wide uppercase">vs {teamName(opponent(match, team))}</div>
+                <div className={cn("mt-1 font-display text-[26px] leading-none tracking-wide uppercase", calledOff && "text-muted-foreground line-through decoration-1")}>vs {teamName(opponent(match, team))}</div>
                 <div className="mt-1.5 text-sm text-dim">
                   {slotTime(match)} · <LocationLabel venue={findVenue(league.schedule.venues, match)} fallback={`Court ${match.court}`} />
                 </div>

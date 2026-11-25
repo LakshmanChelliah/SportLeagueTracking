@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { getLeague } from "@/lib/league"
 import { assertMatch, parseResult } from "@/lib/results"
+import { isCancelled } from "@/lib/schedule"
 import { readStoredResults, updateStoredResults } from "@/lib/save-results"
 import type { ResultsFile } from "@/lib/types"
 
@@ -65,8 +66,12 @@ export async function POST(request: Request) {
 
   const matchId = body.matchId
   const league = getLeague()
-  if (!matchId || !assertMatch(league.schedule.matches, matchId)) {
+  const match = league.schedule.matches.find((item) => item.id === matchId)
+  if (!matchId || !match || !assertMatch(league.schedule.matches, matchId)) {
     return json({ error: "That match is not on the schedule." }, 400)
+  }
+  if (body.action === "save" && isCancelled(match)) {
+    return json({ error: "That match is cancelled." }, 400)
   }
 
   if (body.action === "clear") {

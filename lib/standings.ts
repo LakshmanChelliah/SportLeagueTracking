@@ -1,4 +1,4 @@
-import { setCounts } from "@/lib/schedule"
+import { isCancelled, setCounts } from "@/lib/schedule"
 import { TEAMS } from "@/lib/teams"
 import type { Match, ResultsFile, Standing, TeamId } from "@/lib/types"
 
@@ -17,7 +17,7 @@ export function standings(matches: Match[], results: ResultsFile): Standing[] {
   }
 
   const played = matches
-    .filter((match) => results[match.id])
+    .filter((match) => results[match.id] && !isCancelled(match))
     .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time) || a.court - b.court)
 
   for (const match of played) {

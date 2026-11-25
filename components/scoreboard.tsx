@@ -23,7 +23,7 @@ import {
   type LiveGame,
   type Side,
 } from "@/lib/live-score"
-import { assignedTeams, byStart, formatChip, formatNight, formatTime, involves, matchTitle } from "@/lib/schedule"
+import { assignedTeams, byStart, formatChip, formatNight, formatTime, involves, isCancelled, matchTitle } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { LeagueData, Match } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -38,7 +38,8 @@ export function Scoreboard({ league }: { league: LeagueData }) {
   const [picked, setPicked] = useState<string | null>(null)
   const [saveOpen, setSaveOpen] = useState(false)
   useWakeLock()
-  const queryMatch = requested && league.schedule.matches.some((item) => item.id === requested) ? requested : null
+  const requestedMatch = league.schedule.matches.find((item) => item.id === requested)
+  const queryMatch = requestedMatch && !isCancelled(requestedMatch) ? requestedMatch.id : null
 
   useEffect(() => {
     if (!snap.ready || !queryMatch || picked || snap.matchId === queryMatch) return
@@ -47,7 +48,7 @@ export function Scoreboard({ league }: { league: LeagueData }) {
 
   if (!snap.ready) return <ScoreSkeleton />
 
-  const matches = [...league.schedule.matches].sort(byStart)
+  const matches = [...league.schedule.matches].filter((match) => !isCancelled(match)).sort(byStart)
   if (!team || matches.length === 0) {
     return (
       <div className="mx-auto w-[min(720px,calc(100%-32px))] py-7">

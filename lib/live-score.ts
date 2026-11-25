@@ -1,4 +1,4 @@
-import { involves, nextUnplayed } from "@/lib/schedule"
+import { involves, isCancelled, nextUnplayed } from "@/lib/schedule"
 import type { Match, ResultsFile } from "@/lib/types"
 
 export const BOARDS_KEY = "gdra-live-scores"
@@ -175,9 +175,10 @@ export function pickMatchId(
   savedMatchId: string | null,
   boards: Record<string, LiveBoard>,
 ) {
-  if (matches.length === 0) return null
-  if (savedMatchId && matches.some((match) => match.id === savedMatchId)) return savedMatchId
-  const pool = team == null ? matches : matches.filter((match) => involves(match, team))
+  const open = matches.filter((match) => !isCancelled(match))
+  if (open.length === 0) return null
+  if (savedMatchId && open.some((match) => match.id === savedMatchId)) return savedMatchId
+  const pool = team == null ? open : open.filter((match) => involves(match, team))
   let bestId: string | null = null
   let bestAt = -1
   for (const match of pool) {
@@ -193,7 +194,7 @@ export function pickMatchId(
     const next = nextUnplayed(matches, team, results)
     if (next) return next.id
   }
-  return (pool[0] ?? matches[0]).id
+  return (pool[0] ?? open[0]).id
 }
 
 export function parseBoards(raw: string | null): Record<string, LiveBoard> {

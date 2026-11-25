@@ -91,9 +91,10 @@ UID:2026-12-16-2000-c1-team1@gd-ra-volleyball
 DTSTAMP:20261217T010000Z
 DTSTART;TZID=America/Toronto:20261216T200000
 DTEND;TZID=America/Toronto:20261216T210000
-SUMMARY:GD RA Volleyball · vs Sets on the Beach
+SUMMARY:Cancelled · GD RA Volleyball · vs Sets on the Beach
 LOCATION:2599 Regina St\, Ottawa\, ON K2B 8A5
-DESCRIPTION:8:00 PM · Regina Street PS. One court. Warm up 10 minutes before.
+DESCRIPTION:Cancelled. 8:00 PM · Regina Street PS. One court.
+STATUS:CANCELLED
 END:VEVENT
 BEGIN:VEVENT
 UID:2027-01-06-1800-c1-team1@gd-ra-volleyball

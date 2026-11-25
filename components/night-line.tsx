@@ -1,5 +1,5 @@
 import { LocationLabel } from "@/components/location-label"
-import { assignedTeams, involves, setCounts, slotTime } from "@/lib/schedule"
+import { assignedTeams, involves, isCancelled, setCounts, slotTime } from "@/lib/schedule"
 import { teamName } from "@/lib/teams"
 import type { Match, Result, Venue } from "@/lib/types"
 import { findVenue } from "@/lib/venues"
@@ -19,7 +19,8 @@ export function NightLine({
   showPlace?: boolean
 }) {
   const yours = you != null && involves(match, you)
-  const sets = result && assignedTeams(match) ? setCounts(result) : null
+  const calledOff = isCancelled(match)
+  const sets = result && assignedTeams(match) && !calledOff ? setCounts(result) : null
   const title = assignedTeams(match)
     ? `${yours && match.home === you ? "You" : teamName(match.home)} vs ${yours && match.away === you ? "You" : teamName(match.away)}`
     : match.label ?? "To be set"
@@ -32,7 +33,8 @@ export function NightLine({
     >
       <div className="w-[5.75rem] shrink-0 font-display text-base leading-none tracking-wide">{slotTime(match)}</div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-medium tracking-tight">{title}</div>
+        <div className={cn("text-[15px] font-medium tracking-tight", calledOff ? "text-pretty text-muted-foreground line-through decoration-1" : "truncate")}>{title}</div>
+        {calledOff ? <div className="kicker mt-0.5 text-neg">Cancelled</div> : null}
         {match.note ? <div className="mt-0.5 truncate text-xs text-dim">{match.note}</div> : null}
         {showPlace ? (
           <div className="mt-0.5 truncate text-xs text-dim">
